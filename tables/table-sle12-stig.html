@@ -1750,15 +1750,39 @@ $ sudo chmod +t DIR</pre></td>
 	<td>medium</td>
 	<td>Advanced Intrusion Detection Environment (AIDE) must verify the baseline SUSE operating system configuration at least weekly.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>The AIDE package must be installed if it is to be available for integrity checking.</pre></td>
-	<td><pre>Run the following command to determine if the aide package is installed: $ rpm -q aide
-      Is it the case that the package is not installed?
-      </pre></td>
-	<td><pre>The aide package can be installed with the following command:
+	<td><pre>By default, AIDE does not install itself for periodic execution. Periodically
+running AIDE is necessary to reveal unexpected changes in installed files.
 
-$ sudo zypper install aide</pre></td>
+Unauthorized changes to the baseline configuration could make the system vulnerable
+to various attacks or allow unauthorized access to the operating system. Changes to
+operating system configurations can have unintended side effects, some of which may
+be relevant to security.
+
+Detecting such changes and providing an automated response can help avoid unintended,
+negative consequences that could ultimately affect the security state of the operating
+system. The operating system's Information Management Officer (IMO)/Information System
+Security Officer (ISSO) and System Administrators (SAs) must be notified via email and/or
+monitoring system trap when there is an unauthorized modification of a configuration item.</pre></td>
+	<td><pre>Verify the operating system routinely checks the baseline configuration for unauthorized changes.
+
+To determine that periodic AIDE execution has been scheduled, run the following command:
+$ grep aide /etc/crontab
+The output should return something similar to the following:
+05 4 * * * root /usr/bin/aide --check
+
+NOTE: The usage of special cron times, such as @daily or @weekly, is acceptable.
+      Is it the case that AIDE is not configured to scan periodically?
+      </pre></td>
+	<td><pre>At a minimum, AIDE should be configured to run a weekly scan.
+To implement a daily execution of AIDE at 4:05am using cron, add the following line to /etc/crontab:
+05 4 * * * root /usr/bin/aide --check
+To implement a weekly execution of AIDE at 4:05am using cron, add the following line to /etc/crontab:
+05 4 * * 0 root /usr/bin/aide --check
+AIDE can be executed periodically through other means; this is merely one example.
+The usage of cron's special time codes, such as  @daily and
+@weekly is acceptable.</pre></td>
 	<td>SLES-12-010500</td>
-	<td>package_aide_installed</td>
+	<td>aide_periodic_cron_checking</td>
 </tr>
 
 <tr>
@@ -2218,28 +2242,23 @@ $ sudo userdel unauthorized_user</pre></td>
 	<td>medium</td>
 	<td>The SUSE operating system must not have unnecessary account capabilities.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Ensuring shells are not given to system accounts upon login makes it more
-difficult for attackers to make use of system accounts.</pre></td>
-	<td><pre>To obtain a listing of all users, their UIDs, and their shells, run the
-command: $ awk -F: '{print $1 ":" $3 ":" $7}' /etc/passwd Identify
-the system accounts from this listing. These will primarily be the accounts
-with UID numbers less than UID_MIN, other than root. Value of the UID_MIN
-directive is set in /etc/login.defs configuration file. In the default
-configuration UID_MIN is set to 1000.
-      Is it the case that any system account (other than root) has a login shell?
+	<td><pre>Ensuring shells are not given to system accounts upon login makes it more difficult for
+attackers to make use of system accounts.</pre></td>
+	<td><pre>To obtain a listing of all users, their UIDs, and their shells, run the command:
+$ awk -F: '{print $1 ":" $3 ":" $7}' /etc/passwd
+Identify the system accounts from this listing. These will primarily be the accounts with UID
+numbers less than 1000, other than root.
+      Is it the case that any system account other than root has a login shell?
       </pre></td>
-	<td><pre>Some accounts are not associated with a human user of the system, and exist to
-perform some administrative function. Should an attacker be able to log into
-these accounts, they should not be granted access to a shell.
+	<td><pre>Some accounts are not associated with a human user of the system, and exist to perform some
+administrative functions. Should an attacker be able to log into these accounts, they should
+not be granted access to a shell.
 
-The login shell for each local account is stored in the last field of each line
-in /etc/passwd. System accounts are those user accounts with a user ID
-less than UID_MIN, where value of UID_MIN directive is set in
-/etc/login.defs configuration file. In the default configuration UID_MIN is set
-to 1000, thus system accounts are those user accounts with a user ID less than
+The login shell for each local account is stored in the last field of each line in
+/etc/passwd. System accounts are those user accounts with a user ID less than
 1000. The user ID is stored in the third field. If any system account
-SYSACCT (other than root) has a login shell, disable it with the
-command: $ sudo usermod -s /sbin/nologin SYSACCT</pre></td>
+other than root has a login shell, disable it with the command:
+$ sudo usermod -s /sbin/nologin account</pre></td>
 	<td>SLES-12-010631</td>
 	<td>no_shelllogin_for_systemaccounts</td>
 </tr>
@@ -5992,11 +6011,11 @@ impersonated.</pre></td>
 run the command:
 $ ls -l /etc/ssh/*_key
 If properly configured, the output should indicate the following permissions:
--rw-------
-      Is it the case that /etc/ssh/*_key does not have unix mode -rw-------?
+-rw-r-----
+      Is it the case that /etc/ssh/*_key does not have unix mode -rw-r-----?
       </pre></td>
 	<td><pre>SSH server private keys - files that match the /etc/ssh/*_key glob, have to have restricted permissions.
-If those files are owned by the root user and the root group, they have to have the 0600 permission or stricter.</pre></td>
+If those files are owned by the root user and the root group, they have to have the 0640 permission or stricter.</pre></td>
 	<td>SLES-12-030220</td>
 	<td>file_permissions_sshd_private_key</td>
 </tr>

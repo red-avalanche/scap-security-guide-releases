@@ -443,36 +443,39 @@ can be held accountable for their actions.
   <td>CCE-91251-9</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands</td>
   <td xml:lang="en-US">
-The audit system should collect information about usage of privileged
-commands for all users and root. To find the relevant setuid /
-setgid programs, run the following command for each local partition
-<i>PART</i>:
-<pre>$ sudo find <i>PART</i> -xdev -type f -perm -4000 -o -type f -perm -2000 2&gt;/dev/null</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
-program to read audit rules during daemon startup (the default), add a line of
-the following form to a file with suffix <tt>.rules</tt> in the directory
-<tt>/etc/audit/rules.d</tt> for each setuid / setgid program on the system,
-replacing the <i>SETUID_PROG_PATH</i> part with the full path of that setuid /
-setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt> for each setuid / setgid program on the
-system, replacing the <i>SETUID_PROG_PATH</i> part with the full path of that
-setuid / setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+The audit system should collect information about usage of privileged commands for all users.
+These are commands with suid or sgid bits on and they are specially risky in local block
+device partitions not mounted with noexec and nosuid options. Therefore, these partitions
+should be first identified by the following command:
+<pre>findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,) | grep -Pv "noexec|nosuid"</pre>
+
+For all partitions listed by the previous command, it is necessary to search for
+setuid / setgid programs using the following command:
+<pre>$ sudo find <i>PARTITION</i> -xdev -perm /6000 -type f 2&gt;/dev/null</pre>
+
+For each setuid / setgid program identified by the previous command, an audit rule must be
+present in the appropriate place using the following line structure:
+<pre>-a always,exit -F path=<i>PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program to read
+audit rules during daemon startup, add the line to a file with suffix <tt>.rules</tt> in the
+<tt>/etc/audit/rules.d</tt> directory, replacing the <i>PROG_PATH</i> part with the full path
+of that setuid / setgid identified program.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility instead, add
+the line to the <tt>/etc/audit/audit.rules</tt> file, also replacing the <i>PROG_PATH</i> part
+with the full path of that setuid / setgid identified program.
   </td>
   <td xml:lang="en-US">
-Misuse of privileged functions, either intentionally or unintentionally by
-authorized users, or by unauthorized external entities that have compromised system accounts,
-is a serious and ongoing concern and can have significant adverse impacts on organizations.
-Auditing the use of privileged functions is one way to detect such misuse and identify
-the risk from insider and advanced persistent threats.
+Misuse of privileged functions, either intentionally or unintentionally by authorized users,
+or by unauthorized external entities that have compromised system accounts, is a serious and
+ongoing concern that can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify the
+risk from insider and advanced persistent threats.
 <br /><br />
-Privileged programs are subject to escalation-of-privilege attacks,
-which attempt to subvert their normal role of providing some necessary but
-limited capability. As such, motivation exists to monitor these programs for
-unusual activity.
+Privileged programs are subject to escalation-of-privilege attacks, which attempt to subvert
+their normal role of providing some necessary but limited capability. As such, motivation
+exists to monitor these programs for unusual activity.
   </td>
   <td></td>
 </tr>
@@ -976,77 +979,12 @@ is different from account lockout, which is provided by the pam_faillock module.
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(a)</td>
-  <td>CCE-85842-3</td>
-  <td>Lock Accounts After Failed Password Attempts</td>
-  <td xml:lang="en-US">
-This rule configures the system to lock out accounts after a number of incorrect login attempts
-using <tt>pam_faillock.so</tt>.
-
-pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected.
-
-In order to avoid errors when manually editing these files, it is
-recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.
-  </td>
-  <td xml:lang="en-US">
-By limiting the number of failed logon attempts, the risk of unauthorized system access via
-user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
-the account.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>CM-6(a)<br/>AC-7(b)<br/>IA-5(c)</td>
-  <td>CCE-91171-9</td>
-  <td>Configure the root Account for Failed Password Attempts</td>
-  <td xml:lang="en-US">
-This rule configures the system to lock out the <tt>root</tt> account after a number of
-incorrect login attempts using <tt>pam_faillock.so</tt>.
-
-pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
-recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.
-  </td>
-  <td xml:lang="en-US">
-By limiting the number of failed logon attempts, the risk of unauthorized system access via
-user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
-the account.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>CM-6(a)<br/>AC-7(a)</td>
   <td>CCE-91169-3</td>
   <td>Set Interval For Counting Failed Password Attempts</td>
   <td xml:lang="en-US">
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.
-  </td>
-  <td xml:lang="en-US">
-By limiting the number of failed logon attempts the risk of unauthorized system
-access via user password guessing, otherwise known as brute-forcing, is reduced.
-Limits are imposed by locking the account.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>CM-6(a)<br/>AC-7(b)</td>
-  <td>CCE-85841-5</td>
-  <td>Set Lockout Time for Failed Password Attempts</td>
-  <td xml:lang="en-US">
-This rule configures the system to lock out accounts during a specified time period after a
-number of incorrect login attempts using <tt>pam_faillock.so</tt>.
-
-pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid any errors when manually editing these files,
-it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.
-
-If <tt>unlock_time</tt> is set to <tt>0</tt>, manual intervention by an administrator is required
-to unlock a user. This should be done using the <tt>faillock</tt> tool.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system

@@ -719,7 +719,7 @@ Check for the use of the "pwquality" retry option in the PAM files with the foll
 $ grep pam_pwquality /etc/pam.d/system-auth
 
 
-password required pam_pwquality.so retry=
+password requisite pam_pwquality.so retry=
       Is it the case that the value of "retry" is set to "0" or greater than "&lt;sub idref="var_password_pam_retry" /&gt;", or is missing?
       </pre></td>
 <td>SRG-OS-000069-GPOS-00037<br>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -6794,23 +6794,37 @@ cron.*                                                  /var/log/cron
 <td>xccdf_org.ssgproject.content_rule_rsyslog_nolisten</td>
 <td>medium</td>
 <td>Ensure rsyslog Does Not Accept Remote Messages Unless Acting As Log Server</td>
-<td>Any process which receives messages from the network incurs some risk
-of receiving malicious messages. This risk can be eliminated for
-rsyslog by configuring it not to listen on the network.</td>
-<td>The <code>rsyslog</code> daemon should not accept remote messages
-unless the system acts as a log server.
-To ensure that it is not listening on the network, ensure the following lines are
-<i>not</i> found in <code>/etc/rsyslog.conf</code>:
+<td>Any process which receives messages from the network incurs some risk of receiving malicious
+messages. This risk can be eliminated for rsyslog by configuring it not to listen on the
+network.</td>
+<td>The <code>rsyslog</code> daemon should not accept remote messages unless the system acts as a log
+server. To ensure that it is not listening on the network, ensure any of the following lines
+are <i>not</i> found in <code>rsyslog</code> configuration files.
+
+If using legacy syntax:
 <pre>$ModLoad imtcp
 $InputTCPServerRun <i>port</i>
 $ModLoad imudp
 $UDPServerRun <i>port</i>
 $ModLoad imrelp
 $InputRELPServerRun <i>port</i></pre>
+
+If using RainerScript syntax:
+<pre>module(load="imtcp")
+module(load="imudp")
+input(type="imtcp" port="514")
+input(type="imudp" port="514")
+</pre>
 </td>
-<td><pre>Verify that the system is not accepting "rsyslog" messages from other systems unless it is documented as a log aggregation server.
-Display the contents of the configuration file:
-cat /etc/rsyslog.conf
+<td><pre>Verify that the system is not accepting "rsyslog" messages from other systems unless it is
+documented as a log aggregation server.
+Display the contents of the rsyslog configuration files:
+find /etc -maxdepth 2 -regex '/etc/rsyslog\(\.conf\|\.d\/.*\.conf\)' -exec cat '{}' \;
+
+If any of the below lines are found, ask to see the documentation for the system being used
+for log aggregation:
+
+If using legacy syntax:
 $ModLoad imtcp
 $InputTCPServerRun port
 $ModLoad imudp
@@ -6818,7 +6832,12 @@ $UDPServerRun port
 $ModLoad imrelp
 $InputRELPServerRun port
 
-If any of the above modules are being loaded in the "/etc/rsyslog.conf" file, ask to see the documentation for the system being used for log aggregation.
+If using RainerScript syntax:
+module(load="imtcp")
+module(load="imudp")
+input(type="imtcp" port="514")
+input(type="imudp" port="514")
+
       Is it the case that rsyslog accepts remote messages and is not documented as a log aggregation system?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000362-GPOS-00149<br>SRG-OS-000364-GPOS-00151<br>SRG-OS-000365-GPOS-00152<br>

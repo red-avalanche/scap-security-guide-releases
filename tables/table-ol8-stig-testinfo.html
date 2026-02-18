@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Oracle Linux 8</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Oracle Linux 8 V1R5.</div>
+DISA STIG for Oracle Linux 8 V1R6.</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -1021,10 +1021,7 @@ draw additional attention to some types of password-guessing attacks. Note that 
 is different from account lockout, which is provided by the pam_faillock module.</td>
 <td>To configure the number of retry prompts that are permitted per-session:
 
-Edit the <code>pam_pwquality.so</code> statement in
-
-<code>/etc/pam.d/system-auth</code> to show
-
+Edit the <code>/etc/security/pwquality.conf</code> to include
 
 <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub></code>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
@@ -1032,12 +1029,8 @@ per session.</td>
 <td><pre>Verify Oracle Linux 8 is configured to limit the "pwquality" retry option to .
 
 
-Check for the use of the "pwquality" retry option in the PAM files with the following command:
-
-$ grep pam_pwquality /etc/pam.d/system-auth
-
-
-password required pam_pwquality.so retry=
+Check for the use of the "pwquality" retry option in the pwquality.conf file with the following command:
+$ grep retry /etc/security/pwquality.conf
       Is it the case that the value of "retry" is set to "0" or greater than "&lt;sub idref="var_password_pam_retry" /&gt;", or is missing?
       </pre></td>
 <td>SRG-OS-000069-GPOS-00037<br>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -1077,31 +1070,6 @@ ucredit = -1
 <td>CCI-000192<br>CCI-000193<br>
 </td>
 <td>IA-5 (1) (a)<br>IA-5 (1) (a)<br>
-</td>
-</tr>
-<tr>
-<td>xccdf_org.ssgproject.content_rule_accounts_password_pam_unix_rounds_system_auth</td>
-<td>medium</td>
-<td>Set number of Password Hashing Rounds - system-auth</td>
-<td>Using a higher number of rounds makes password cracking attacks more difficult.</td>
-<td>Configure the number or rounds for the password hashing algorithm. This can be
-accomplished by using the <code>rounds</code> option for the <code>pam_unix</code> PAM module.
-<br><br>
-In file <code>/etc/pam.d/system-auth</code> append <code>rounds=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_unix_rounds" use="legacy"></xccdf-1.2:sub></code>
-to the <code>pam_unix.so</code> entry, as shown below:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_unix_rounds" use="legacy"></xccdf-1.2:sub></pre>
-The system's default number of rounds is 5000.</td>
-<td><pre>To verify the number of rounds for the password hashing algorithm is configured, run the following command:
-$ sudo grep rounds /etc/pam.d/system-auth
-The output should show the following match:
-password sufficient pam_unix.so sha512 rounds=
-      Is it the case that rounds is not set to &lt;sub idref="var_password_pam_unix_rounds" /&gt; or is commented out?
-      </pre></td>
-<td>SRG-OS-000073-GPOS-00041<br>
-</td>
-<td>CCI-000196<br>
-</td>
-<td>IA-5 (1) (c)<br>
 </td>
 </tr>
 <tr>
@@ -1440,10 +1408,13 @@ written to by unauthorized users.</td>
 <td>To ensure the default umask controlled by <code>/etc/profile</code> is set properly,
 add or correct the <code>umask</code> setting in <code>/etc/profile</code> to read as follows:
 <pre>umask <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub></pre>
-</td>
+
+Note that <code>/etc/profile</code> also reads scrips within <code>/etc/profile.d</code> directory.
+These scripts are also valid files to set umask value. Therefore, they should also be
+considered during the check and properly remediated, if necessary.</td>
 <td><pre>Verify the umask setting is configured correctly in the /etc/profile file
-with the following command:
-$ grep "umask" /etc/profile
+or scripts within /etc/profile.d directory with the following command:
+$ grep "umask" /etc/profile*
 umask 
       Is it the case that the value for the "umask" parameter is not "&lt;sub idref="var_accounts_user_umask" /&gt;",
 or the "umask" parameter is missing or is commented out?
@@ -1733,21 +1704,14 @@ audit tools by running the following command:
 # sudo cat /etc/aide.conf | grep /usr/sbin/au
 
 /usr/sbin/auditctl p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/auditd p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/ausearch p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/aureport p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/autrace p+i+n+u+g+s+b+acl+xattrs+sha512
-
 
 /usr/sbin/rsyslogd p+i+n+u+g+s+b+acl+xattrs+sha512
 
-
 /usr/sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512
-
 
 
 If AIDE is configured properly to protect the integrity of the audit tools,
@@ -4922,9 +4886,9 @@ server [ntp.server.name] iburst maxpoll .
 <td>xccdf_org.ssgproject.content_rule_chronyd_server_directive</td>
 <td>medium</td>
 <td>Ensure Chrony is only configured with the server directive</td>
-<td>Depending on the infrastruture being used the <code>pool</code> directive may not be supported.</td>
+<td>Depending on the infrastructure being used the <code>pool</code> directive may not be supported.</td>
 <td>Check that Chrony only has time sources configured with the <code>server</code> directive.</td>
-<td><pre>Run the following command and verify that time sources are only configure with server directive:
+<td><pre>Run the following command and verify that time sources are only configured with server directive:
 # grep -E "^(server|pool)" /etc/chrony.conf
 A line with the appropriate server should be returned, any line returned starting with pool is a finding.
       Is it the case that an authoritative remote time server is not configured or configured with pool directive?
@@ -5417,6 +5381,37 @@ AuditBackend=LinuxAudit
 </td>
 <td>AU-12 a<br>AU-12 c<br>
 </td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_configured_firewalld_default_deny</td>
+<td>medium</td>
+<td>Firewalld Must Employ a Deny-all, Allow-by-exception Policy for Allowing Connections to Other Systems</td>
+<td>Failure to restrict network connectivity only to authorized systems permits inbound connections from malicious systems.
+It also permits outbound connections that may facilitate exfiltration of data.</td>
+<td>Oracle Linux 8 incorporates the "firewalld" daemon, which allows for many different configurations. One of these configurations is zones.
+Zones can be utilized to a deny-all, allow-by-exception approach.
+The default "drop" zone will drop all incoming network packets unless it is explicitly allowed by the configuration file or is related to an outgoing network connection.</td>
+<td><pre>Verify "firewalld" is configured to employ a deny-all, allow-by-exception policy for allowing connections to other systems with the following commands:
+
+$ sudo firewall-cmd --state
+
+running
+
+$ sudo firewall-cmd --get-active-zones
+
+[custom]
+interfaces: ens33
+
+$ sudo firewall-cmd --info-zone=[custom] | grep target
+
+target: DROP
+      Is it the case that no zones are active on the interfaces or if the target is set to a different option other than "DROP"?
+      </pre></td>
+<td>SRG-OS-000297-GPOS-00115<br>
+</td>
+<td>CCI-002314<br>
+</td>
+<td></td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_coredump_disable_backtraces</td>
@@ -6307,7 +6302,8 @@ add_dracutmodules+=" fips "
 protect data. The operating system must implement cryptographic modules adhering to the higher
 standards approved by the federal government since this provides assurance they have been tested
 and validated.</td>
-<td>To enable FIPS mode, run the following command:
+<td>
+To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
 <br>
 The <code>fips-mode-setup</code> command will configure the system in
@@ -6486,6 +6482,43 @@ sections:
 gpgcheck=0
 A value of 0 indicates that gpgcheck has been disabled for that repo.
       Is it the case that GPG checking is disabled?
+      </pre></td>
+<td>SRG-OS-000366-GPOS-00153<br>
+</td>
+<td>CCI-001749<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_ensure_oracle_gpgkey_installed</td>
+<td>high</td>
+<td>Ensure Oracle Linux GPG Key Installed</td>
+<td>Changes to software components can have significant effects on the
+overall security of the operating system. This requirement ensures
+the software has not been tampered with and that it has been provided
+by a trusted vendor. The Oracle GPG key is necessary to
+cryptographically verify packages are from Oracle.</td>
+<td>To ensure the system can cryptographically verify base software
+packages come from Oracle (and to connect to the Unbreakable Linux Network to
+receive them), the Oracle GPG key must properly be installed.
+To install the Oracle GPG key, run:
+<pre>$ sudo uln_register</pre>
+If the system is not connected to the Internet,
+then install the Oracle GPG key from trusted media such as
+the Oracle installation CD-ROM or DVD. Assuming the disc is mounted
+in <code>/media/cdrom</code>, use the following command as the root user to import
+it into the keyring:
+<pre>$ sudo rpm --import /media/cdrom/RPM-GPG-KEY-oracle</pre>
+
+Alternatively, the key may be pre-loaded during the Oracle installation. In
+such cases, the key can be installed by running the following command:
+<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle</pre>
+</td>
+<td><pre>To ensure that the GPG key is installed, run:
+$ rpm -q --queryformat "%{SUMMARY}\n" gpg-pubkey
+The command should return the string below:
+gpg(Oracle OSS group (Open Source Software group) &lt;build@oss.oracle.com&gt;
+      Is it the case that the Oracle GPG Key is not installed?
       </pre></td>
 <td>SRG-OS-000366-GPOS-00153<br>
 </td>
@@ -9479,6 +9512,48 @@ $ rpm -q krb5-workstation
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_package_libreport-plugin-logger_removed</td>
+<td>low</td>
+<td>Uninstall libreport-plugin-logger Package</td>
+<td>
+<code>libreport-plugin-logger</code> is a ABRT plugin to report bugs into the
+Red Hat Support system.</td>
+<td>The <code>libreport-plugin-logger</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase libreport-plugin-logger</pre>
+</td>
+<td><pre>Run the following command to determine if the libreport-plugin-logger package is installed:
+$ rpm -q libreport-plugin-logger
+      Is it the case that the package is installed?
+      </pre></td>
+<td>SRG-OS-000095-GPOS-00049<br>
+</td>
+<td>CCI-000381<br>
+</td>
+<td>CM-7<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_package_mailx_installed</td>
+<td>medium</td>
+<td>The mailx Package Is Installed</td>
+<td>Emails can be used to notify designated personnel about important
+system events such as failures or warnings.</td>
+<td>A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo yum install mailx</pre>
+</td>
+<td><pre>Run the following command to determine if the mailx package is installed: $ rpm -q mailx
+      Is it the case that the package is not installed?
+      </pre></td>
+<td>SRG-OS-000363-GPOS-00150<br>
+</td>
+<td>CCI-001744<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_package_mcafeetp_installed</td>
 <td>medium</td>
 <td>Install McAfee Endpoint Security for Linux (ENSL)</td>
@@ -9634,12 +9709,14 @@ $ rpm -q rsh-server
 <td>The rsyslog-gnutls package provides Transport Layer Security (TLS) support
 for the rsyslog daemon, which enables secure remote logging.</td>
 <td>TLS protocol support for rsyslog is installed.
+
 The <code>rsyslog-gnutls</code> package can be installed with the following command:
 <pre>
 $ sudo yum install rsyslog-gnutls</pre>
 </td>
-<td><pre>Run the following command to determine if the rsyslog-gnutls package is installed: $ rpm -q rsyslog-gnutls
-      Is it the case that the package is not installed?
+<td><pre>Run the following command to determine if the rsyslog-gnutls package is installed:
+$ rpm -q rsyslog-gnutls
+      Is it the case that the package is installed?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
 </td>

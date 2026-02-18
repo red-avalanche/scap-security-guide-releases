@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG with GUI for Oracle Linux 7</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG with GUI for Oracle Linux V2R10.
+DISA STIG with GUI for Oracle Linux V2R11.
 
 Warning: The installation and use of a Graphical User Interface (GUI)
 increases your attack vector and decreases your overall security posture. If
@@ -87,35 +87,33 @@ INACTIVE=
 </td>
 </tr>
 <tr>
-<td>xccdf_org.ssgproject.content_rule_account_emergency_expire_date</td>
+<td>xccdf_org.ssgproject.content_rule_account_temp_expire_date</td>
 <td>medium</td>
-<td>Assign Expiration Date to Emergency Accounts</td>
-<td>If emergency user accounts remain active when no longer needed or for
+<td>Assign Expiration Date to Temporary Accounts</td>
+<td>If temporary user accounts remain active when no longer needed or for
 an excessive period, these accounts may be used to gain unauthorized access.
-To mitigate this risk, automated termination of all emergency accounts
+To mitigate this risk, automated termination of all temporary accounts
 must be set upon account creation.
 <br>
 </td>
-<td>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<code><i>ACCOUNT_NAME</i></code> and <code><i>YYYY-MM-DD</i></code>
+<td>Temporary accounts are established as part of normal account activation
+procedures when there is a need for short-term accounts. In the event
+temporary accounts are required, configure the system to
+terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
+it, substituting <code><i>USER</i></code> and <code><i>YYYY-MM-DD</i></code>
 appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<pre>$ sudo chage -E <i>YYYY-MM-DD USER</i></pre>
 <code><i>YYYY-MM-DD</i></code> indicates the documented expiration date for the
 account. For U.S. Government systems, the operating system must be
 configured to automatically terminate these types of accounts after a
 period of 72 hours.</td>
-<td><pre>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
-
-For every emergency account, run the following command to obtain its account aging and expiration information:
-
-$ sudo chage -l emergency_account_name
-
-Verify each of these accounts has an expiration date set within 72 hours or as documented.
-      Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?
+<td><pre>Verify that temporary accounts have been provisioned with an expiration date
+of 72 hours. For every temporary account, run the following command to
+obtain its account aging and expiration information:
+$ sudo chage -l temporary_account_name
+Verify each of these accounts has an expiration date set within 72 hours or
+as documented.
+      Is it the case that any temporary accounts have no expiration date set or do not expire within 72 hours?
       </pre></td>
 <td>SRG-OS-000002-GPOS-00002<br>SRG-OS-000123-GPOS-00064<br>
 </td>
@@ -715,7 +713,7 @@ Check for the use of the "pwquality" retry option in the PAM files with the foll
 $ grep pam_pwquality /etc/pam.d/system-auth
 
 
-password required pam_pwquality.so retry=
+password requisite pam_pwquality.so retry=
       Is it the case that the value of "retry" is set to "0" or greater than "&lt;sub idref="var_password_pam_retry" /&gt;", or is missing?
       </pre></td>
 <td>SRG-OS-000069-GPOS-00037<br>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -4538,6 +4536,39 @@ If properly configured, the output should be
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_dconf_gnome_disable_user_list</td>
+<td>medium</td>
+<td>Disable the GNOME3 Login User List</td>
+<td>Leaving the user list enabled is a security risk since it allows anyone
+with physical access to the system to quickly enumerate known user accounts
+without logging in.</td>
+<td>In the default graphical environment, users logging directly into the
+system are greeted with a login screen that displays all known users.
+This functionality should be disabled by setting <code>disable-user-list</code>
+to <code>true</code>.
+<br><br>
+To disable, add or edit <code>disable-user-list</code> to
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/login-screen]
+disable-user-list=true</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent
+user modification. For example:
+<pre>/org/gnome/login-screen/disable-user-list</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td><pre>To ensure the user list is disabled, run the following command:
+$ grep disable-user-list /etc/dconf/db/local.d/*
+The output should be true.
+To ensure that users cannot enable displaying the user list, run the following:
+$ grep disable-user-list /etc/dconf/db/local.d/locks/*
+If properly configured, the output should be /org/gnome/login-screen/disable-user-list
+      Is it the case that disable-user-list has not been configured or is not disabled?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_dconf_gnome_enable_smartcard_auth</td>
 <td>medium</td>
 <td>Enable the GNOME3 Login Smartcard Authentication</td>
@@ -5098,6 +5129,43 @@ If "localpkg_gpgcheck" is not set to "1", or if the option is missing or comment
 <td></td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_ensure_oracle_gpgkey_installed</td>
+<td>high</td>
+<td>Ensure Oracle Linux GPG Key Installed</td>
+<td>Changes to software components can have significant effects on the
+overall security of the operating system. This requirement ensures
+the software has not been tampered with and that it has been provided
+by a trusted vendor. The Oracle GPG key is necessary to
+cryptographically verify packages are from Oracle.</td>
+<td>To ensure the system can cryptographically verify base software
+packages come from Oracle (and to connect to the Unbreakable Linux Network to
+receive them), the Oracle GPG key must properly be installed.
+To install the Oracle GPG key, run:
+<pre>$ sudo uln_register</pre>
+If the system is not connected to the Internet,
+then install the Oracle GPG key from trusted media such as
+the Oracle installation CD-ROM or DVD. Assuming the disc is mounted
+in <code>/media/cdrom</code>, use the following command as the root user to import
+it into the keyring:
+<pre>$ sudo rpm --import /media/cdrom/RPM-GPG-KEY-oracle</pre>
+
+Alternatively, the key may be pre-loaded during the Oracle installation. In
+such cases, the key can be installed by running the following command:
+<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle</pre>
+</td>
+<td><pre>To ensure that the GPG key is installed, run:
+$ rpm -q --queryformat "%{SUMMARY}\n" gpg-pubkey
+The command should return the string below:
+gpg(Oracle OSS group (Open Source Software group) &lt;build@oss.oracle.com&gt;
+      Is it the case that the Oracle GPG Key is not installed?
+      </pre></td>
+<td>SRG-OS-000366-GPOS-00153<br>
+</td>
+<td>CCI-001749<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_file_groupowner_cron_allow</td>
 <td>medium</td>
 <td>Verify Group Who Owns /etc/cron.allow file</td>
@@ -5366,14 +5434,13 @@ $ sudo chgrp group file
 <td>System Audit Logs Must Have Mode 0640 or Less Permissive</td>
 <td>If users can write to audit logs, audit trails can be modified or destroyed.</td>
 <td>
-If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the
-<code>root</code>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0640 <i>audit_file</i></pre>
-<br>
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0600 <i>audit_file</i></pre>
-</td>
+Determine where the audit logs are stored with the following command:
+<pre>$ sudo grep -iw log_file /etc/audit/auditd.conf
+log_file = /var/log/audit/audit.log</pre>
+Configure the audit log to be protected from unauthorized read access by setting the correct
+permissive mode with the following command:
+<pre>$ sudo chmod 0600 <i>audit_log_file</i></pre>
+By default, <i>audit_log_file</i> is "/var/log/audit/audit.log".</td>
 <td><pre>Run the following command to check the mode of the system audit logs:
 $ sudo grep -iw log_file /etc/audit/auditd.conf
 log_file=/var/log/audit/audit.log
@@ -5863,6 +5930,9 @@ exists is an approved organizational connection.</td>
 <td><pre>Verify that Oracle Linux 7 does not have unauthorized IP tunnels configured.
 
 
+# yum list installed libreswan
+libreswan.x86-64 3.20-5.el7_4
+
 
 If "libreswan" is installed, check to see if the "IPsec" service is active with the following command:
 
@@ -6351,6 +6421,26 @@ $ sudo yum install firewalld</pre>
 <td>SRG-OS-000297-GPOS-00115<br>
 </td>
 <td>CCI-002314<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_package_mailx_installed</td>
+<td>medium</td>
+<td>The mailx Package Is Installed</td>
+<td>Emails can be used to notify designated personnel about important
+system events such as failures or warnings.</td>
+<td>A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo yum install mailx</pre>
+</td>
+<td><pre>Run the following command to determine if the mailx package is installed: $ rpm -q mailx
+      Is it the case that the package is not installed?
+      </pre></td>
+<td>SRG-OS-000363-GPOS-00150<br>
+</td>
+<td>CCI-001744<br>
 </td>
 <td></td>
 </tr>
@@ -6926,23 +7016,37 @@ cron.*                                                  /var/log/cron
 <td>xccdf_org.ssgproject.content_rule_rsyslog_nolisten</td>
 <td>medium</td>
 <td>Ensure rsyslog Does Not Accept Remote Messages Unless Acting As Log Server</td>
-<td>Any process which receives messages from the network incurs some risk
-of receiving malicious messages. This risk can be eliminated for
-rsyslog by configuring it not to listen on the network.</td>
-<td>The <code>rsyslog</code> daemon should not accept remote messages
-unless the system acts as a log server.
-To ensure that it is not listening on the network, ensure the following lines are
-<i>not</i> found in <code>/etc/rsyslog.conf</code>:
+<td>Any process which receives messages from the network incurs some risk of receiving malicious
+messages. This risk can be eliminated for rsyslog by configuring it not to listen on the
+network.</td>
+<td>The <code>rsyslog</code> daemon should not accept remote messages unless the system acts as a log
+server. To ensure that it is not listening on the network, ensure any of the following lines
+are <i>not</i> found in <code>rsyslog</code> configuration files.
+
+If using legacy syntax:
 <pre>$ModLoad imtcp
 $InputTCPServerRun <i>port</i>
 $ModLoad imudp
 $UDPServerRun <i>port</i>
 $ModLoad imrelp
 $InputRELPServerRun <i>port</i></pre>
+
+If using RainerScript syntax:
+<pre>module(load="imtcp")
+module(load="imudp")
+input(type="imtcp" port="514")
+input(type="imudp" port="514")
+</pre>
 </td>
-<td><pre>Verify that the system is not accepting "rsyslog" messages from other systems unless it is documented as a log aggregation server.
-Display the contents of the configuration file:
-cat /etc/rsyslog.conf
+<td><pre>Verify that the system is not accepting "rsyslog" messages from other systems unless it is
+documented as a log aggregation server.
+Display the contents of the rsyslog configuration files:
+find /etc -maxdepth 2 -regex '/etc/rsyslog\(\.conf\|\.d\/.*\.conf\)' -exec cat '{}' \;
+
+If any of the below lines are found, ask to see the documentation for the system being used
+for log aggregation:
+
+If using legacy syntax:
 $ModLoad imtcp
 $InputTCPServerRun port
 $ModLoad imudp
@@ -6950,7 +7054,12 @@ $UDPServerRun port
 $ModLoad imrelp
 $InputRELPServerRun port
 
-If any of the above modules are being loaded in the "/etc/rsyslog.conf" file, ask to see the documentation for the system being used for log aggregation.
+If using RainerScript syntax:
+module(load="imtcp")
+module(load="imudp")
+input(type="imtcp" port="514")
+input(type="imudp" port="514")
+
       Is it the case that rsyslog accepts remote messages and is not documented as a log aggregation system?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000362-GPOS-00149<br>SRG-OS-000364-GPOS-00151<br>SRG-OS-000365-GPOS-00152<br>
@@ -8763,6 +8872,29 @@ If "Defaults !runaspw" is not defined, this is a finding.
 <td>CCI-000366<br>CCI-002227<br>
 </td>
 <td>CM-6 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sysctl_kernel_dmesg_restrict</td>
+<td>low</td>
+<td>Restrict Access to Kernel Message Buffer</td>
+<td>Unprivileged access to the kernel syslog can expose sensitive kernel
+address information.</td>
+<td>To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.dmesg_restrict = 1</pre>
+</td>
+<td><pre>The runtime status of the kernel.dmesg_restrict kernel parameter can be queried
+by running the following command:
+$ sysctl kernel.dmesg_restrict
+1.
+
+      Is it the case that the correct value is not returned?
+      </pre></td>
+<td>SRG-OS-000138-GPOS-00069<br>SRG-OS-000206-GPOS-00084<br>
+</td>
+<td>CCI-001090<br>CCI-001314<br>
+</td>
+<td>SC-4<br>SI-11 c<br>
 </td>
 </tr>
 <tr>
