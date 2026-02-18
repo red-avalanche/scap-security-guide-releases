@@ -414,9 +414,9 @@ Ensure that the <code>tmp.mount</code> systemd unit is enabled.</td>
 <td>CCE-92502-4</td>
 <td>Remove the GDM Package Group</td>
 <td>
-By removing the <code>gdm</code> package, the system no longer has GNOME installed
+By removing the <code>gdm</code> package, the system no longer has GNOME installed.
 
-installed. If X Windows is not installed then the system cannot boot into graphical user mode.
+If X Windows is not installed then the system cannot boot into graphical user mode.
 This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
 mode. To do so, run the following command:
 
@@ -484,7 +484,7 @@ DISPLAYMANAGER_PASSWORD_LESS_LOGIN="no"</pre>
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92563-6</td>
 <td>Disable XDMCP in GDM</td>
 <td>XDMCP is an unencrypted protocol, and therefore, presents a security risk, see e.g.
 <a href="https://help.gnome.org/admin/gdm/stable/security.html.en_GB#xdmcpsecurity">XDMCP Gnome docs</a>.
@@ -495,6 +495,54 @@ To disable XDMCP support in Gnome, set <code>Enable</code> to <code>false</code>
 Enable=false
 </pre>
         </td>
+</tr>
+<tr>
+<td>CCE-92491-0</td>
+<td>Disable GNOME3 Automounting</td>
+<td>The system's default desktop environment, GNOME3, will mount
+devices and removable media (such as DVDs, CDs and USB flash drives) whenever
+they are inserted into the system. To disable automount within GNOME3, add or set
+<code>automount</code> to <code>false</code> in <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>[org/gnome/desktop/media-handling]
+automount=false</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/media-handling/automount</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+</tr>
+<tr>
+<td>CCE-92492-8</td>
+<td>Disable GNOME3 Automount Opening</td>
+<td>The system's default desktop environment, GNOME3, will mount
+devices and removable media (such as DVDs, CDs and USB flash drives) whenever
+they are inserted into the system. To disable automount-open within GNOME3, add or set
+<code>automount-open</code> to <code>false</code> in <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>[org/gnome/desktop/media-handling]
+automount-open=false</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/media-handling/automount-open</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+</tr>
+<tr>
+<td>CCE-92493-6</td>
+<td>Disable GNOME3 Automount running</td>
+<td>The system's default desktop environment, GNOME3, will mount
+devices and removable media (such as DVDs, CDs and USB flash drives) whenever
+they are inserted into the system. To disable autorun-never within GNOME3, add or set
+<code>autorun-never</code> to <code>true</code> in <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>[org/gnome/desktop/media-handling]
+autorun-never=true</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/media-handling/autorun-never</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
 </tr>
 <tr>
 <td>CCE-85777-1</td>
@@ -557,6 +605,18 @@ idle-delay=uint32 900</pre>
         </td>
 </tr>
 <tr>
+<td>CCE-92495-1</td>
+<td>Set GNOME3 Screensaver Lock Delay After Activation Period</td>
+<td>To activate the locking delay of the screensaver in the GNOME3 desktop when
+the screensaver is activated, add or set <code>lock-delay</code> to <code>uint32 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_screensaver_lock_delay" use="legacy"></xccdf-1.2:sub>
+         </code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/desktop/screensaver]
+lock-delay=uint32 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_screensaver_lock_delay" use="legacy"></xccdf-1.2:sub>
+         </pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+</tr>
+<tr>
 <td>CCE-85766-4</td>
 <td>Enable GNOME3 Screensaver Lock After Idle Period</td>
 <td>
@@ -598,6 +658,16 @@ For example:
 After the settings have been set, run <code>dconf update</code>.</td>
 </tr>
 <tr>
+<td>CCE-92498-5</td>
+<td>Ensure Users Cannot Change GNOME3 Screensaver Settings</td>
+<td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
+by adding <code>/org/gnome/desktop/screensaver/lock-delay</code>
+to <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/screensaver/lock-delay</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+</tr>
+<tr>
 <td>CCE-91245-1</td>
 <td>Ensure Users Cannot Change GNOME3 Session Idle Settings</td>
 <td>If not already configured, ensure that users cannot change GNOME3 session idle settings
@@ -616,21 +686,21 @@ $ sudo zypper install sudo</pre>
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92503-2</td>
 <td>Verify Group Who Owns /etc/sudoers.d Directory</td>
 <td> To properly set the group owner of <code>/etc/sudoers.d</code>, run the command:
 <pre>$ sudo chgrp root /etc/sudoers.d</pre>
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92512-3</td>
 <td>Verify User Who Owns /etc/sudoers.d Directory</td>
 <td> To properly set the owner of <code>/etc/sudoers.d</code>, run the command:
 <pre>$ sudo chown root /etc/sudoers.d </pre>
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92525-5</td>
 <td>Verify Permissions On /etc/sudoers.d Directory</td>
 <td> To properly set the permissions of <code>/etc/sudoers.d</code>, run the command: <pre>$ sudo chmod 0750 /etc/sudoers.d</pre>
        </td>
@@ -1380,6 +1450,51 @@ is at least <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2
 <td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
 </tr>
 <tr>
+<td>CCE-85842-3</td>
+<td>Lock Accounts After Failed Password Attempts</td>
+<td>This rule configures the system to lock out accounts after a number of incorrect login attempts
+using <code>pam_faillock.so</code>.
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected.
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>deny = &lt;count&gt;</code>
+Where count should be less than or equal to
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy"></xccdf-1.2:sub> and greater than 0.
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
+</tr>
+<tr>
+<td>CCE-91171-9</td>
+<td>Configure the root Account for Failed Password Attempts</td>
+<td>This rule configures the system to lock out the <code>root</code> account after a number of
+incorrect login attempts using <code>pam_faillock.so</code>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
+</tr>
+<tr>
+<td>CCE-85841-5</td>
+<td>Set Lockout Time for Failed Password Attempts</td>
+<td>This rule configures the system to lock out accounts during a specified time period after a
+number of incorrect login attempts using <code>pam_faillock.so</code>.
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>unlock_time=&lt;interval-in-seconds&gt;</code> where
+<code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time" use="legacy"></xccdf-1.2:sub></code> or greater.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid any errors when manually editing these files,
+it is recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.
+
+If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an administrator is required
+to unlock a user. This should be done using the <code>faillock</code> tool.</td>
+</tr>
+<tr>
 <td>CCE-85554-4</td>
 <td>Set Deny For Failed Password Attempts</td>
 <td>The SUSE Linux Enterprise 15 operating system must lock an account after - at most - <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_tally2" use="legacy"></xccdf-1.2:sub>
@@ -1470,6 +1585,14 @@ Add <code>ucredit=-1</code> after pam_cracklib.so to require use of an upper
 case character in passwords.</td>
 </tr>
 <tr>
+<td>CCE-85785-4</td>
+<td>Ensure PAM Enforces Password Requirements - Minimum Length</td>
+<td>The pam_pwquality module's <code>minlen</code> parameter controls requirements for
+minimum characters required in a password. Add <code>minlen=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_minlen" use="legacy"></xccdf-1.2:sub>
+          </code>
+after pam_pwquality to set minimum password length requirements.</td>
+</tr>
+<tr>
 <td>CCE-85754-0</td>
 <td>Set PAM's Common Authentication Hashing Algorithm</td>
 <td>The PAM system service can be configured to only store encrypted
@@ -1506,6 +1629,24 @@ algorithm for password hashing:
 <pre>ENCRYPT_METHOD <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub>
          </pre>
         </td>
+</tr>
+<tr>
+<td>CCE-92607-1</td>
+<td>Set PAM''s Password Hashing Algorithm - password-auth</td>
+<td>The PAM system service can be configured to only store encrypted representations of passwords.
+In <code>/etc/pam.d/password-auth</code>, the <code>password</code> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <code>pam_unix.so</code> module in the <code>password</code> section to include the option
+<code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub></code> and no other hashing
+algorithms as shown below:
+<br>
+         <pre>password    sufficient    pam_unix.so <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+          <i>other arguments...</i>
+         </pre>
+         <br>
+This will help ensure that new passwords for local users will be stored using the
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub> algorithm.</td>
 </tr>
 <tr>
 <td>CCE-85565-0</td>
@@ -1743,6 +1884,15 @@ To remove unauthorized system accounts, use the following command:
 <td>CCE-91340-0</td>
 <td>Ensure All Groups on the System Have Unique Group Names</td>
 <td>Change the group name or delete groups, so each has a unique name.</td>
+</tr>
+<tr>
+<td>CCE-92592-5</td>
+<td>Ensure nologin Shell is Not Listed in /etc/shells</td>
+<td>The <code>/sbin/nologin</code> shell is used to restrict accounts from having login access
+and should not be listed as a valid login shell in <code>/etc/shells</code>.
+To verify that nologin is not listed in /etc/shells, run:
+<pre>$ grep nologin /etc/shells</pre>
+The command should return no output.</td>
 </tr>
 <tr>
 <td>CCE-85558-5</td>
@@ -2060,6 +2210,19 @@ assigned.</td>
 altered privileges through the <code>su</code> command.</td>
 </tr>
 <tr>
+<td>CCE-92532-1</td>
+<td>Ensure Authentication Required for Single User Mode</td>
+<td>Single user mode is used for recovery when the system detects an
+issue during boot or by manual selection from the bootloader.</td>
+</tr>
+<tr>
+<td>CCE-92565-1</td>
+<td>Verify Only Group Root Has GID 0</td>
+<td>If any group other than root has a GID of 0, this misconfiguration should
+be investigated and the groups other than root should be removed or have
+their GID changed.</td>
+</tr>
+<tr>
 <td>CCE-91427-5</td>
 <td>Direct root Logins Not Allowed</td>
 <td>To further limit access to the <code>root</code> account, administrators
@@ -2076,6 +2239,27 @@ file by typing the following command:
 <pre>
 $ sudo echo &gt; /etc/securetty
 </pre>
+        </td>
+</tr>
+<tr>
+<td>CCE-92591-7</td>
+<td>Verify Non-Interactive Accounts Are Locked</td>
+<td>Accounts meant for non-interactive purposes should be locked to prevent
+unauthorized access. Accounts with non-standard shells (those not defined in
+<code>/etc/shells</code>) should be locked using <code>usermod -L</code>.</td>
+</tr>
+<tr>
+<td>CCE-92593-3</td>
+<td>Ensure that System Accounts Are Locked</td>
+<td>Some accounts are not associated with a human user of the system, and exist to perform some
+administrative functions. An attacker should not be able to log into these accounts.
+<br>
+         <br>
+System accounts are those user accounts with a user ID less than <code>1000</code>.
+If any system account other than <code>root</code>, <code>halt</code>, <code>sync</code>, <code>shutdown</code>
+and <code>nfsnobody</code> has an unlocked password, disable it with the command:
+<pre>$ sudo usermod -L <i>account</i>
+         </pre>
         </td>
 </tr>
 <tr>
@@ -2339,6 +2523,14 @@ owned by an interactive user. It also ensures that interactive users are
 owners of one and only one home directory.</td>
 </tr>
 <tr>
+<td>CCE-92554-5</td>
+<td>Ensure User Bash History File Has Correct Permissions</td>
+<td>Set the mode of the bash history file to <code>0600</code> with the
+following command:
+<pre>$ sudo chmod 0600 /home/<i>USER</i>/.bash_history</pre>
+       </td>
+</tr>
+<tr>
 <td>CCE-85630-2</td>
 <td>Ensure All User Initialization Files Have Mode 0740 Or Less Permissive</td>
 <td>Set the mode of the user initialization files to <code>0740</code> with the
@@ -2429,7 +2621,7 @@ add or correct the <code>umask</code> setting in <code>/etc/profile</code> to re
 <pre>umask <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub>
          </pre>
 
-Note that <code>/etc/profile</code> also reads scrips within <code>/etc/profile.d</code> directory.
+Note that <code>/etc/profile</code> also reads scripts within <code>/etc/profile.d</code> directory.
 These scripts are also valid files to set umask value. Therefore, they should also be
 considered during the check and properly remediated, if necessary.</td>
 </tr>
@@ -2439,7 +2631,16 @@ considered during the check and properly remediated, if necessary.</td>
 <td>Remove the <code>UMASK</code> environment variable from all interactive users initialization files.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92484-5</td>
+<td>Ensure the Root Bash Umask is Set Correctly</td>
+<td>To ensure the root user's umask of the Bash shell is set properly,
+add or correct the <code>umask</code> setting in <code>/root/.bashrc</code>
+or <code>/root/.profile</code> to read as follows:
+<pre>umask 0027</pre>
+        </td>
+</tr>
+<tr>
+<td>CCE-92594-1</td>
 <td>Ensure AppArmor is installed</td>
 <td>AppArmor provide Mandatory Access Controls.</td>
 </tr>
@@ -2563,7 +2764,7 @@ memory pages in the user space, it is enabled by default since Linux kernel 3.7.
 But it could be disabled through kernel boot parameters.
 
 Ensure that Supervisor Mode Access Prevention (SMAP) is not disabled by
-the <code>nosmap</code> boot paramenter option.
+the <code>nosmap</code> boot parameter option.
 
 Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
 doesn't contain the argument <code>nosmap</code>.
@@ -2579,7 +2780,7 @@ it is enabled by default since Linux kernel 3.0. But it could be disabled throug
 kernel boot parameters.
 
 Ensure that Supervisor Mode Execution Prevention (SMEP) is not disabled by
-the <code>nosmep</code> boot paramenter option.
+the <code>nosmep</code> boot parameter option.
 
 Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
 doesn't contain the argument <code>nosmep</code>.
@@ -2948,7 +3149,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
 <td>Certain buggy versions of glibc (2.3.3) will crash if they are presented with a 32-bit vDSO
 that is not mapped at the address indicated in its segment table.
 Setting <code>CONFIG_COMPAT_VDSO</code> to <code>y</code> turns off the 32-bit VDSO and works
-aroud the glibc bug.
+around the glibc bug.
 
 The configuration that was used to build kernel is available at <code>/boot/config-*</code>.
     To check the configuration value for <code>CONFIG_COMPAT_VDSO</code>, run the following command:
@@ -3339,7 +3540,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92567-7</td>
 <td>Enable seccomp to safely compute untrusted bytecode</td>
 <td>This kernel feature is useful for number crunching applications that may need to compute
 untrusted bytecode during their execution. By using pipes or other transports made available
@@ -3354,7 +3555,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92568-5</td>
 <td>Enable use of Berkeley Packet Filter with seccomp</td>
 <td>Enable tasks to build secure computing environments defined in terms of Berkeley Packet Filter
 programs which implement task-defined system call filtering polices.
@@ -3367,7 +3568,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92570-1</td>
 <td>Enable different security models</td>
 <td>This allows you to choose different security modules to be configured into your kernel.
 
@@ -3391,7 +3592,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92571-9</td>
 <td>Disable mutable hooks</td>
 <td>Ensure kernel structures associated with LSMs are always mapped as read-only after system boot.
 
@@ -3404,7 +3605,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92572-7</td>
 <td>Enable Yama support</td>
 <td>This enables support for LSM module Yama, which extends DAC support with additional system-wide
 security settings beyond regular Linux discretionary access controls. The module will limit the
@@ -3510,6 +3711,22 @@ The <code>rsyslog</code> service can be enabled with the following command:
 <td>Ensure that the system real-time clock (RTC) is set to Coordinated Universal Time (UTC).</td>
 </tr>
 <tr>
+<td>CCE-92582-6</td>
+<td>Ensure One Logging Service Is In Use</td>
+<td>Ensure that a logging system is active and in use.
+<pre>
+systemctl is-active rsyslog systemd-journald
+</pre>
+The command should return at least one <code>active</code>.</td>
+</tr>
+<tr>
+<td>CCE-92599-0</td>
+<td>Ensure rsyslog Default File Permissions Configured</td>
+<td>rsyslog will create logfiles that do not already exist on the system.
+This settings controls what permissions will be applied to these newly
+created files.</td>
+</tr>
+<tr>
 <td></td>
 <td>Ensure Rsyslog Authenticates Off-Loaded Audit Records</td>
 <td>Rsyslogd is a system utility providing support for message logging. Support
@@ -3535,7 +3752,7 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs off a encrpytion system must be used.
+When using <code>rsyslogd</code> to off-load logs off a encryption system must be used.
 
 Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
 <pre>$ActionSendStreamDriverMode 1</pre>
@@ -3629,7 +3846,26 @@ specifies rules for logging and which files are to be used to log certain
 classes of messages.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92598-2</td>
+<td>Install systemd-journal-remote Package</td>
+<td>Journald (via systemd-journal-remote ) supports the ability to send
+log events it gathers to a remote log host or to receive messages
+from remote hosts, thus enabling centralised log management.</td>
+</tr>
+<tr>
+<td>CCE-92604-8</td>
+<td>Enable systemd-journal-upload Service</td>
+<td>The <code>systemd-journal-upload</code> service is part of the <code>systemd-journal-remote</code> package
+and enables centralized logging by uploading local systemd journal entries to a remote log
+server via HTTPS. This service acts as a client that pushes journal data to a remote host
+running the <code>systemd-journal-remote</code> receiver service.
+
+The <code>systemd-journal-upload</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable systemd-journal-upload.service</pre>
+       </td>
+</tr>
+<tr>
+<td>CCE-92605-5</td>
 <td>Enable systemd-journald Service</td>
 <td>The <code>systemd-journald</code> service is an essential component of
 systemd.
@@ -3644,6 +3880,11 @@ The <code>systemd-journald</code> service can be enabled with the following comm
 <td>The journald system can compress large log files to avoid fill the system disk.</td>
 </tr>
 <tr>
+<td>CCE-92566-9</td>
+<td>Ensure journald ForwardToSyslog is disabled</td>
+<td>Data from journald should be kept in the confines of the service and not forwarded to other services.</td>
+</tr>
+<tr>
 <td>CCE-91376-4</td>
 <td>Ensure journald is configured to send logs to rsyslog</td>
 <td>Data from journald may be stored in volatile memory or persisted locally.
@@ -3654,6 +3895,30 @@ Utilities exist to accept remote export of journald logs.</td>
 <td>Ensure journald is configured to write log files to persistent disk</td>
 <td>The journald system may store log files in volatile memory or locally on disk.
 If the logs are only stored in volatile memory they will be lost upon reboot.</td>
+</tr>
+<tr>
+<td>CCE-92608-9</td>
+<td>Disable systemd-journal-remote Socket</td>
+<td>Journald supports the ability to receive messages from remote hosts,
+thus acting as a log server. Clients should not receive data from
+other hosts.
+NOTE:
+    The same package, systemd-journal-remote , is used for both sending
+    logs to remote hosts and receiving incoming logs.
+    With regards to receiving logs, there are two Systemd unit files;
+    systemd-journal-remote.socket and systemd-journal-remote.service.</td>
+</tr>
+<tr>
+<td>CCE-92612-1</td>
+<td>Configure systemd-journal-upload TLS parameters: ServerKeyFile, ServerCertificateFile and TrustedCertificateFile</td>
+<td>SUSE Linux Enterprise 15 must offload rsyslog messages for networked systems in real time and
+offload standalone systems at least weekly</td>
+</tr>
+<tr>
+<td>CCE-92613-9</td>
+<td>Configure systemd-journal-upload URL</td>
+<td>SUSE Linux Enterprise 15 must offload rsyslog messages for networked systems in real time and
+offload standalone systems at least weekly</td>
 </tr>
 <tr>
 <td>CCE-92561-0</td>
@@ -3909,34 +4174,34 @@ $ sudo zypper install libreswan</pre>
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92499-3</td>
 <td>Verify Group Who Owns /etc/ipsec.d Directory</td>
 <td> To properly set the group owner of <code>/etc/ipsec.d</code>, run the command:
 <pre>$ sudo chgrp root /etc/ipsec.d</pre>
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92508-1</td>
 <td>Verify User Who Owns /etc/ipsec.d Directory</td>
 <td> To properly set the owner of <code>/etc/ipsec.d</code>, run the command:
 <pre>$ sudo chown root /etc/ipsec.d </pre>
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92517-2</td>
 <td>Verify Permissions On /etc/ipsec.d Directory</td>
 <td> To properly set the permissions of <code>/etc/ipsec.d</code>, run the command: <pre>$ sudo chmod 0700 /etc/ipsec.d</pre>
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92535-4</td>
 <td>Verify Group Who Owns /etc/ipsec.conf File</td>
 <td> To properly set the group owner of <code>/etc/ipsec.conf</code>, run the command:
 <pre>$ sudo chgrp root /etc/ipsec.conf</pre>
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92537-0</td>
 <td>Verify Group Who Owns /etc/ipsec.secrets File</td>
 <td> To properly set the group owner of <code>/etc/ipsec.secrets</code>, run the command:
 <pre>$ sudo chgrp root /etc/ipsec.secrets</pre>
@@ -4277,7 +4542,7 @@ To make sure that the setting is persistent, add the following line to a file in
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92609-7</td>
 <td>Configure ARP filtering for All IPv4 Interfaces</td>
 <td>To set the runtime status of the <code>net.ipv4.conf.all.arp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.arp_filter=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_conf_all_arp_filter_value" use="legacy"></xccdf-1.2:sub>
          </pre>
@@ -4286,7 +4551,7 @@ To make sure that the setting is persistent, add the following line to a file in
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92610-5</td>
 <td>Configure Response Mode of ARP Requests for All IPv4 Interfaces</td>
 <td>To set the runtime status of the <code>net.ipv4.conf.all.arp_ignore</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.arp_ignore=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_conf_all_arp_ignore_value" use="legacy"></xccdf-1.2:sub>
          </pre>
@@ -4302,7 +4567,7 @@ To make sure that the setting is persistent, add the following line to a file in
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92611-3</td>
 <td>Prevent Routing External Traffic to Local Loopback on All IPv4 Interfaces</td>
 <td>To set the runtime status of the <code>net.ipv4.conf.all.route_localnet</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.route_localnet=0</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.route_localnet = 0</pre>
@@ -4347,7 +4612,7 @@ To make sure that the setting is persistent, add the following line to a file in
 </tr>
 <tr>
 <td>CCE-92482-9</td>
-<td>Enable Kernel Paremeter to Log Martian Packets on all IPv4 Interfaces by Default</td>
+<td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default</td>
 <td>To set the runtime status of the <code>net.ipv4.conf.default.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.log_martians=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.log_martians = 1</pre>
         </td>
@@ -4492,21 +4757,21 @@ The <code>nftables</code> service can be disabled with the following command:
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92500-8</td>
 <td>Verify Group Who Owns /etc/nftables Directory</td>
 <td> To properly set the group owner of <code>/etc/nftables</code>, run the command:
 <pre>$ sudo chgrp root /etc/nftables</pre>
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92509-9</td>
 <td>Verify User Who Owns /etc/nftables Directory</td>
 <td> To properly set the owner of <code>/etc/nftables</code>, run the command:
 <pre>$ sudo chown root /etc/nftables </pre>
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92521-4</td>
 <td>Verify Permissions On /etc/nftables Directory</td>
 <td> To properly set the permissions of <code>/etc/nftables</code>, run the command: <pre>$ sudo chmod 0700 /etc/nftables</pre>
        </td>
@@ -4584,10 +4849,15 @@ streaming media and telephony.
 To configure the system to prevent the <code>dccp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/dccp.conf</code>:
 <pre>install dccp /bin/false</pre>
+This entry will cause a non-zero return value during a <code>dccp</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install dccp /bin/true</pre>
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92580-0</td>
 <td>Disable RDS Support</td>
 <td>The Reliable Datagram Sockets (RDS) protocol is a transport
 layer protocol designed to provide reliable high-bandwidth,
@@ -4596,6 +4866,11 @@ low-latency communications between nodes in a cluster.
 To configure the system to prevent the <code>rds</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/rds.conf</code>:
 <pre>install rds /bin/false</pre>
+This entry will cause a non-zero return value during a <code>rds</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install rds /bin/true</pre>
        </td>
 </tr>
 <tr>
@@ -4609,10 +4884,15 @@ within one connection.
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
 <pre>install sctp /bin/false</pre>
+This entry will cause a non-zero return value during a <code>sctp</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install sctp /bin/true</pre>
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92581-8</td>
 <td>Disable TIPC Support</td>
 <td>The Transparent Inter-Process Communication (TIPC) protocol
 is designed to provide communications between nodes in a
@@ -4621,7 +4901,21 @@ cluster.
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
 <pre>install tipc /bin/false</pre>
+This entry will cause a non-zero return value during a <code>tipc</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install tipc /bin/true</pre>
        </td>
+</tr>
+<tr>
+<td>CCE-92600-6</td>
+<td>Disable Bluetooth Service</td>
+<td>
+The <code>bluetooth</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now bluetooth.service</pre>
+         <pre>$ sudo service bluetooth stop</pre>
+        </td>
 </tr>
 <tr>
 <td>CCE-83286-5</td>
@@ -4925,6 +5219,20 @@ To properly set the permissions of <code>/etc/security/opasswd</code>, run the c
         </td>
 </tr>
 <tr>
+<td>CCE-92539-6</td>
+<td>Verify Group Who Owns /etc/security/opasswd File</td>
+<td> To properly set the group owner of <code>/etc/security/opasswd</code>, run the command:
+<pre>$ sudo chgrp root /etc/security/opasswd</pre>
+        </td>
+</tr>
+<tr>
+<td>CCE-92540-4</td>
+<td>Verify Group Who Owns /etc/security/opasswd.old File</td>
+<td> To properly set the group owner of <code>/etc/security/opasswd.old</code>, run the command:
+<pre>$ sudo chgrp root /etc/security/opasswd.old</pre>
+        </td>
+</tr>
+<tr>
 <td>CCE-85808-4</td>
 <td>Verify Group Who Owns shadow File</td>
 <td> To properly set the group owner of <code>/etc/shadow</code>, run the command:
@@ -4932,7 +5240,7 @@ To properly set the permissions of <code>/etc/security/opasswd</code>, run the c
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92541-2</td>
 <td>Verify Group Who Owns /etc/shells File</td>
 <td>
 To properly set the group owner of <code>/etc/shells</code>, run the command:
@@ -4990,6 +5298,20 @@ To properly set the group owner of <code>/etc/shells</code>, run the command:
         </td>
 </tr>
 <tr>
+<td>CCE-92545-3</td>
+<td>Verify User Who Owns /etc/security/opasswd File</td>
+<td> To properly set the owner of <code>/etc/security/opasswd</code>, run the command:
+<pre>$ sudo chown root /etc/security/opasswd </pre>
+        </td>
+</tr>
+<tr>
+<td>CCE-92546-1</td>
+<td>Verify User Who Owns /etc/security/opasswd.old File</td>
+<td> To properly set the owner of <code>/etc/security/opasswd.old</code>, run the command:
+<pre>$ sudo chown root /etc/security/opasswd.old </pre>
+        </td>
+</tr>
+<tr>
 <td>CCE-85807-6</td>
 <td>Verify User Who Owns shadow File</td>
 <td> To properly set the owner of <code>/etc/shadow</code>, run the command:
@@ -4997,7 +5319,7 @@ To properly set the group owner of <code>/etc/shells</code>, run the command:
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92547-9</td>
 <td>Verify Who Owns /etc/shells File</td>
 <td>
 To properly set the owner of <code>/etc/shells</code>, run the command:
@@ -5062,6 +5384,22 @@ To properly set the permissions of <code>/etc/passwd</code>, run the command:
         </td>
 </tr>
 <tr>
+<td>CCE-92558-6</td>
+<td>Verify Permissions on /etc/security/opasswd File</td>
+<td>
+To properly set the permissions of <code>/etc/security/opasswd</code>, run the command:
+<pre>$ sudo chmod 0600 /etc/security/opasswd</pre>
+        </td>
+</tr>
+<tr>
+<td>CCE-92559-4</td>
+<td>Verify Permissions on /etc/security/opasswd.old File</td>
+<td>
+To properly set the permissions of <code>/etc/security/opasswd.old</code>, run the command:
+<pre>$ sudo chmod 0600 /etc/security/opasswd.old</pre>
+        </td>
+</tr>
+<tr>
 <td>CCE-85804-3</td>
 <td>Verify Permissions on shadow File</td>
 <td>
@@ -5070,7 +5408,7 @@ To properly set the permissions of <code>/etc/shadow</code>, run the command:
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92562-8</td>
 <td>Verify Permissions on /etc/shells File</td>
 <td>
 To properly set the permissions of <code>/etc/shells</code>, run the command:
@@ -5240,21 +5578,21 @@ its permission with the following command:
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92506-5</td>
 <td>Verify Group Who Owns /etc/sysctl.d Directory</td>
 <td> To properly set the group owner of <code>/etc/sysctl.d</code>, run the command:
 <pre>$ sudo chgrp root /etc/sysctl.d</pre>
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92513-1</td>
 <td>Verify User Who Owns /etc/sysctl.d Directory</td>
 <td> To properly set the owner of <code>/etc/sysctl.d</code>, run the command:
 <pre>$ sudo chown root /etc/sysctl.d </pre>
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92527-1</td>
 <td>Verify Permissions On /etc/sysctl.d Directory</td>
 <td> To properly set the permissions of <code>/etc/sysctl.d</code>, run the command: <pre>$ sudo chmod 0755 /etc/sysctl.d</pre>
         </td>
@@ -5417,6 +5755,11 @@ The <code>autofs</code> service can be disabled with the following command:
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>cramfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install cramfs /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -5426,44 +5769,81 @@ Linux filesystem embedded in small footprint systems. A
 decompress the image.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92573-5</td>
 <td>Disable Mounting of freevxfs</td>
 <td>
 To configure the system to prevent the <code>freevxfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/freevxfs.conf</code>:
 <pre>install freevxfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>freevxfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install freevxfs /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92574-3</td>
 <td>Disable Mounting of hfs</td>
 <td>
 To configure the system to prevent the <code>hfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfs.conf</code>:
 <pre>install hfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>hfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install hfs /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92575-0</td>
 <td>Disable Mounting of hfsplus</td>
 <td>
 To configure the system to prevent the <code>hfsplus</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfsplus.conf</code>:
 <pre>install hfsplus /bin/false</pre>
+This entry will cause a non-zero return value during a <code>hfsplus</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install hfsplus /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92577-6</td>
 <td>Disable Mounting of jffs2</td>
 <td>
 To configure the system to prevent the <code>jffs2</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/jffs2.conf</code>:
 <pre>install jffs2 /bin/false</pre>
+This entry will cause a non-zero return value during a <code>jffs2</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install jffs2 /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
+</tr>
+<tr>
+<td>CCE-92579-2</td>
+<td>Ensure overlayfs kernel module is not available</td>
+<td>
+To configure the system to prevent the <code>overlayfs</code>
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/overlayfs.conf</code>:
+<pre>install overlayfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>overlayfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install overlayfs /bin/true</pre>
+
+overlayfs is a Linux filesystem that layers multiple filesystems to create a single
+unified view which allows a user to "merge" several mount points into a unified
+filesystem.</td>
 </tr>
 <tr>
 <td>CCE-92452-2</td>
@@ -5472,6 +5852,11 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>squashfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/squashfs.conf</code>:
 <pre>install squashfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>squashfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install squashfs /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -5487,13 +5872,18 @@ to first decompress the image.</td>
 To configure the system to prevent the <code>udf</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/udf.conf</code>:
 <pre>install udf /bin/false</pre>
+This entry will cause a non-zero return value during a <code>udf</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install udf /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
 The <code>udf</code> filesystem type is the universal disk format
 used to implement the ISO/IEC 13346 and ECMA-167 specifications.
 This is an open vendor filesystem type for data storage on a broad
-range of media. This filesystem type is neccessary to support
+range of media. This filesystem type is necessary to support
 writing DVDs and newer optical disc formats.</td>
 </tr>
 <tr>
@@ -5505,6 +5895,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/false</pre>
+This entry will cause a non-zero return value during a <code>usb-storage</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install usb-storage /bin/true</pre>
 
 This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
 module, but will not prevent an administrator (or another program) from using the
@@ -5517,6 +5912,11 @@ module, but will not prevent an administrator (or another program) from using th
 To configure the system to prevent the <code>vfat</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/vfat.conf</code>:
 <pre>install vfat /bin/false</pre>
+This entry will cause a non-zero return value during a <code>vfat</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install vfat /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -5650,7 +6050,7 @@ Add the <code>noexec</code> option to the fourth column of
 and set-group-identifier (SGID) permissions from taking effect. These permissions
 allow users to execute binaries with the same permissions as the owner and group
 of the file respectively. Users should not be allowed to introduce SUID and SGID
-files into the system via partitions mounted from removeable media.
+files into the system via partitions mounted from removable media.
 Add the <code>nosuid</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 
@@ -5706,6 +6106,49 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/tmp</code>.</td>
 </tr>
 <tr>
+<td>CCE-92583-4</td>
+<td>Add nodev Option to /var/log/audit</td>
+<td>The <code>nodev</code> mount option can be used to prevent device files from
+being created in <code>/var/log/audit</code>.
+Legitimate character and block devices should exist only in
+the <code>/dev</code> directory on the root partition or within chroot
+jails built for system services.
+Add the <code>nodev</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/var/log/audit</code>.</td>
+</tr>
+<tr>
+<td>CCE-92584-2</td>
+<td>Add noexec Option to /var/log/audit</td>
+<td>The <code>noexec</code> mount option can be used to prevent binaries
+from being executed out of <code>/var/log/audit</code>.
+Add the <code>noexec</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/var/log/audit</code>.</td>
+</tr>
+<tr>
+<td>CCE-92587-5</td>
+<td>Add nosuid Option to /var/log/audit</td>
+<td>The <code>nosuid</code> mount option can be used to prevent
+execution of setuid programs in <code>/var/log/audit</code>. The SUID and SGID permissions
+should not be required in directories containing audit log files.
+Add the <code>nosuid</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/var/log/audit</code>.</td>
+</tr>
+<tr>
+<td>CCE-92589-1</td>
+<td>Add nodev Option to /var/log</td>
+<td>The <code>nodev</code> mount option can be used to prevent device files from
+being created in <code>/var/log</code>.
+Legitimate character and block devices should exist only in
+the <code>/dev</code> directory on the root partition or within chroot
+jails built for system services.
+Add the <code>nodev</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/var/log</code>.</td>
+</tr>
+<tr>
 <td>CCE-91274-1</td>
 <td>Add noexec Option to /var/log</td>
 <td>The <code>noexec</code> mount option can be used to prevent binaries
@@ -5723,6 +6166,18 @@ should not be required in directories containing log files.
 Add the <code>nosuid</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/var/log</code>.</td>
+</tr>
+<tr>
+<td>CCE-92590-9</td>
+<td>Add nodev Option to /var</td>
+<td>The <code>nodev</code> mount option can be used to prevent device files from
+being created in <code>/var</code>.
+Legitimate character and block devices should exist only in
+the <code>/dev</code> directory on the root partition or within chroot
+jails built for system services.
+Add the <code>nodev</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/var</code>.</td>
 </tr>
 <tr>
 <td>CCE-91276-6</td>
@@ -5775,7 +6230,7 @@ Add the <code>nosuid</code> option to the fourth column of
 <tr>
 <td>CCE-83285-7</td>
 <td>Verify that local /var/log/messages is not world-readable</td>
-<td>Files containing sensitive informations should be protected by restrictive
+<td>Files containing sensitive information should be protected by restrictive
 permissions. Most of the time, there is no need that these files need to be read by any non-root user
 
 To properly set the permissions of <code>/var/log/messages</code>, run the command:
@@ -5816,7 +6271,7 @@ generators.</td>
 <tr>
 <td>CCE-85607-0</td>
 <td>Verify that Local Logs of the audit Daemon are not World-Readable</td>
-<td>Files containing sensitive informations should be protected by restrictive
+<td>Files containing sensitive information should be protected by restrictive
 permissions. Most of the time, there is no need that these files need to be
 read by any non-root user.
 
@@ -6042,21 +6497,21 @@ Remove any instances of <code>selinux=0</code> from the kernel arguments in that
 file to prevent SELinux from being disabled at boot.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92501-6</td>
 <td>Verify Group Who Owns /etc/selinux Directory</td>
 <td> To properly set the group owner of <code>/etc/selinux</code>, run the command:
 <pre>$ sudo chgrp root /etc/selinux</pre>
       </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92510-7</td>
 <td>Verify User Who Owns /etc/selinux Directory</td>
 <td> To properly set the owner of <code>/etc/selinux</code>, run the command:
 <pre>$ sudo chown root /etc/selinux </pre>
       </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92524-8</td>
 <td>Verify Permissions On /etc/selinux Directory</td>
 <td> To properly set the permissions of <code>/etc/selinux</code>, run the command: <pre>$ sudo chmod 0755 /etc/selinux</pre>
       </td>
@@ -6445,6 +6900,12 @@ To properly set the permissions of <code>/etc/crontab</code>, run the command:
 Use <code>/etc/at.allow</code> instead.</td>
 </tr>
 <tr>
+<td>CCE-92533-9</td>
+<td>Ensure that /etc/cron.allow exists</td>
+<td>The file <code>/etc/cron.allow</code> should exist and should be used instead
+of <code>/etc/cron.deny</code>.</td>
+</tr>
+<tr>
 <td>CCE-91314-5</td>
 <td>Ensure that /etc/cron.deny does not exist</td>
 <td>The file <code>/etc/cron.deny</code> should not exist.
@@ -6525,7 +6986,7 @@ To properly set the permissions of <code>/etc/cron.allow</code>, run the command
 <tr>
 <td></td>
 <td>Uninstall the ntpdate package</td>
-<td>ntpdate is a historical ntp synchronization client for unixes. It sould be uninstalled.</td>
+<td>ntpdate is a historical ntp synchronization client for unixes. It should be uninstalled.</td>
 </tr>
 <tr>
 <td></td>
@@ -6611,6 +7072,25 @@ The <code>dhcpd</code> service can be disabled with the following command:
        </td>
 </tr>
 <tr>
+<td>CCE-92596-6</td>
+<td>Uninstall dnsmasq Package</td>
+<td>dnsmasq is a lightweight tool that provides DNS caching, DNS forwarding and
+DHCP (Dynamic Host Configuration Protocol) services.
+<br>
+The <code>dnsmasq</code> package can be removed with the following command:
+<pre>
+$ sudo zypper remove dnsmasq</pre>
+      </td>
+</tr>
+<tr>
+<td>CCE-92602-2</td>
+<td>Disable dnsmasq Service</td>
+<td>
+The <code>dnsmasq</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now dnsmasq.service</pre>
+      </td>
+</tr>
+<tr>
 <td>CCE-91285-7</td>
 <td>Uninstall bind Package</td>
 <td>The <code>named</code> service is provided by the <code>bind</code> package.
@@ -6631,6 +7111,18 @@ The <code>named</code> service can be disabled with the following command:
 <td></td>
 <td>fapolicyd Must be Configured to Limit Access to Users Home Folders</td>
 <td>fapolicyd needs be configured so that users cannot give access to their home folders to other users.</td>
+</tr>
+<tr>
+<td>CCE-92597-4</td>
+<td>Remove ftp Package</td>
+<td>FTP (File Transfer Protocol) is a traditional and widely used standard tool for
+transferring files between a server and clients over a network, especially where no
+authentication is necessary (permits anonymous users to connect to a server).
+<br>
+The <code>ftp</code> package can be removed with the following command:
+<pre>
+$ sudo zypper remove ftp</pre>
+      </td>
 </tr>
 <tr>
 <td>CCE-85700-3</td>
@@ -6693,6 +7185,14 @@ The <code>httpd</code> service can be disabled with the following command:
        </td>
 </tr>
 <tr>
+<td>CCE-92595-8</td>
+<td>Uninstall cyrus-imapd Package</td>
+<td>The <code>cyrus-imapd</code> package can be removed with the following command:
+<pre>
+$ sudo zypper remove cyrus-imapd</pre>
+       </td>
+</tr>
+<tr>
 <td>CCE-91369-9</td>
 <td>Uninstall dovecot Package</td>
 <td>
@@ -6726,6 +7226,12 @@ $ sudo zypper remove openldap2-client</pre>
 system. It is needed only by the OpenLDAP server, not by the
 clients which use LDAP for authentication. If the system is not
 intended for use as an LDAP Server it should be removed.</td>
+</tr>
+<tr>
+<td>CCE-92603-0</td>
+<td>Disable LDAP Server (slapd)</td>
+<td>The Lightweight Directory Access Protocol (LDAP) is a service that
+provides a method for looking up information from a central database.</td>
 </tr>
 <tr>
 <td>CCE-92519-8</td>
@@ -6911,7 +7417,7 @@ $ sudo zypper install chrony</pre>
 <td>The ntpd service should be installed.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92601-4</td>
 <td>The Chronyd service is enabled</td>
 <td>chrony is a daemon which implements the Network Time Protocol (NTP) is designed to
 synchronize system clocks across a variety of systems and use a source that is highly
@@ -6958,6 +7464,14 @@ for guidance which NTP daemon to choose depending on the environment used.</td>
 <td>
 The <code>ntp</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable ntp.service</pre>
+      </td>
+</tr>
+<tr>
+<td>CCE-91296-4</td>
+<td>Enable systemd_timesyncd Service</td>
+<td>
+The <code>systemd_timesyncd</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable systemd_timesyncd.service</pre>
       </td>
 </tr>
 <tr>
@@ -7045,6 +7559,20 @@ following form, substituting the IP address or hostname of a remote NTP server f
 <pre>server <i>ntpserver</i>
        </pre>
       </td>
+</tr>
+<tr>
+<td>CCE-92538-8</td>
+<td>Configure Systemd Timesyncd Servers</td>
+<td>
+<code>systemd-timesyncd</code> is a daemon that has been added for synchronizing the system clock
+across the network. The <code>systemd-timesyncd</code> daemon implements:
+  - Implements an SNTP client
+  - Runs with minimal privileges
+  - Saves the current clock to disk every time a new NTP sync has been acquired
+  - Is hooked up with networkd to only operate when network connectivity is available
+Add or edit server or pool lines to <code>/etc/systemd/timesyncd.conf</code> as appropriate:
+<pre>server &lt;remote-server&gt;</pre>
+Multiple servers may be configured.</td>
 </tr>
 <tr>
 <td>CCE-92514-9</td>
@@ -7258,7 +7786,7 @@ TFTP does not support authentication and can be easily hacked. The package
 <code>tftp</code> is a client program that allows for connections to a <code>tftp</code> server.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92606-3</td>
 <td>Disable tftp Service</td>
 <td>The <code>tftp</code> service should be disabled.
 
@@ -7750,7 +8278,7 @@ To explicitly disable Environment options, add or correct the following
 <tr>
 <td></td>
 <td>Enable GSSAPI Authentication</td>
-<td>Sites setup to use Kerberos or other GSSAPI Authenticaion require setting
+<td>Sites setup to use Kerberos or other GSSAPI Authentication require setting
 sshd to accept this authentication.
 To enable GSSAPI authentication, add or correct the following line in
 
@@ -7923,7 +8451,7 @@ appropriate limits to ensure the service is available for needed access.</td>
 <tr>
 <td>CCE-91394-7</td>
 <td>Set LogLevel to INFO</td>
-<td>The INFO parameter specifices that record login and logout activity will be logged.
+<td>The INFO parameter specifies that record login and logout activity will be logged.
 <br>
 The default SSH configuration sets the log level to INFO. The appropriate
 configuration is used if no value is set for <code>LogLevel</code>.
@@ -8235,10 +8763,11 @@ Configure the default Grub2 kernel command line to contain audit=1 as follows:
 <td>CCE-91374-9</td>
 <td>Extend Audit Backlog Limit for the Audit Daemon</td>
 <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <code>audit_backlog_limit=8192</code> to the default
+prior to the audit daemon, add the argument <code>audit_backlog_limit=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_backlog_limit" use="legacy"></xccdf-1.2:sub>
+      </code> to the default
 GRUB 2 command line for the Linux operating system.
-Configure the default Grub2 kernel command line to contain audit_backlog_limit=8192 as follows:
-<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit_backlog_limit=8192"</pre>
+Configure the default Grub2 kernel command line to contain audit_backlog_limit=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_backlog_limit" use="legacy"></xccdf-1.2:sub> as follows:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit_backlog_limit=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_backlog_limit" use="legacy"></xccdf-1.2:sub>"</pre>
      </td>
 </tr>
 <tr>
@@ -8466,6 +8995,24 @@ utility to read audit rules during daemon startup, add the following lines to
 
 <pre>-w /var/log/wtmp -p wa -k session</pre>
       </td>
+</tr>
+<tr>
+<td>CCE-92488-6</td>
+<td>Record Events When Executables Are Run As Another User</td>
+<td>Verify the system generates an audit record when actions are run as another user.
+sudo provides users with temporary elevated privileges to perform operations, either as the superuser or another user.
+
+If audit is using the "auditctl" tool to load the rules, run the following command:
+
+<pre>$ sudo grep execve /etc/audit/audit.rules</pre>
+
+If audit is using the "augenrules" tool to load the rules, run the following command:
+
+<pre>$ sudo grep -r execve /etc/audit/rules.d</pre>
+       <pre>-a always,exit -F arch=b32 -S execve -C euid!=uid -F auid!=unset -k user_emulation</pre>
+       <pre>-a always,exit -F arch=b64  S execve -C euid!=uid -F auid!=unset -k user_emulation</pre>
+
+If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.</td>
 </tr>
 <tr>
 <td>CCE-85611-2</td>
@@ -8725,7 +9272,7 @@ utility to read audit rules during daemon startup, add the following lines to
       </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92530-5</td>
 <td>System Audit Logs Must Have Mode 0750 or Less Permissive</td>
 <td>
 If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
@@ -8737,14 +9284,31 @@ Otherwise, change the mode of the audit log files with the following command:
       </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92534-7</td>
+<td>System Audit Logs Must Be Group Owned By Root</td>
+<td>All audit logs must be group owned by root user. The path for audit log can
+be configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
+
+To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
+
+  <pre>$ sudo chgrp root /var/log/audit/*</pre>
+  
+
+
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other
+than the <code>root</code> group account, change the group ownership of the audit logs
+to this specific group.</td>
+</tr>
+<tr>
+<td>CCE-92544-6</td>
 <td>Audit Configuration Files Must Be Owned By Group root</td>
 <td>All audit configuration files must be owned by group root.
 <pre>chown :root /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*</pre>
       </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92550-3</td>
 <td>Audit Configuration Files Must Be Owned By Root</td>
 <td>All audit configuration files must be owned by root user.
 
@@ -8776,7 +9340,19 @@ To properly set the owner of <code>/var/log/audit/*</code>, run the command:
       </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92553-7</td>
+<td>System Audit Logs Must Be Owned By Root</td>
+<td>All audit logs must be owned by root user. The path for audit log can be
+configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or by default, the path for audit log is <pre>/var/log/audit/</pre>.
+
+To properly set the owner of <code>/var/log/audit/*</code>, run the command:
+
+  <pre>$ sudo chown root /var/log/audit/* </pre>
+      </td>
+</tr>
+<tr>
+<td>CCE-92557-8</td>
 <td>Audit Configuration Files Permissions are 640 or More Restrictive</td>
 <td>All audit configuration files permissions must be 640 or more restrictive.
 <pre>chmod 0640 /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*</pre>
@@ -9685,7 +10261,8 @@ add the lines to file <code>/etc/audit/audit.rules</code>.</td>
 <tr>
 <td>CCE-85748-2</td>
 <td>Ensure auditd Collects Information on Kernel Module Unloading - delete_module</td>
-<td>To capture kernel module unloading events, use following line, setting ARCH to
+<td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
@@ -9701,24 +10278,25 @@ add the line to file <code>/etc/audit/audit.rules</code>.</td>
 <tr>
 <td>CCE-85749-0</td>
 <td>Ensure auditd Collects Information on Kernel Module Loading and Unloading - finit_module</td>
-<td>If the <code>auditd</code> daemon is configured to use the <code>augenrules</code> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+<td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
-    If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility to read audit
-rules during daemon startup, add the following lines to <code>/etc/audit/audit.rules</code> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
-       </td>
+
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
 </tr>
 <tr>
 <td>CCE-85750-8</td>
 <td>Ensure auditd Collects Information on Kernel Module Loading - init_module</td>
-<td>To capture kernel module loading events, use following line, setting ARCH to
+<td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
@@ -10872,6 +11450,93 @@ to one of the following values: <code>syslog</code>, <code>single</code>, <code>
 <td>To configure Audit daemon to write Audit logs to the disk, set
 <code>write_logs</code> to <code>yes</code> in <code>/etc/audit/auditd.conf</code>.
 This is the default setting.</td>
+</tr>
+<tr>
+<td>CCE-92543-8</td>
+<td>Verify that audit tools are owned by group root</td>
+<td>The SUSE Linux Enterprise 15 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %G" /usr/sbin/auditctl /usr/sbin/aureport /usr/sbin/ausearch /usr/sbin/autrace /usr/sbin/auditd /usr/sbin/augenrules /usr/sbin/audisp-syslog
+
+/usr/sbin/auditctl root
+
+/usr/sbin/aureport root
+
+/usr/sbin/ausearch root
+
+/usr/sbin/autrace root
+
+/usr/sbin/auditd root
+
+/usr/sbin/augenrules root
+
+/usr/sbin/audisp-syslog root
+
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td>CCE-92549-5</td>
+<td>Verify that audit tools are owned by root</td>
+<td>The SUSE Linux Enterprise 15 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %U" /usr/sbin/auditctl /usr/sbin/aureport /usr/sbin/ausearch /usr/sbin/autrace /usr/sbin/auditd /usr/sbin/augenrules /usr/sbin/audisp-syslog
+
+/usr/sbin/auditctl root
+
+/usr/sbin/aureport root
+
+/usr/sbin/ausearch root
+
+/usr/sbin/autrace root
+
+/usr/sbin/auditd root
+
+/usr/sbin/augenrules root
+
+/usr/sbin/audisp-syslog root
+
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td>CCE-92555-2</td>
+<td>Verify that audit tools Have Mode 0755 or less</td>
+<td>The SUSE Linux Enterprise 15 operating system audit tools must have the proper
+permissions configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %a" /usr/sbin/auditctl /usr/sbin/aureport /usr/sbin/ausearch /usr/sbin/autrace /usr/sbin/auditd /usr/sbin/augenrules /usr/sbin/audisp-syslog
+
+/usr/sbin/auditctl 755
+
+/usr/sbin/aureport 755
+
+/usr/sbin/ausearch 755
+
+/usr/sbin/autrace 755
+
+/usr/sbin/auditd 755
+
+/usr/sbin/augenrules 755
+
+/usr/sbin/audisp-syslog 755
+
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
 </tr>
 </table>
 </body>

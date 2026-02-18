@@ -351,7 +351,7 @@ to begin and end the string with ' and use \n for new lines.</pre></td>
 	<td>The SUSE operating system must be able to lock the graphical user interface (GUI).</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.</pre></td>
+of the information system but does not want to logout because of the temporary nature of the absence.</pre></td>
 	<td><pre>To check the status of the idle screen lock activation, run the following command:
 
 gsettings get org.gnome.desktop.lockdown disable-lock-screen
@@ -524,8 +524,8 @@ After the settings have been set, run dconf update.</pre></td>
 	<td>medium</td>
 	<td>The SUSE operating system must specify the default "include" directory for the /etc/sudoers file.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Some sudo configurtion options allow users to run programs without re-authenticating.
-Use of these configuration options makes it easier for one compromised accound to be used to
+	<td><pre>Some sudo configuration options allow users to run programs without re-authenticating.
+Use of these configuration options makes it easier for one compromised account to be used to
 compromise other accounts.</pre></td>
 	<td><pre>To determine whether sudo command includes configuration files from the appropriate directory,
 run the following command:
@@ -1472,7 +1472,7 @@ useradd man page for more information.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Limiting the number of logon attempts over a certain time interval reduces
 the chances that an unauthorized user may gain access to an account.</pre></td>
-	<td><pre>Verify that the SUSE Linux Enterprise 12 operating system enforces a minimum delay betweeen
+	<td><pre>Verify that the SUSE Linux Enterprise 12 operating system enforces a minimum delay between
 logon prompts following a failed logon attempt.
 
 # grep pam_faildelay /etc/pam.d/common-auth
@@ -2176,6 +2176,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the usb-storage
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/usb-storage.conf:
 install usb-storage /bin/false
+This entry will cause a non-zero return value during a usb-storage module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both /bin/true and /bin/false are allowed by OVAL and will be accepted by the scan):
+install usb-storage /bin/true
 
 This will prevent the modprobe program from loading the usb-storage
 module, but will not prevent an administrator (or another program) from using the
@@ -2891,7 +2896,7 @@ UUID=2bc871e4-e2a3-4f29-9ece-3be60c835222 /mnt/usbflash vfat noauto,owner,ro,nos
 and set-group-identifier (SGID) permissions from taking effect. These permissions
 allow users to execute binaries with the same permissions as the owner and group
 of the file respectively. Users should not be allowed to introduce SUID and SGID
-files into the system via partitions mounted from removeable media.
+files into the system via partitions mounted from removable media.
 Add the nosuid option to the fourth column of
 /etc/fstab for the line which controls mounting of
 
@@ -3585,7 +3590,7 @@ Run the following command to correct the permissions after adding the missing en
 # sudo chkstat --set --system
       Is it the case that Make sure /var/log/messages is not world-readable?
       </pre></td>
-	<td><pre>Files containing sensitive informations should be protected by restrictive
+	<td><pre>Files containing sensitive information should be protected by restrictive
 permissions. Most of the time, there is no need that these files need to be read by any non-root user
 
 To properly set the permissions of /var/log/messages, run the command:
@@ -3746,7 +3751,7 @@ take corrective action prior to any disruption.</pre></td>
 	<td><pre>Inspect /etc/audit/auditd.conf and locate the following line to
 determine if the system is configured correctly:
 space_left SIZE_in_MB
-      Is it the case that the system is not configured a specfic size in MB to notify administrators of an issue?
+      Is it the case that the system is not configured a specific size in MB to notify administrators of an issue?
       </pre></td>
 	<td><pre>The auditd service can be configured to take an action
 when disk space is running low but prior to running out of space completely.
@@ -3773,7 +3778,7 @@ administrators of the system, who can take appropriate action.</pre></td>
 $ sudo grep action_mail_acct /etc/audit/auditd.conf
 
 action_mail_acct = 
-      Is it the case that the value of the "action_mail_acct" keyword is not set to "<sub idref="var_auditd_action_mail_acct" />" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the retuned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?
+      Is it the case that the value of the "action_mail_acct" keyword is not set to "<sub idref="var_auditd_action_mail_acct" />" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the returned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?
       </pre></td>
 	<td><pre>The auditd service can be configured to send email to
 a designated account in certain situations. Add or correct the following line
@@ -4021,7 +4026,7 @@ entries:
 # sudo chkstat --set --system
       Is it the case that ?
       </pre></td>
-	<td><pre>Files containing sensitive informations should be protected by restrictive
+	<td><pre>Files containing sensitive information should be protected by restrictive
 permissions. Most of the time, there is no need that these files need to be
 read by any non-root user.
 
@@ -5655,7 +5660,8 @@ If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
       </pre></td>
-	<td><pre>To capture kernel module unloading events, use following line, setting ARCH to
+	<td><pre>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 -a always,exit -F arch=ARCH -S delete_module -F key=modules
@@ -5687,7 +5693,8 @@ If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
       </pre></td>
-	<td><pre>To capture kernel module loading events, use following line, setting ARCH to
+	<td><pre>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 -a always,exit -F arch=ARCH -S init_module -F key=modules
@@ -5751,7 +5758,7 @@ utility to read audit rules during daemon startup, add the following lines to
 	<td><pre>It is detrimental for operating systems to provide, or install by default,
 functionality exceeding requirements or mission objectives. These
 unnecessary capabilities are often overlooked and therefore may remain
-unsecure. They increase the risk to the platform by providing additional
+insecure. They increase the risk to the platform by providing additional
 attack vectors.
 
 The telnet service provides an unencrypted remote access service which does
@@ -6979,7 +6986,7 @@ by running the following command:
 $ sysctl net.ipv6.conf.default.forwarding
 0.
 The ability to forward packets is only appropriate for routers.
-      Is it the case that IPv6 Forwading is not disabled?
+      Is it the case that IPv6 Forwarding is not disabled?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv6.conf.default.forwarding kernel parameter, run the following command: $ sudo sysctl -w net.ipv6.conf.default.forwarding=0
 To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.default.forwarding = 0
@@ -7375,7 +7382,7 @@ or similar secure authentication devices issued by an organization or identity p
 	<td><pre>To verify the operating system implements certificate status checking for PKI
 authentication, run the following command:
 $ sudo grep -i cert_policy /etc/pam_pkcs11/pam_pkcs11.conf
-The output should return multiple lines similiar to the following:
+The output should return multiple lines similar to the following:
 cert_policy = ca, ocsp_on, signature;
 cert_policy = ca, ocsp_on, signature;
 cert_policy = ca, ocsp_on, signature;
@@ -7480,7 +7487,7 @@ or similar secure authentication devices issued by an organization or identity p
 	<td><pre>To verify the operating system implements certificate status checking for PKI
 authentication, run the following command:
 $ sudo grep -i cert_policy /etc/pam_pkcs11/pam_pkcs11.conf
-The output should return multiple lines similiar to the following:
+The output should return multiple lines similar to the following:
 cert_policy = ca, ocsp_on, signature;
 cert_policy = ca, ocsp_on, signature;
 cert_policy = ca, ocsp_on, signature;

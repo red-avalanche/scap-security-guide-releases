@@ -1,0 +1,285 @@
+<html xmlns:cce="http://cce.mitre.org" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> CCE Identifiers in Guide to the Secure Configuration of SUSE Linux Enterprise Server 16</title>
+</head>
+<body>
+<br><br><div style="text-align: center; font-size: x-large; font-weight:bold">
+			CCE Identifiers in Guide to the Secure Configuration of SUSE Linux Enterprise Server 16</div>
+<br><br><style type="text/css">
+		table
+		{
+			border-collapse:collapse;
+		}
+		table, th, td
+		{
+			border: 2px solid #dcdcdc;
+			border-left: none;
+			border-right: none;
+			vertical-align: top;
+			padding: 2px;
+			font-family: verdana,arial,sans-serif;
+			font-size:11px;
+		}
+		pre { 
+			white-space: pre-wrap;
+			white-space: -moz-pre-wrap !important;
+			word-wrap:break-word; 
+		}
+		table tr:nth-child(2n+2) { background-color: #f4f4f4; }
+		thead
+		{
+			display: table-header-group;
+			font-weight: bold;
+			background-color: #dedede;
+		}
+	</style>
+<table>
+<thead>
+<td>CCE ID</td>
+<td>Rule Title</td>
+<td>Description</td>
+</thead>
+<tr>
+<td></td>
+<td>Build and Test AIDE Database</td>
+<td>Run the following command to generate a new database:
+
+<pre>$ sudo /usr/bin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<code>/var/lib/aide/aide.db.new</code>.
+
+Storing the database, the configuration file <code>/etc/aide.conf</code>, and the binary
+<code>/usr/bin/aide</code>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new /var/lib/aide/aide.db</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/bin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+</tr>
+<tr>
+<td></td>
+<td>Configure Systemd Timer Execution of AIDE</td>
+<td>At a minimum, AIDE should be configured to run a weekly scan.
+To implement a systemd service and a timer unit to run the service periodically:
+For example, if a systemd timer is expected to be started every day at 5AM
+<pre>OnCalendar=*-*-* 05:00:0</pre>
+          <pre>[Timer]</pre> section in the timer unit and
+a Unit section starting the AIDE check service unit should be referred.</td>
+</tr>
+<tr>
+<td></td>
+<td>The Installed Operating System Is Vendor Supported</td>
+<td>The installed operating system must be maintained by a vendor.
+
+SUSE Linux Enterprise is supported by SUSE. As the SUSE Linux Enterprise
+vendor, SUSE is responsible for providing security patches.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure PAM Displays Last Logon/Access Notification</td>
+<td>To configure the system to notify users of last logon/access using <code>pam_lastlog</code>,
+add or correct the <code>pam_lastlog</code> settings in <code>/etc/pam.d/postlogin-session</code>
+to include <code>showfailed</code> option, such as:
+<pre>session     optional    pam_lastlog2.so showfailed</pre>
+And make sure that the <code>silent</code> option is not set for this specific line.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure that System Accounts Do Not Run a Shell Upon Login</td>
+<td>Some accounts are not associated with a human user of the system, and exist to perform some
+administrative functions. Should an attacker be able to log into these accounts, they should
+not be granted access to a shell.
+<br>
+         <br>
+The login shell for each local account is stored in the last field of each line in
+<code>/etc/passwd</code>. System accounts are those user accounts with a user ID less than
+<code>1000</code>. The user ID is stored in the third field. If any system account
+other than <code>root</code> has a login shell, disable it with the command:
+<pre>$ sudo usermod -s /sbin/nologin <i>account</i>
+         </pre>
+        </td>
+</tr>
+<tr>
+<td></td>
+<td>Restrict Serial Port Root Logins</td>
+<td>To restrict root logins on serial ports,
+ensure lines of this form do not appear in <code>/etc/securetty</code>:
+<pre>ttyS0
+ttyS1</pre>
+        </td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure SMEP is not disabled during boot</td>
+<td>The SMEP is used to prevent the supervisor mode from executing user space code,
+it is enabled by default since Linux kernel 3.0. But it could be disabled through
+kernel boot parameters.
+
+Ensure that Supervisor Mode Execution Prevention (SMEP) is not disabled by
+the <code>nosmep</code> boot parameter option.
+
+Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
+doesn't contain the argument <code>nosmep</code>.
+Run the following command to update command line for already installed kernels:
+<pre># grubby --update-kernel=ALL --remove-args="nosmep"</pre>
+      </td>
+</tr>
+<tr>
+<td></td>
+<td>Enforce Spectre v2 mitigation</td>
+<td>Spectre V2 is an indirect branch poisoning attack that can lead to data leakage.
+An exploit for Spectre V2 tricks the indirect branch predictor into executing
+code from a future indirect branch chosen by the attacker, even if the privilege
+level is different.
+
+Since Linux Kernel 4.15 you can check the Spectre V2 mitigation state with the following command:
+<code>cat /sys/devices/system/cpu/vulnerabilities/spectre_v2</code>
+
+Enforce the Spectre V2 mitigation by adding the argument
+<code>spectre_v2=on</code> to the default
+GRUB 2 command line for the Linux operating system.
+Configure the default Grub2 kernel command line to contain spectre_v2=on as follows:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) spectre_v2=on"</pre>
+      </td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure Logs Sent To Remote Host</td>
+<td>To configure rsyslog to send logs to a remote log server,
+open <code>/etc/rsyslog.conf</code> and read and understand the last section of the file,
+which describes the multiple directives necessary to activate remote
+logging.
+Along with these other directives, the system can be configured
+to forward its logs to a particular log server by
+adding or correcting one of the following lines,
+substituting <code><i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i></code> appropriately.
+The choice of protocol depends on the environment of the system;
+although TCP and RELP provide more reliable message delivery,
+they may not be supported in all environments.
+<br>
+To use UDP for log message delivery:
+<pre>*.* @<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i>
+        </pre>
+        <br>
+Or in RainerScript:
+<pre>*.* action(type="omfwd" ... target="<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i>" protocol="udp")</pre>
+        <br>
+To use TCP for log message delivery:
+<pre>*.* @@<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i>
+        </pre>
+        <br>
+Or in RainerScript:
+<pre>*.* action(type="omfwd" ... target="<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i>" protocol="tcp")</pre>
+        <br>
+To use RELP for log message delivery:
+<pre>*.* :omrelp:<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i>
+        </pre>
+        <br>
+Or in RainerScript:
+<pre>*.* action(type="omfwd" ... target="<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i>" protocol="relp")</pre>
+        <br>
+There must be a resolvable DNS CNAME or Alias record set to "<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub>" for logs to be sent correctly to the centralized logging utility.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure All Files Are Owned by a Group</td>
+<td>If any file is not group-owned by a valid defined group, the cause of the lack of
+group-ownership must be investigated. Following this, those files should be deleted or
+assigned to an appropriate group. The groups need to be defined in <code>/etc/group</code>
+or in <code>/usr/lib/group</code> if <code>nss-altfiles</code> are configured to be used
+in <code>/etc/nsswitch.conf</code>.
+
+Locate the mount points related to local devices by the following command:
+<pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid group using the following command:
+<pre>$ sudo find <i>MOUNTPOINT</i> -xdev -nogroup 2&gt;/dev/null</pre>
+       </td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure All Files Are Owned by a User</td>
+<td>If any files are not owned by a user, then the cause of their lack of ownership should be
+investigated. Following this, the files should be deleted or assigned to an appropriate user.
+
+Locate the mount points related to local devices by the following command:
+<pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid user using the following command:
+<pre>$ sudo find <i>MOUNTPOINT</i> -xdev -nouser 2&gt;/dev/null</pre>
+       </td>
+</tr>
+<tr>
+<td></td>
+<td>Enable NX or XD Support in the BIOS</td>
+<td>Reboot the system and enter the BIOS or Setup configuration menu.
+Navigate the BIOS configuration menu and make sure that the option is enabled. The setting may be located
+under a Security section. Look for Execute Disable (XD) on Intel-based systems and No Execute (NX)
+on AMD-based systems.</td>
+</tr>
+<tr>
+<td></td>
+<td>Install PAE Kernel on Supported 32-bit x86 Systems</td>
+<td>Systems that are using the 64-bit x86 kernel package
+do not need to install the kernel-PAE package because the 64-bit
+x86 kernel already includes this support. However, if the system is
+32-bit and also supports the PAE and NX features as
+determined in the previous section, the kernel-PAE package should
+be installed to enable XD or NX support.
+The <code>kernel-PAE</code> package can be installed with the following command:
+<pre>
+$ sudo zypper install kernel-PAE</pre>
+The installation process should also have configured the
+bootloader to load the new kernel at boot. Verify this after reboot
+and modify <code>/etc/default/grub</code> if necessary.</td>
+</tr>
+<tr>
+<td></td>
+<td>Install libselinux Package</td>
+<td>The <code>libselinux</code> package can be installed with the following command:
+<pre>
+$ sudo zypper install libselinux</pre>
+      </td>
+</tr>
+<tr>
+<td></td>
+<td>Enable the selinuxuser_execmod SELinux Boolean</td>
+<td>By default, the SELinux boolean <code>selinuxuser_execmod</code> is enabled.
+If this setting is disabled, it should be enabled.
+
+To enable the <code>selinuxuser_execmod</code> SELinux boolean, run the following command:
+<pre>$ sudo setsebool -P selinuxuser_execmod on</pre>
+       </td>
+</tr>
+<tr>
+<td></td>
+<td>Enable auditd Service</td>
+<td>The <code>auditd</code> service is an essential userspace component of
+the Linux Auditing System, as it is responsible for writing audit records to
+disk.
+
+The <code>auditd</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable auditd.service</pre>
+     </td>
+</tr>
+<tr>
+<td></td>
+<td>Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td>To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system.
+Configure the default Grub2 kernel command line to contain audit=1 as follows:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+     </td>
+</tr>
+</table>
+</body>
+</html>

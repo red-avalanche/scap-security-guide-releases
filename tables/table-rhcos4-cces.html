@@ -448,6 +448,12 @@ logical volume at installation time, or migrate it using LVM.</td>
 </tr>
 <tr>
 <td></td>
+<td>Ensure /usr Located On Separate Partition</td>
+<td>It is recommended that the <code>/usr</code> directory resides on a separate
+partition.</td>
+</tr>
+<tr>
+<td></td>
 <td>Ensure /var Located On Separate Partition</td>
 <td>The <code>/var</code> directory is used by daemons and other system
 services to store frequently-changing data. Ensure that <code>/var</code> has its own partition
@@ -865,6 +871,15 @@ To properly set the group owner of <code>/etc/issue.net</code>, run the command:
 </tr>
 <tr>
 <td></td>
+<td>Verify Group Ownership of Message of the Day Banner</td>
+<td>
+To properly set the group owner of <code>/etc/motd</code>, run the command:
+
+  <pre>$ sudo chgrp root /etc/motd</pre>
+       </td>
+</tr>
+<tr>
+<td></td>
 <td>Verify ownership of System Login Banner</td>
 <td>
 To properly set the owner of <code>/etc/issue</code>, run the command:
@@ -883,6 +898,15 @@ To properly set the owner of <code>/etc/issue.net</code>, run the command:
 </tr>
 <tr>
 <td></td>
+<td>Verify ownership of Message of the Day Banner</td>
+<td>
+To properly set the owner of <code>/etc/motd</code>, run the command:
+
+  <pre>$ sudo chown root /etc/motd </pre>
+       </td>
+</tr>
+<tr>
+<td></td>
 <td>Verify permissions on System Login Banner</td>
 <td>
 To properly set the permissions of <code>/etc/issue</code>, run the command:
@@ -895,6 +919,14 @@ To properly set the permissions of <code>/etc/issue</code>, run the command:
 <td>
 To properly set the permissions of <code>/etc/issue.net</code>, run the command:
 <pre>$ sudo chmod 0644 /etc/issue.net</pre>
+       </td>
+</tr>
+<tr>
+<td></td>
+<td>Verify permissions on Message of the Day Banner</td>
+<td>
+To properly set the permissions of <code>/etc/motd</code>, run the command:
+<pre>$ sudo chmod 0644 /etc/motd</pre>
        </td>
 </tr>
 <tr>
@@ -1055,7 +1087,7 @@ EOF
 </pre>
         <p>
 This will add the relevant configuration to <code>/etc/systemd/system.conf.d/</code>,
-thus configuring Systemd apropriately.
+thus configuring Systemd appropriately.
 </p>
         <p>
 Note that this needs to be done for each <code>MachineConfigPool</code>
@@ -1197,6 +1229,21 @@ The console can now be locked with the following key combination:
 <td>The <code>tmux</code> terminal multiplexer is used to implement
 automatic session locking. It should not be listed in
 <code>/etc/shells</code>.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure All Accounts on the System Have Unique User IDs</td>
+<td>Change user IDs (UIDs), or delete accounts, so each has a unique name.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure All Groups on the System Have Unique Group ID</td>
+<td>Change the group name or delete groups, so each has a unique id.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure All Groups on the System Have Unique Group Names</td>
+<td>Change the group name or delete groups, so each has a unique name.</td>
 </tr>
 <tr>
 <td>CCE-82695-8</td>
@@ -1550,10 +1597,46 @@ Files that begin with a "." are excluded from this requirement.</td>
 </tr>
 <tr>
 <td></td>
+<td>All Interactive User Home Directories Must Be Group-Owned By The Primary Group</td>
+<td>Change the group owner of interactive users home directory to the
+group found in <code>/etc/passwd</code>. To change the group owner of
+interactive users home directory, use the following command:
+<pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>
+        </pre>
+
+This rule ensures every home directory related to an interactive user is
+group-owned by an interactive user. It also ensures that interactive users
+are group-owners of one and only one home directory.</td>
+</tr>
+<tr>
+<td></td>
+<td>All Interactive User Home Directories Must Be Owned By The Primary User</td>
+<td>Change the owner of interactive users home directories to that correct
+owner. To change the owner of a interactive users home directory, use
+the following command:
+<pre>$ sudo chown <i>USER</i> /home/<i>USER</i>
+        </pre>
+
+This rule ensures every home directory related to an interactive user is
+owned by an interactive user. It also ensures that interactive users are
+owners of one and only one home directory.</td>
+</tr>
+<tr>
+<td></td>
 <td>Ensure All User Initialization Files Have Mode 0740 Or Less Permissive</td>
 <td>Set the mode of the user initialization files to <code>0740</code> with the
 following command:
 <pre>$ sudo chmod 0740 /home/<i>USER</i>/.<i>INIT_FILE</i>
+        </pre>
+       </td>
+</tr>
+<tr>
+<td></td>
+<td>All Interactive User Home Directories Must Have mode 0750 Or Less Permissive</td>
+<td>Change the mode of interactive users home directories to <code>0750</code>. To
+change the mode of interactive users home directory, use the
+following command:
+<pre>$ sudo chmod 0750 /home/<i>USER</i>
         </pre>
        </td>
 </tr>
@@ -1629,7 +1712,7 @@ add or correct the <code>umask</code> setting in <code>/etc/profile</code> to re
 <pre>umask <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub>
          </pre>
 
-Note that <code>/etc/profile</code> also reads scrips within <code>/etc/profile.d</code> directory.
+Note that <code>/etc/profile</code> also reads scripts within <code>/etc/profile.d</code> directory.
 These scripts are also valid files to set umask value. Therefore, they should also be
 considered during the check and properly remediated, if necessary.</td>
 </tr>
@@ -1784,7 +1867,7 @@ memory pages in the user space, it is enabled by default since Linux kernel 3.7.
 But it could be disabled through kernel boot parameters.
 
 Ensure that Supervisor Mode Access Prevention (SMAP) is not disabled by
-the <code>nosmap</code> boot paramenter option.
+the <code>nosmap</code> boot parameter option.
 
 Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
 doesn't contain the argument <code>nosmap</code>.
@@ -1800,7 +1883,7 @@ it is enabled by default since Linux kernel 3.0. But it could be disabled throug
 kernel boot parameters.
 
 Ensure that Supervisor Mode Execution Prevention (SMEP) is not disabled by
-the <code>nosmep</code> boot paramenter option.
+the <code>nosmep</code> boot parameter option.
 
 Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
 doesn't contain the argument <code>nosmep</code>.
@@ -2132,7 +2215,7 @@ for systemd related issues and should otherwise be disabled.
 By default, the <code>debug-shell</code> systemd service is already disabled.
 
 Ensure the debug-shell is not enabled by the <code>systemd.debug-shel=1</code>
-boot paramenter option.
+boot parameter option.
 
 Check that not boot entries in <code>/boot/loader/entries/*.conf</code> have
 <code>systemd.debug-shell=1</code> included in its options.<br>
@@ -2245,7 +2328,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
 <td>Certain buggy versions of glibc (2.3.3) will crash if they are presented with a 32-bit vDSO
 that is not mapped at the address indicated in its segment table.
 Setting <code>CONFIG_COMPAT_VDSO</code> to <code>y</code> turns off the 32-bit VDSO and works
-aroud the glibc bug.
+around the glibc bug.
 
 The configuration that was used to build kernel is available at <code>/boot/config-*</code>.
     To check the configuration value for <code>CONFIG_COMPAT_VDSO</code>, run the following command:
@@ -2845,7 +2928,7 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs off a encrpytion system must be used.
+When using <code>rsyslogd</code> to off-load logs off a encryption system must be used.
 
 Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
 <pre>$ActionSendStreamDriverMode 1</pre>
@@ -3579,7 +3662,7 @@ To make sure that the setting is persistent, add the following line to a file in
 </tr>
 <tr>
 <td>CCE-82487-0</td>
-<td>Enable Kernel Paremeter to Log Martian Packets on all IPv4 Interfaces by Default</td>
+<td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default</td>
 <td>To set the runtime status of the <code>net.ipv4.conf.default.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.log_martians=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.log_martians = 1</pre>
         </td>
@@ -3734,6 +3817,11 @@ and virtual paths.
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
 <pre>install atm /bin/false</pre>
+This entry will cause a non-zero return value during a <code>atm</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install atm /bin/true</pre>
        </td>
 </tr>
 <tr>
@@ -3746,6 +3834,11 @@ is now also used in marine, industrial, and medical applications.
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
 <pre>install can /bin/false</pre>
+This entry will cause a non-zero return value during a <code>can</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install can /bin/true</pre>
        </td>
 </tr>
 <tr>
@@ -3757,6 +3850,11 @@ high-speed real-time communication.
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
 <pre>install firewire-core /bin/false</pre>
+This entry will cause a non-zero return value during a <code>firewire-core</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install firewire-core /bin/true</pre>
        </td>
 </tr>
 <tr>
@@ -3769,6 +3867,11 @@ low-latency communications between nodes in a cluster.
 To configure the system to prevent the <code>rds</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/rds.conf</code>:
 <pre>install rds /bin/false</pre>
+This entry will cause a non-zero return value during a <code>rds</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install rds /bin/true</pre>
        </td>
 </tr>
 <tr>
@@ -3782,6 +3885,11 @@ within one connection.
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
 <pre>install sctp /bin/false</pre>
+This entry will cause a non-zero return value during a <code>sctp</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install sctp /bin/true</pre>
        </td>
 </tr>
 <tr>
@@ -3794,6 +3902,11 @@ cluster.
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
 <pre>install tipc /bin/false</pre>
+This entry will cause a non-zero return value during a <code>tipc</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install tipc /bin/true</pre>
        </td>
 </tr>
 <tr>
@@ -3854,6 +3967,11 @@ to prevent the loading of the Bluetooth module:
 To configure the system to prevent the <code>cfg80211</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cfg80211.conf</code>:
 <pre>install cfg80211 /bin/false</pre>
+This entry will cause a non-zero return value during a <code>cfg80211</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install cfg80211 /bin/true</pre>
         </td>
 </tr>
 <tr>
@@ -3863,6 +3981,11 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
 To configure the system to prevent the <code>iwlmvm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/iwlmvm.conf</code>:
 <pre>install iwlmvm /bin/false</pre>
+This entry will cause a non-zero return value during a <code>iwlmvm</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install iwlmvm /bin/true</pre>
         </td>
 </tr>
 <tr>
@@ -3872,6 +3995,11 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
 To configure the system to prevent the <code>iwlwifi</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/iwlwifi.conf</code>:
 <pre>install iwlwifi /bin/false</pre>
+This entry will cause a non-zero return value during a <code>iwlwifi</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install iwlwifi /bin/true</pre>
         </td>
 </tr>
 <tr>
@@ -3881,6 +4009,11 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
 To configure the system to prevent the <code>mac80211</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/mac80211.conf</code>:
 <pre>install mac80211 /bin/false</pre>
+This entry will cause a non-zero return value during a <code>mac80211</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install mac80211 /bin/true</pre>
         </td>
 </tr>
 <tr>
@@ -3902,6 +4035,13 @@ capability.
 Configure the system to disable all wireless network interfaces with the following command:
 <pre>$ sudo nmcli radio all off</pre>
         </td>
+</tr>
+<tr>
+<td>CCE-87849-6</td>
+<td>Only Allow specific PKI-established CAs</td>
+<td>The operating system must only allow the use of trusted PKI-established
+certificate authorities for verification of the establishment of
+protected sessions.</td>
 </tr>
 <tr>
 <td>CCE-82753-5</td>
@@ -4016,12 +4156,53 @@ To properly set the permissions of <code>/boot/System.map*</code>, run the comma
 </tr>
 <tr>
 <td></td>
+<td>Ensure All SGID Executables Are Authorized</td>
+<td>The SGID (set group id) bit should be set only on files that were installed via authorized
+means. A straightforward means of identifying unauthorized SGID files is determine if any were
+not installed as part of an RPM package, which is cryptographically verified. Investigate the
+origin of any unpackaged SGID files. This configuration check considers authorized SGID files
+those which were installed via RPM. It is assumed that when an individual has sudo access to
+install an RPM and all packages are signed with an organizationally-recognized GPG key, the
+software should be considered an approved package on the system. Any SGID file not deployed
+through an RPM will be flagged for further review.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure All SUID Executables Are Authorized</td>
+<td>The SUID (set user id) bit should be set only on files that were installed via authorized
+means. A straightforward means of identifying unauthorized SUID files is determine if any were
+not installed as part of an RPM package, which is cryptographically verified. Investigate the
+origin of any unpackaged SUID files. This configuration check considers authorized SUID files
+those which were installed via RPM. It is assumed that when an individual has sudo access to
+install an RPM and all packages are signed with an organizationally-recognized GPG key, the
+software should be considered an approved package on the system. Any SUID file not deployed
+through an RPM will be flagged for further review.</td>
+</tr>
+<tr>
+<td></td>
 <td>Ensure No World-Writable Files Exist</td>
 <td>It is generally a good idea to remove global (other) write access to a file when it is
 discovered. However, check with documentation for specific applications before making changes.
 Also, monitor for recurring world-writable files, as these may be symptoms of a misconfigured
 application or user account. Finally, this applies to real files and not virtual files that
 are a part of pseudo file systems such as <code>sysfs</code> or <code>procfs</code>.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure All Files Are Owned by a Group</td>
+<td>If any file is not group-owned by a valid defined group, the cause of the lack of
+group-ownership must be investigated. Following this, those files should be deleted or
+assigned to an appropriate group. The groups need to be defined in <code>/etc/group</code>
+or in <code>/usr/lib/group</code> if <code>nss-altfiles</code> are configured to be used
+in <code>/etc/nsswitch.conf</code>.
+
+Locate the mount points related to local devices by the following command:
+<pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid group using the following command:
+<pre>$ sudo find <i>MOUNTPOINT</i> -xdev -nogroup 2&gt;/dev/null</pre>
+       </td>
 </tr>
 <tr>
 <td>CCE-82506-7</td>
@@ -4580,6 +4761,11 @@ Configure the default Grub2 kernel command line to contain nousb as follows:
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>cramfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install cramfs /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -4595,6 +4781,11 @@ decompress the image.</td>
 To configure the system to prevent the <code>freevxfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/freevxfs.conf</code>:
 <pre>install freevxfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>freevxfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install freevxfs /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
@@ -4605,6 +4796,11 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>hfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfs.conf</code>:
 <pre>install hfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>hfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install hfs /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
@@ -4615,6 +4811,11 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>hfsplus</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfsplus.conf</code>:
 <pre>install hfsplus /bin/false</pre>
+This entry will cause a non-zero return value during a <code>hfsplus</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install hfsplus /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
@@ -4625,6 +4826,11 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>jffs2</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/jffs2.conf</code>:
 <pre>install jffs2 /bin/false</pre>
+This entry will cause a non-zero return value during a <code>jffs2</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install jffs2 /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
@@ -4635,6 +4841,11 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>squashfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/squashfs.conf</code>:
 <pre>install squashfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>squashfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install squashfs /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -4650,13 +4861,18 @@ to first decompress the image.</td>
 To configure the system to prevent the <code>udf</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/udf.conf</code>:
 <pre>install udf /bin/false</pre>
+This entry will cause a non-zero return value during a <code>udf</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install udf /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
 The <code>udf</code> filesystem type is the universal disk format
 used to implement the ISO/IEC 13346 and ECMA-167 specifications.
 This is an open vendor filesystem type for data storage on a broad
-range of media. This filesystem type is neccessary to support
+range of media. This filesystem type is necessary to support
 writing DVDs and newer optical disc formats.</td>
 </tr>
 <tr>
@@ -4668,6 +4884,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/false</pre>
+This entry will cause a non-zero return value during a <code>usb-storage</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install usb-storage /bin/true</pre>
 
 This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
 module, but will not prevent an administrator (or another program) from using the
@@ -4680,6 +4901,11 @@ module, but will not prevent an administrator (or another program) from using th
 To configure the system to prevent the <code>vfat</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/vfat.conf</code>:
 <pre>install vfat /bin/false</pre>
+This entry will cause a non-zero return value during a <code>vfat</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install vfat /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -4817,7 +5043,7 @@ controls mounting of
 and set-group-identifier (SGID) permissions from taking effect. These permissions
 allow users to execute binaries with the same permissions as the owner and group
 of the file respectively. Users should not be allowed to introduce SUID and SGID
-files into the system via partitions mounted from removeable media.
+files into the system via partitions mounted from removable media.
 Add the <code>nosuid</code> option to the list of
 <code>Options</code> in the <code>systemd.mount</code> unit that
 controls mounting of
@@ -5338,7 +5564,7 @@ Operator see
 <tr>
 <td></td>
 <td>Uninstall the ntpdate package</td>
-<td>ntpdate is a historical ntp synchronization client for unixes. It sould be uninstalled.</td>
+<td>ntpdate is a historical ntp synchronization client for unixes. It should be uninstalled.</td>
 </tr>
 <tr>
 <td></td>
@@ -6011,6 +6237,20 @@ location:
        </td>
 </tr>
 <tr>
+<td></td>
+<td>Uninstall telnet-server Package</td>
+<td>The <code>telnet-server</code> package can be removed with the following command:
+<pre>
+$ sudo dnf remove telnet-server</pre>
+       </td>
+</tr>
+<tr>
+<td></td>
+<td>Remove telnet Clients</td>
+<td>The telnet client allows users to start connections to other systems via
+the telnet protocol.</td>
+</tr>
+<tr>
 <td>CCE-82535-6</td>
 <td>Enable the Hardware RNG Entropy Gatherer Service</td>
 <td>The Hardware RNG Entropy Gatherer service should be enabled.
@@ -6082,6 +6322,43 @@ $ sudo dnf install openssh-server</pre>
 The <code>openssh-server</code> package can be removed with the following command:
 <pre>
 $ sudo dnf remove openssh-server</pre>
+      </td>
+</tr>
+<tr>
+<td></td>
+<td>Enable the OpenSSH Service</td>
+<td>The SSH server service, sshd, is commonly needed.
+
+The <code>sshd</code> service can be enabled with the following manifest:
+<pre>
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 75-master-sshd-enable
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+      - name: sshd.service
+        enabled: true
+</pre>
+       <p>
+This will enable the <code>sshd</code> service in all the
+nodes labeled with the "master" role.
+</p>
+       <p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+       </p>
+       <p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
       </td>
 </tr>
 <tr>
@@ -6276,7 +6553,7 @@ To explicitly disable host-based authentication, add or correct the
 following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>HostbasedAuthentication no</pre>
        </td>
@@ -6316,7 +6593,7 @@ To explicitly disallow SSH login from accounts with empty passwords,
 add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <br>
         <pre>PermitEmptyPasswords no</pre>
@@ -6335,7 +6612,7 @@ configuration is used if no value is set for <code>GSSAPIAuthentication</code>.
 To explicitly disable GSSAPI authentication, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>GSSAPIAuthentication no</pre>
        </td>
@@ -6352,7 +6629,7 @@ The appropriate configuration is used if no value is set for <code>KerberosAuthe
 To explicitly disable Kerberos authentication, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>KerberosAuthentication no</pre>
        </td>
@@ -6365,7 +6642,7 @@ authentication mechanisms. To disable PubkeyAuthentication authentication, add o
 correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>PubkeyAuthentication no</pre>
        </td>
@@ -6383,7 +6660,7 @@ configuration is used if no value is set for <code>IgnoreRhosts</code>.
 To explicitly disable support for .rhosts files, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>IgnoreRhosts yes</pre>
        </td>
@@ -6408,7 +6685,7 @@ system directly over a network.
 To disable root login via SSH, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>PermitRootLogin no</pre>
        </td>
@@ -6419,7 +6696,7 @@ To disable root login via SSH, add or correct the following line in
 <td>To disable password-based root logins over SSH, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>PermitRootLogin prohibit-password</pre>
        </td>
@@ -6431,7 +6708,7 @@ To disable root login via SSH, add or correct the following line in
 To disable TCP forwarding, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>AllowTcpForwarding no</pre>
        </td>
@@ -6446,7 +6723,7 @@ systems public keys is available.  This should be disabled.
 To ensure this behavior is disabled, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>IgnoreUserKnownHosts yes</pre>
        </td>
@@ -6465,7 +6742,7 @@ configuration is used if no value is set for <code>X11Forwarding</code>.
 To explicitly disable X11 Forwarding, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>X11Forwarding no</pre>
        </td>
@@ -6481,7 +6758,7 @@ configuration is used if no value is set for <code>PermitUserEnvironment</code>.
 To explicitly disable Environment options, add or correct the following
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>PermitUserEnvironment no</pre>
        </td>
@@ -6489,12 +6766,12 @@ To explicitly disable Environment options, add or correct the following
 <tr>
 <td></td>
 <td>Enable GSSAPI Authentication</td>
-<td>Sites setup to use Kerberos or other GSSAPI Authenticaion require setting
+<td>Sites setup to use Kerberos or other GSSAPI Authentication require setting
 sshd to accept this authentication.
 To enable GSSAPI authentication, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>GSSAPIAuthentication yes</pre>
        </td>
@@ -6510,7 +6787,7 @@ authentication types.
 To enable PAM authentication, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>UsePAM yes</pre>
        </td>
@@ -6526,7 +6803,7 @@ configuration is used if no value is set for <code>PubkeyAuthentication</code>.
 To explicitly enable Public Key Authentication, add or correct the following
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>PubkeyAuthentication yes</pre>
        </td>
@@ -6544,7 +6821,7 @@ configuration is used if no value is set for <code>StrictModes</code>.
 To explicitly enable <code>StrictModes</code> in SSH, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>StrictModes yes</pre>
        </td>
@@ -6556,7 +6833,7 @@ To explicitly enable <code>StrictModes</code> in SSH, add or correct the followi
 across the system, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>Banner /etc/issue</pre>
 Another section contains information on how to create an
@@ -6568,7 +6845,7 @@ appropriate system-wide warning banner.</td>
 <td>To enable the warning banner and ensure it is consistent
 across the system, add or correct the following line in
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>Banner /etc/issue.net</pre>
 Another section contains information on how to create an
@@ -6585,7 +6862,7 @@ by users. SSH has the capability to encrypt remote X11 connections when SSH's
 To enable X11 Forwarding, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>X11Forwarding yes</pre>
        </td>
@@ -6629,7 +6906,7 @@ The appropriate configuration is used if no value is set for <code>PrintLastLog<
 To explicitly enable LastLog in SSH, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>PrintLastLog yes</pre>
        </td>
@@ -6644,7 +6921,7 @@ elapsed.<br>
 To decrease the default limits, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>RekeyLimit <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_rekey_limit_size" use="legacy"></xccdf-1.2:sub>
          <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_rekey_limit_time" use="legacy"></xccdf-1.2:sub>
@@ -6662,7 +6939,7 @@ appropriate limits to ensure the service is available for needed access.</td>
 <tr>
 <td></td>
 <td>Set LogLevel to INFO</td>
-<td>The INFO parameter specifices that record login and logout activity will be logged.
+<td>The INFO parameter specifies that record login and logout activity will be logged.
 <br>
 The default SSH configuration sets the log level to INFO. The appropriate
 configuration is used if no value is set for <code>LogLevel</code>.
@@ -6670,7 +6947,7 @@ configuration is used if no value is set for <code>LogLevel</code>.
 To explicitly specify the log level in SSH, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>LogLevel INFO</pre>
        </td>
@@ -6683,7 +6960,7 @@ To specify the log level in
 SSH, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:
+<code>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</code>:
 
 <pre>LogLevel VERBOSE</pre>
        </td>
@@ -6950,6 +7227,11 @@ to <code>/etc/usbguard/rules.conf</code>.</td>
 <pre>
 $ sudo dnf install audispd-plugins</pre>
      </td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure the audit-libs package as a part of audit Subsystem is Installed</td>
+<td>The audit-libs package should be installed.</td>
 </tr>
 <tr>
 <td>CCE-82669-3</td>
@@ -7407,6 +7689,91 @@ utility to read audit rules during daemon startup, add the following lines to
       </td>
 </tr>
 <tr>
+<td></td>
+<td>Ensure auditd Collects System Administrator Actions - /etc/sudoers</td>
+<td>At a minimum, the audit system should collect administrator actions
+for all users and root.
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/sudoers -p wa -k actions</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/sudoers -p wa -k actions</pre>
+      </td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure auditd Collects System Administrator Actions - /etc/sudoers.d/</td>
+<td>At a minimum, the audit system should collect administrator actions
+for all users and root.
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/sudoers.d/ -p wa -k actions</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/sudoers.d/ -p wa -k actions</pre>
+      </td>
+</tr>
+<tr>
+<td></td>
+<td>Record Events When Executables Are Run As Another User</td>
+<td>Verify the system generates an audit record when actions are run as another user.
+sudo provides users with temporary elevated privileges to perform operations, either as the superuser or another user.
+
+If audit is using the "auditctl" tool to load the rules, run the following command:
+
+<pre>$ sudo grep execve /etc/audit/audit.rules</pre>
+
+If audit is using the "augenrules" tool to load the rules, run the following command:
+
+<pre>$ sudo grep -r execve /etc/audit/rules.d</pre>
+       <pre>-a always,exit -F arch=b32 -S execve -C euid!=uid -F auid!=unset -k user_emulation</pre>
+       <pre>-a always,exit -F arch=b64  S execve -C euid!=uid -F auid!=unset -k user_emulation</pre>
+
+If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.</td>
+</tr>
+<tr>
+<td>CCE-87439-6</td>
+<td>Record Events When Privileged Executables Are Run</td>
+<td>Verify the system generates an audit record when privileged functions are executed.
+
+If audit is using the "auditctl" tool to load the rules, run the following command:
+
+<pre>$ sudo grep execve /etc/audit/audit.rules</pre>
+
+If audit is using the "augenrules" tool to load the rules, run the following command:
+
+<pre>$ sudo grep -r execve /etc/audit/rules.d</pre>
+       <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
+       <pre>-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
+       <pre>-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
+       <pre>-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
+
+
+If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.
+If both the "b32" and "b64" audit rules for "SGID" files are not defined, this is a finding.</td>
+</tr>
+<tr>
 <td>CCE-82613-1</td>
 <td>Ensure auditd Collects System Administrator Actions</td>
 <td>
@@ -7576,6 +7943,36 @@ utility to read audit rules during daemon startup, add the following lines to
       </td>
 </tr>
 <tr>
+<td></td>
+<td>Record Attempts to perform maintenance activities</td>
+<td>The Red Hat Enterprise Linux CoreOS 4 operating system must generate audit records for
+privileged activities, nonlocal maintenance, diagnostic sessions and
+other system-level access.
+
+Verify the operating system audits activities performed during nonlocal
+maintenance and diagnostic sessions. Run the following command:
+<pre>$ sudo auditctl -l | grep sudo.log
+-w /var/log/sudo.log -p wa -k maintenance</pre>
+
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /var/log/sudo.log -p wa -k maintenance</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /var/log/sudo.log -p wa -k maintenance</pre>
+      </td>
+</tr>
+<tr>
 <td>CCE-82712-1</td>
 <td>Record Access Events to Audit Log Directory</td>
 <td>The audit system should collect access events to read audit log directory.
@@ -7602,6 +7999,23 @@ group account, change the mode of the audit log files with the following command
 Otherwise, change the mode of the audit log files with the following command:
 <pre>$ sudo chmod 0700 /var/log/audit</pre>
       </td>
+</tr>
+<tr>
+<td></td>
+<td>System Audit Logs Must Be Group Owned By Root</td>
+<td>All audit logs must be group owned by root user. The path for audit log can
+be configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
+
+To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
+
+  <pre>$ sudo chgrp root /var/log/audit/*</pre>
+  
+
+
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other
+than the <code>root</code> group account, change the group ownership of the audit logs
+to this specific group.</td>
 </tr>
 <tr>
 <td></td>
@@ -7970,6 +8384,48 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-a always,exit -F arch=b32 -S umount2 -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S umount2 -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+       </td>
+</tr>
+<tr>
+<td></td>
+<td>Record Any Attempts to Run chacl</td>
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/chacl -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/chacl -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+       </td>
+</tr>
+<tr>
+<td></td>
+<td>Record Any Attempts to Run setfacl</td>
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/setfacl -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/setfacl -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
@@ -8551,7 +9007,7 @@ If the system is 64 bit then also add the following lines:
 all users and root. The <code>open_by_handle_at</code> syscall can be used to create new files
 when O_CREAT flag is specified.
 
-The following auidt rules will asure that unsuccessful attempts to create a
+The following auidt rules will assure that unsuccessful attempts to create a
 file via <code>open_by_handle_at</code> syscall are collected.
 
 If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
@@ -8581,7 +9037,7 @@ If the system is 64 bit then also add the following lines:
 all users and root. The <code>open_by_handle_at</code> syscall can be used to modify files
 if called for write operation of with O_TRUNC_WRITE flag.
 
-The following auidt rules will asure that unsuccessful attempts to modify a
+The following auidt rules will assure that unsuccessful attempts to modify a
 file via <code>open_by_handle_at</code> syscall are collected.
 
 If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
@@ -8648,7 +9104,7 @@ If the system is 64 bit then also add the following lines:
 all users and root. The <code>open</code> syscall can be used to create new files
 when O_CREAT flag is specified.
 
-The following auidt rules will asure that unsuccessful attempts to create a
+The following auidt rules will assure that unsuccessful attempts to create a
 file via <code>open</code> syscall are collected.
 
 If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
@@ -8677,7 +9133,7 @@ If the system is 64 bit then also add the following lines:
 <td>The audit system should collect detailed unauthorized file accesses for
 all users and root. The <code>open</code> syscall can be used to modify files
 if called for write operation of with O_TRUNC_WRITE flag.
-The following auidt rules will asure that unsuccessful attempts to modify a
+The following auidt rules will assure that unsuccessful attempts to modify a
 file via <code>open</code> syscall are collected.
 If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
 program to read audit rules during daemon startup (the default), add the
@@ -8769,7 +9225,7 @@ If the system is 64 bit then also add the following lines:
 all users and root. The <code>openat</code> syscall can be used to create new files
 when O_CREAT flag is specified.
 
-The following auidt rules will asure that unsuccessful attempts to create a
+The following auidt rules will assure that unsuccessful attempts to create a
 file via <code>openat</code> syscall are collected.
 
 If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
@@ -8799,7 +9255,7 @@ If the system is 64 bit then also add the following lines:
 all users and root. The <code>openat</code> syscall can be used to modify files
 if called for write operation of with O_TRUNC_WRITE flag.
 
-The following auidt rules will asure that unsuccessful attempts to modify a
+The following auidt rules will assure that unsuccessful attempts to modify a
 file via <code>openat</code> syscall are collected.
 
 If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
@@ -9027,7 +9483,8 @@ add the lines to file <code>/etc/audit/audit.rules</code>.</td>
 <tr>
 <td>CCE-82580-2</td>
 <td>Ensure auditd Collects Information on Kernel Module Unloading - delete_module</td>
-<td>To capture kernel module unloading events, use following line, setting ARCH to
+<td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
@@ -9043,24 +9500,25 @@ add the line to file <code>/etc/audit/audit.rules</code>.</td>
 <tr>
 <td>CCE-82581-0</td>
 <td>Ensure auditd Collects Information on Kernel Module Loading and Unloading - finit_module</td>
-<td>If the <code>auditd</code> daemon is configured to use the <code>augenrules</code> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+<td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
-    If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility to read audit
-rules during daemon startup, add the following lines to <code>/etc/audit/audit.rules</code> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
-       </td>
+
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
 </tr>
 <tr>
 <td>CCE-82582-8</td>
 <td>Ensure auditd Collects Information on Kernel Module Loading - init_module</td>
-<td>To capture kernel module loading events, use following line, setting ARCH to
+<td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
@@ -9464,6 +9922,27 @@ following form to <code>/etc/audit/audit.rules</code>:
        </td>
 </tr>
 <tr>
+<td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/kmod -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/kmod -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+       </td>
+</tr>
+<tr>
 <td>CCE-82595-0</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - mount</td>
 <td>
@@ -9716,6 +10195,27 @@ following form to <code>/etc/audit/audit.rules</code>:
        </td>
 </tr>
 <tr>
+<td></td>
+<td>Record Any Attempts to Run ssh-agent</td>
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/ssh-agent -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/ssh-agent -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+       </td>
+</tr>
+<tr>
 <td>CCE-82604-0</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - ssh-keysign</td>
 <td>
@@ -9926,6 +10426,27 @@ following form to <code>/etc/audit/audit.rules</code>:
        </td>
 </tr>
 <tr>
+<td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - unix_update</td>
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/unix_update -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/unix_update -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+       </td>
+</tr>
+<tr>
 <td>CCE-82610-7</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - userhelper</td>
 <td>
@@ -9944,6 +10465,27 @@ If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the
 following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+       </td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - usermod</td>
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/usermod -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/usermod -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
@@ -10443,6 +10985,93 @@ This is the default setting.</td>
 </tr>
 <tr>
 <td></td>
+<td>Verify that audit tools are owned by group root</td>
+<td>The Red Hat Enterprise Linux CoreOS 4 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %G" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl root
+
+/sbin/aureport root
+
+/sbin/ausearch root
+
+/sbin/autrace root
+
+/sbin/auditd root
+
+/sbin/audispd root
+
+/sbin/augenrules root
+
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify that audit tools are owned by root</td>
+<td>The Red Hat Enterprise Linux CoreOS 4 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %U" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl root
+
+/sbin/aureport root
+
+/sbin/ausearch root
+
+/sbin/autrace root
+
+/sbin/auditd root
+
+/sbin/audispd root
+
+/sbin/augenrules root
+
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify that audit tools Have Mode 0755 or less</td>
+<td>The Red Hat Enterprise Linux CoreOS 4 operating system audit tools must have the proper
+permissions configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %a" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl 755
+
+/sbin/aureport 755
+
+/sbin/ausearch 755
+
+/sbin/autrace 755
+
+/sbin/auditd 755
+
+/sbin/audispd 755
+
+/sbin/augenrules 755
+
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td></td>
 <td>Configure auditing of unsuccessful file accesses</td>
 <td>Ensure that unsuccessful attempts to access a file are audited.
 
@@ -10456,7 +11085,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -10472,7 +11101,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -10521,7 +11150,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -10540,7 +11169,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -10557,7 +11186,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -10572,7 +11201,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -10612,7 +11241,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -10631,7 +11260,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -10778,7 +11407,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -10795,7 +11424,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -10810,7 +11439,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -10827,7 +11456,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -10842,7 +11471,7 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are aligned with your needs.</td>
 </tr>
 <tr>
 <td></td>

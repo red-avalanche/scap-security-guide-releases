@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>373</td>
+			<td>374</td>
 			<td>0</td>
-			<td>373</td>
+			<td>374</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -1622,16 +1622,18 @@ $ sudo chgrp root [FILE]</pre></td>
 	<td><pre>If OL 8 were to allow any user to make changes to software libraries, those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process. 
  
 This requirement applies to OL 8 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files contained in the following directories have mode "755" or less permissive with the following command: 
- 
-$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 -perm /022 -type f -exec ls -l {} \;
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" have mode 0755 or less permissive.
 
-If any system-wide shared library file is found to be group-writable or world-writable, this is a finding.</pre></td>
-	<td><pre>Configure the library files to be protected from unauthorized access. Run the following command, replacing "[FILE]" with any library file with a mode more permissive than 755. 
- 
-$ sudo chmod 755 [FILE]</pre></td>
+Check that the systemwide shared library files have mode 0755 or less permissive with the following command:
+
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' -perm /022 -exec stat -c "%n %a" {} +
+
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" have mode 0755 or less permissive with the following command.
+
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' -perm /022 -exec chmod go-w {} +</pre></td>
 	<td>OL08-00-010330</td>
-	<td>SV-248570r991560_rule</td>
+	<td>SV-248570r1101862_rule</td>
 </tr>
 
 <tr>
@@ -1643,18 +1645,16 @@ $ sudo chmod 755 [FILE]</pre></td>
 	<td><pre>If OL 8 were to allow any user to make changes to software libraries, those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process. 
  
 This requirement applies to OL 8 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files are owned by "root" with the following command: 
- 
-$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -user root -exec ls -l {} \;
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are owned by root with the following command:
 
-If any system-wide shared library file is returned, this is a finding.</pre></td>
-	<td><pre>Configure the system-wide shared library files (/lib, /lib64, /usr/lib, and /usr/lib64) to be protected from unauthorized access. 
- 
-Run the following command, replacing "[FILE]" with any library file not owned by "root". 
- 
-$ sudo chown root [FILE]</pre></td>
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -exec stat -c "%n %U" {} +
+
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" to be owned by root with the following command:
+
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -exec chown root {} +</pre></td>
 	<td>OL08-00-010340</td>
-	<td>SV-248571r991560_rule</td>
+	<td>SV-248571r1101865_rule</td>
 </tr>
 
 <tr>
@@ -1666,18 +1666,16 @@ $ sudo chown root [FILE]</pre></td>
 	<td><pre>If OL 8 were to allow any user to make changes to software libraries, those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to OL 8 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files are group-owned by "root" with the following command:
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are group owned by root with the following command:
 
-$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \;
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec stat -c "%n %G" {} +
 
-If any system-wide shared library file is returned, this is a finding.</pre></td>
-	<td><pre>Configure the system-wide shared library files (/lib, /lib64, /usr/lib, and /usr/lib64) to be protected from unauthorized access.
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are group owned by root with the following command:
 
-Run the following command, replacing "[FILE]" with any library file not group-owned by "root".
-
-$ sudo chgrp root [FILE]</pre></td>
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec chown :root {} +</pre></td>
 	<td>OL08-00-010350</td>
-	<td>SV-248572r991560_rule</td>
+	<td>SV-248572r1101868_rule</td>
 </tr>
 
 <tr>
@@ -2105,7 +2103,7 @@ Satisfies: SRG-OS-000373-GPOS-00156, SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPO
 
 Check that the "/etc/sudoers" file has no occurrences of "NOPASSWD" by running the following command:
 
-$ sudo grep -ir nopasswd /etc/sudoers /etc/sudoers.d
+$ sudo grep -iR 'NOPASSWD' /etc/sudoers /etc/sudoers.d/
 
 %admin ALL=(ALL) NOPASSWD: ALL
 
@@ -2122,7 +2120,7 @@ $ sudo grep -ir nopasswd /etc/sudoers.d
 
 Remove any occurrences of "NOPASSWD" tags in the file.</pre></td>
 	<td>OL08-00-010380</td>
-	<td>SV-248581r1050789_rule</td>
+	<td>SV-248581r1101870_rule</td>
 </tr>
 
 <tr>
@@ -2138,12 +2136,12 @@ When operating systems provide the capability to escalate a functional capabilit
 Satisfies: SRG-OS-000373-GPOS-00156, SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPOS-00158</pre></td>
 	<td><pre>Verify that the "/etc/sudoers" file has no occurrences of "!authenticate" by running the following command:
 
-     $ sudo grep -Ei !authenticate /etc/sudoers /etc/sudoers.d/*
+     $ sudo egrep -iR '!authenticate' /etc/sudoers /etc/sudoers.d/
 
 If any occurrences of "!authenticate" return from the command, this is a finding.</pre></td>
 	<td><pre>Remove any occurrence of "!authenticate" found in the "/etc/sudoers" file or files in the "/etc/sudoers.d" directory.</pre></td>
 	<td>OL08-00-010381</td>
-	<td>SV-248582r1050789_rule</td>
+	<td>SV-248582r1101872_rule</td>
 </tr>
 
 <tr>
@@ -2154,7 +2152,7 @@ If any occurrences of "!authenticate" return from the command, this is a finding
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>The sudo command allows a user to execute programs with elevated (administrator) privileges. It prompts the user for their password and confirms your request to execute a command by checking a file, called sudoers. If the "sudoers" file is not configured correctly, any user defined on the system can initiate privileged actions on the target system.</pre></td>
 	<td><pre>Verify the "sudoers" file restricts sudo access to authorized personnel.
-$ sudo grep -iw 'ALL' /etc/sudoers /etc/sudoers.d/*
+$ sudo grep -iwR 'ALL' /etc/sudoers /etc/sudoers.d/ | grep -v '#'
 
 If the either of the following entries are returned, this is a finding:
 ALL     ALL=(ALL) ALL
@@ -2163,7 +2161,7 @@ ALL     ALL=(ALL:ALL) ALL</pre></td>
 ALL     ALL=(ALL) ALL
 ALL     ALL=(ALL:ALL) ALL</pre></td>
 	<td>OL08-00-010382</td>
-	<td>SV-248583r991589_rule</td>
+	<td>SV-248583r1101874_rule</td>
 </tr>
 
 <tr>
@@ -8758,21 +8756,21 @@ $ActionSendStreamDriverAuthMode x509/name</pre></td>
 	<td>medium</td>
 	<td>OL 8 must take action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity.</td>
 	<td>SRG-OS-000343-GPOS-00134</td>
-	<td><pre>If security personnel are not notified immediately when storage volume reaches 75 percent utilization, they are unable to plan for audit record storage capacity expansion.</pre></td>
+	<td><pre>If security personnel are not notified immediately when storage volume reaches a maximum of 75 percent utilization, they are unable to plan for audit record storage capacity expansion. The notification can be set to trigger at lower utilization thresholds at the information system security officer's (ISSO's) discretion.</pre></td>
 	<td><pre>Verify OL 8 takes action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following commands: 
  
 $ sudo grep -w space_left /etc/audit/auditd.conf 
  
 space_left = 25% 
  
-If the value of the "space_left" keyword is not set to "25%" or if the line is commented out, ask the SA to demonstrate how the system is providing real-time alerts to the SA and ISSO. 
+If the value of the "space_left" keyword is not set to 25 percent or greater of the storage volume allocated to audit logs, or if the line is commented out, ask the system administrator (SA) to indicate how the system is providing real-time alerts to the SA and ISSO. If the "space_left" value is not configured to the value 25 percent or more, this is a finding. 
  
 If there is no evidence that real-time alerts are configured on the system, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to initiate an action to notify the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity by adding/modifying the following line in the "/etc/audit/auditd.conf" file. 
+	<td><pre>Configure OL 8 to initiate an action to notify the SA and ISSO (at a minimum) when allocated audit record storage volume reaches (at most) 75 percent of the repository maximum audit record storage capacity by adding/modifying the following line in the /etc/audit/auditd.conf file.
  
 space_left = 25%</pre></td>
 	<td>OL08-00-030730</td>
-	<td>SV-248818r971542_rule</td>
+	<td>SV-248818r1106143_rule</td>
 </tr>
 
 <tr>
@@ -11890,26 +11888,31 @@ X11UseLocalhost yes</pre></td>
 	<td>If the Trivial File Transfer Protocol (TFTP) server is required, the OL 8 TFTP daemon must be configured to operate in secure mode.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>Restricting TFTP to a specific directory prevents remote users from copying, transferring, or overwriting system files.</pre></td>
-	<td><pre>Verify the TFTP daemon is configured to operate in secure mode with the following commands: 
- 
-$ sudo yum list installed tftp-server 
- 
-tftp-server.x86_64 x.x-x.el8 
- 
-If a TFTP server is not installed, this is not applicable. 
- 
-If a TFTP server is installed, check for the server arguments with the following command: 
- 
-$ sudo grep server_args /etc/xinetd.d/tftp 
- 
-server_args = -s /var/lib/tftpboot 
- 
-If the "server_args" line does not have a "-s" option and a subdirectory is not assigned, this is a finding.</pre></td>
-	<td><pre>Configure the TFTP daemon to operate in secure mode by adding the following line to "/etc/xinetd.d/tftp" (or modify the line to have the required value): 
- 
-server_args = -s /var/lib/tftpboot</pre></td>
+	<td><pre>Note: If TFTP is not required, it must not be installed. If TFTP is not installed, this rule is not applicable.
+
+Check to see if TFTP server is installed with the following command:
+
+$ sudo dnf list installed | grep tftp-server 
+tftp-server.x86_64 x.x-x.el8
+
+Verify the TFTP daemon, if tftp.server is installed, is configured to operate in secure mode with the following command:
+
+$ grep -i execstart /usr/lib/systemd/system/tftp.service
+ExecStart=/usr/sbin/in.tftpd -s /var/lib/tftpboot
+
+Note: The "-s" option ensures the TFTP server only serves files from the specified directory, which is a security measure to prevent unauthorized access to other parts of the file system.</pre></td>
+	<td><pre>Configure the TFTP daemon to operate in secure mode with the following command:
+$ sudo systemctl edit tftp.service
+
+In the editor, enter:
+[Service]
+ExecStart=/usr/sbin/in.tftpd -s /var/lib/tftpboot
+
+After making changes, reload the systemd daemon and restart the TFTP service as follows:
+$ sudo systemctl daemon-reload
+$ sudo systemctl restart tftp.service</pre></td>
 	<td>OL08-00-040350</td>
-	<td>SV-248902r991589_rule</td>
+	<td>SV-248902r1106146_rule</td>
 </tr>
 
 <tr>
@@ -12619,6 +12622,35 @@ The "logind" service must be restarted for the changes to take effect. To restar
      $ sudo systemctl restart systemd-logind</pre></td>
 	<td>OL08-00-020035</td>
 	<td>SV-257259r970703_rule</td>
+</tr>
+
+<tr>
+	<td>V-274876</td>
+	<td>CCI-000172</td>
+	<td>medium</td>
+	<td>OL 8  must audit any script or executable called by cron as root or by any privileged user.</td>
+	<td>SRG-OS-000471-GPOS-00215</td>
+	<td><pre>Any script or executable called by cron as root or by any privileged user must be owned by that user and must have the permissions 755 or more restrictive and should have no extended rights that allow any nonprivileged user to modify the script or executable.</pre></td>
+	<td><pre>Verify that OL 8 is configured to audit the execution of any system call made by cron as root or as any privileged user.
+
+$ sudo auditctl -l | grep /etc/cron.d
+-w /etc/cron.d -p wa -k cronjobs
+
+$ sudo auditctl -l | grep /var/spool/cron
+-w /var/spool/cron -p wa -k cronjobs
+
+If either of these commands do not return the expected output, or the lines are commented out, this is a finding.</pre></td>
+	<td><pre>Configure OL 8 to audit the execution of any system call made by cron as root or as any privileged user.
+
+Add or update the following file system rules to "/etc/audit/rules.d/audit.rules":
+auditctl -w /etc/cron.d/ -p wa -k cronjobs
+auditctl -w /var/spool/cron/ -p wa -k cronjobs
+
+To load the rules to the kernel immediately, use the following command:
+
+$ sudo augenrules --load</pre></td>
+	<td>OL08-00-030645</td>
+	<td>SV-274876r1106141_rule</td>
 </tr>
 
 </table>

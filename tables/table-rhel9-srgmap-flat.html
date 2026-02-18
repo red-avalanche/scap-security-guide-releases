@@ -774,7 +774,7 @@ depending on the OS version.</td>
     <td>This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
 after system reboot. From "pam_faillock" man pages:
 <pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
-boot so the access will be reenabled after system reboot. If that is undesirable, a different
+boot so the access will be re-enabled after system reboot. If that is undesirable, a different
 tally directory must be set with the "dir" option.</pre>
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
@@ -795,7 +795,7 @@ The output should show that dir is set to something other than "/var/run/failloc
     <td>This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
 after system reboot. From "pam_faillock" man pages:
 <pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
-boot so the access will be reenabled after system reboot. If that is undesirable, a different
+boot so the access will be re-enabled after system reboot. If that is undesirable, a different
 tally directory must be set with the "dir" option.</pre>
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
@@ -4012,7 +4012,8 @@ system, or having two lines for both b32 and b64 in case your system is 64-bit:
 Audit record content that may be necessary to satisfy this requirement includes, for example, time stamps, source and destination addresses, user/process identifiers, event descriptions, success/fail indications, filenames involved, and access control or flow control rules invoked.
 
 Associating event types with detected events in the operating system audit logs provides a means of investigating an attack; recognizing resource utilization or capacity thresholds; or identifying an improperly configured operating system.</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -4032,7 +4033,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to produce audit records containing information to establish what type of events occurred.</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -4063,18 +4065,19 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 Audit record content that may be necessary to satisfy this requirement includes, for example, time stamps, source and destination addresses, user/process identifiers, event descriptions, success/fail indications, filenames involved, and access control or flow control rules invoked.
 
 Associating event types with detected events in the operating system audit logs provides a means of investigating an attack; recognizing resource utilization or capacity thresholds; or identifying an improperly configured operating system.</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system produces audit records containing information to establish what type of events occurred. If it does not, this is a finding.</td>
     <td>To determine if the system is configured to audit calls to the
@@ -4083,18 +4086,19 @@ b64 as appropriate for your system:
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to produce audit records containing information to establish what type of events occurred.</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -4114,7 +4118,8 @@ b64 as appropriate for your system:
 Audit record content that may be necessary to satisfy this requirement includes, for example, time stamps, source and destination addresses, user/process identifiers, event descriptions, success/fail indications, filenames involved, and access control or flow control rules invoked.
 
 Associating event types with detected events in the operating system audit logs provides a means of investigating an attack; recognizing resource utilization or capacity thresholds; or identifying an improperly configured operating system.</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -4134,7 +4139,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to produce audit records containing information to establish what type of events occurred.</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -6455,50 +6461,50 @@ Audit record content that may be necessary to satisfy this requirement includes,
 
 Associating event types with detected events in the operating system audit logs provides a means of investigating an attack; recognizing resource utilization or capacity thresholds; or identifying an improperly configured operating system.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system produces audit records containing information to establish what type of events occurred. If it does not, this is a finding.</td>
     <td>Inspect the form of default GRUB 2 command line for the Linux operating system
-in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=8192</tt>,
+in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt>,
 then the parameter will be configured for newly installed kernels.
 First check if the GRUB recovery is enabled:
 <pre>$ sudo grep 'GRUB_DISABLE_RECOVERY' /etc/default/grub</pre>
 If this option is set to true, then check that a line is output by the following command:
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=8192.*' /etc/default/grub</pre>
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>
 If the recovery is disabled, check the line with
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=8192.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
 Run the following command:
-<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=8192'</pre>
+<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=<sub idref="var_audit_backlog_limit" />'</pre>
 The command should not return any output. Is it the case that audit backlog limit is not configured?</td>
     <td>Configure the operating system to produce audit records containing information to establish what type of events occurred.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>low</td>
@@ -8257,7 +8263,8 @@ system, or having two lines for both b32 and b64 in case your system is 64-bit:
     <td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
 
 At a minimum, the organization must audit the full-text recording of privileged commands. The organization must maintain audit trails in sufficient detail to reconstruct events to determine the cause and impact of compromise.</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -8277,7 +8284,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to generate audit records containing the full-text recording of privileged commands.</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -8306,18 +8314,19 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
 
 At a minimum, the organization must audit the full-text recording of privileged commands. The organization must maintain audit trails in sufficient detail to reconstruct events to determine the cause and impact of compromise.</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records containing the full-text recording of privileged commands. If it does not, this is a finding.</td>
     <td>To determine if the system is configured to audit calls to the
@@ -8326,18 +8335,19 @@ b64 as appropriate for your system:
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to generate audit records containing the full-text recording of privileged commands.</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -8355,7 +8365,8 @@ b64 as appropriate for your system:
     <td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
 
 At a minimum, the organization must audit the full-text recording of privileged commands. The organization must maintain audit trails in sufficient detail to reconstruct events to determine the cause and impact of compromise.</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -8375,7 +8386,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to generate audit records containing the full-text recording of privileged commands.</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -10622,50 +10634,50 @@ For more details on configuring kernel arguments in bootable container images, p
 
 At a minimum, the organization must audit the full-text recording of privileged commands. The organization must maintain audit trails in sufficient detail to reconstruct events to determine the cause and impact of compromise.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records containing the full-text recording of privileged commands. If it does not, this is a finding.</td>
     <td>Inspect the form of default GRUB 2 command line for the Linux operating system
-in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=8192</tt>,
+in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt>,
 then the parameter will be configured for newly installed kernels.
 First check if the GRUB recovery is enabled:
 <pre>$ sudo grep 'GRUB_DISABLE_RECOVERY' /etc/default/grub</pre>
 If this option is set to true, then check that a line is output by the following command:
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=8192.*' /etc/default/grub</pre>
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>
 If the recovery is disabled, check the line with
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=8192.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
 Run the following command:
-<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=8192'</pre>
+<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=<sub idref="var_audit_backlog_limit" />'</pre>
 The command should not return any output. Is it the case that audit backlog limit is not configured?</td>
     <td>Configure the operating system to generate audit records containing the full-text recording of privileged commands.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>low</td>
@@ -10814,7 +10826,7 @@ via email for those situations:
 
 <pre>$ sudo grep action_mail_acct /etc/audit/auditd.conf
 
-action_mail_acct = <sub idref="var_auditd_action_mail_acct" /></pre> Is it the case that the value of the "action_mail_acct" keyword is not set to "<sub idref="var_auditd_action_mail_acct" />" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the retuned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?</td>
+action_mail_acct = <sub idref="var_auditd_action_mail_acct" /></pre> Is it the case that the value of the "action_mail_acct" keyword is not set to "<sub idref="var_auditd_action_mail_acct" />" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the returned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?</td>
     <td>Configure the operating system to alert the ISSO and SA (at a minimum) in the event of an audit processing failure.</td>
     <td>The <tt>auditd</tt> service can be configured to send email to
 a designated account in certain situations. Add or correct the following line
@@ -14125,7 +14137,8 @@ DoD has defined the list of events for which the operating system will provide a
 3) All account creations, modifications, disabling, and terminations; and 
 
 4) All kernel module load, unload, and restart actions.</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -14167,7 +14180,8 @@ DoD has defined the list of events for which the operating system will provide a
 3) All account creations, modifications, disabling, and terminations; and 
 
 4) All kernel module load, unload, and restart actions.</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -14208,18 +14222,19 @@ DoD has defined the list of events for which the operating system will provide a
 3) All account creations, modifications, disabling, and terminations; and 
 
 4) All kernel module load, unload, and restart actions.</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system provides audit record generation capability for DoD-defined auditable events for all operating system components. 
 
@@ -14250,18 +14265,19 @@ DoD has defined the list of events for which the operating system will provide a
 3) All account creations, modifications, disabling, and terminations; and 
 
 4) All kernel module load, unload, and restart actions.</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -14291,7 +14307,8 @@ DoD has defined the list of events for which the operating system will provide a
 3) All account creations, modifications, disabling, and terminations; and 
 
 4) All kernel module load, unload, and restart actions.</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -14333,7 +14350,8 @@ DoD has defined the list of events for which the operating system will provide a
 3) All account creations, modifications, disabling, and terminations; and 
 
 4) All kernel module load, unload, and restart actions.</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -17948,19 +17966,19 @@ DoD has defined the list of events for which the operating system will provide a
 
 4) All kernel module load, unload, and restart actions.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>Applicable - Configurable</td>
@@ -17978,16 +17996,16 @@ DoD has defined the list of events for which the operating system will provide a
 
 If it does not, this is a finding.</td>
     <td>Inspect the form of default GRUB 2 command line for the Linux operating system
-in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=8192</tt>,
+in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt>,
 then the parameter will be configured for newly installed kernels.
 First check if the GRUB recovery is enabled:
 <pre>$ sudo grep 'GRUB_DISABLE_RECOVERY' /etc/default/grub</pre>
 If this option is set to true, then check that a line is output by the following command:
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=8192.*' /etc/default/grub</pre>
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>
 If the recovery is disabled, check the line with
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=8192.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
 Run the following command:
-<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=8192'</pre>
+<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=<sub idref="var_audit_backlog_limit" />'</pre>
 The command should not return any output. Is it the case that audit backlog limit is not configured?</td>
     <td>Configure the operating system to provide audit record generation capability for DoD-defined auditable events for all operating system components.
 
@@ -18001,19 +18019,19 @@ DoD has defined the list of events for which the operating system will provide a
 
 4) All kernel module load, unload, and restart actions.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>low</td>
@@ -21314,7 +21332,12 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/false</pre></td>
+<pre>install atm /bin/false</pre>
+This entry will cause a non-zero return value during a <code>atm</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install atm /bin/true</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured to disable non-essential capabilities. If it does not, this is a finding.</td>
     <td>
@@ -21331,7 +21354,12 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/false</pre></td>
+<pre>install atm /bin/false</pre>
+This entry will cause a non-zero return value during a <code>atm</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install atm /bin/true</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -21396,7 +21424,12 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/false</pre></td>
+<pre>install can /bin/false</pre>
+This entry will cause a non-zero return value during a <code>can</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install can /bin/true</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured to disable non-essential capabilities. If it does not, this is a finding.</td>
     <td>
@@ -21413,7 +21446,12 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/false</pre></td>
+<pre>install can /bin/false</pre>
+This entry will cause a non-zero return value during a <code>can</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install can /bin/true</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -21437,6 +21475,11 @@ Examples of non-essential capabilities include, but are not limited to, games, s
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>cramfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install cramfs /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -21458,6 +21501,11 @@ Run the following command to search for such lines in all files in <code>/etc/mo
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>cramfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install cramfs /bin/true</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -21489,7 +21537,12 @@ high-speed real-time communication.
 
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
-<pre>install firewire-core /bin/false</pre></td>
+<pre>install firewire-core /bin/false</pre>
+This entry will cause a non-zero return value during a <code>firewire-core</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install firewire-core /bin/true</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured to disable non-essential capabilities. If it does not, this is a finding.</td>
     <td>
@@ -21505,7 +21558,12 @@ high-speed real-time communication.
 
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
-<pre>install firewire-core /bin/false</pre></td>
+<pre>install firewire-core /bin/false</pre>
+This entry will cause a non-zero return value during a <code>firewire-core</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install firewire-core /bin/true</pre></td>
     <td>low</td>
     <td></td>
     <td></td>
@@ -21532,7 +21590,12 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/false</pre></td>
+<pre>install sctp /bin/false</pre>
+This entry will cause a non-zero return value during a <code>sctp</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install sctp /bin/true</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured to disable non-essential capabilities. If it does not, this is a finding.</td>
     <td>
@@ -21550,7 +21613,12 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/false</pre></td>
+<pre>install sctp /bin/false</pre>
+This entry will cause a non-zero return value during a <code>sctp</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install sctp /bin/true</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -21576,7 +21644,12 @@ cluster.
 
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
-<pre>install tipc /bin/false</pre></td>
+<pre>install tipc /bin/false</pre>
+This entry will cause a non-zero return value during a <code>tipc</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install tipc /bin/true</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured to disable non-essential capabilities. If it does not, this is a finding.</td>
     <td>
@@ -21593,7 +21666,12 @@ cluster.
 
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
-<pre>install tipc /bin/false</pre></td>
+<pre>install tipc /bin/false</pre>
+This entry will cause a non-zero return value during a <code>tipc</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install tipc /bin/true</pre></td>
     <td>low</td>
     <td></td>
     <td></td>
@@ -23310,6 +23388,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/false</pre>
+This entry will cause a non-zero return value during a <code>usb-storage</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install usb-storage /bin/true</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -23330,6 +23413,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/false</pre>
+This entry will cause a non-zero return value during a <code>usb-storage</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install usb-storage /bin/true</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -23537,7 +23625,7 @@ If the symlink exists, Kerberos is configured to use the system-wide crypto poli
     <td>Verify the operating system uses mechanisms meeting the requirements of applicable federal laws, Executive orders, directives, policies, regulations, standards, and guidance for authentication to a cryptographic module. If it does not, this is a finding.</td>
     <td>Check that the symlink exists and target the correct Kerberos crypto policy, with the following command:
 <pre>file /etc/krb5.conf.d/crypto-policies</pre>
-If command ouput shows the following line, Kerberos is configured to use the system-wide crypto policy.
+If command output shows the following line, Kerberos is configured to use the system-wide crypto policy.
 <pre>/etc/krb5.conf.d/crypto-policies: symbolic link to /etc/crypto-policies/back-ends/krb5.config</pre> Is it the case that the symlink does not exist or points to a different target?</td>
     <td>Configure the operating system to use mechanisms meeting the requirements of applicable federal laws, Executive orders, directives, policies, regulations, standards, and guidance for authentication to a cryptographic module.</td>
     <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
@@ -25179,7 +25267,7 @@ run the command:
 <pre>$ ls -lL /var/log</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /var/log does not have a group owner of
 root
 ?</td>
@@ -25214,7 +25302,7 @@ run the command:
 <pre>$ ls -lL /var/log/messages</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /var/log/messages does not have a group owner of
 root
 ?</td>
@@ -27516,50 +27604,50 @@ For more details on configuring kernel arguments in bootable container images, p
 
     <td>If auditing is enabled late in the start-up process, the actions of some start-up processes may not be audited. Some audit systems also maintain state information only available if auditing is enabled before a given process is created.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system initiates session audits at system start-up. If it does not, this is a finding.</td>
     <td>Inspect the form of default GRUB 2 command line for the Linux operating system
-in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=8192</tt>,
+in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt>,
 then the parameter will be configured for newly installed kernels.
 First check if the GRUB recovery is enabled:
 <pre>$ sudo grep 'GRUB_DISABLE_RECOVERY' /etc/default/grub</pre>
 If this option is set to true, then check that a line is output by the following command:
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=8192.*' /etc/default/grub</pre>
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>
 If the recovery is disabled, check the line with
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=8192.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
 Run the following command:
-<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=8192'</pre>
+<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=<sub idref="var_audit_backlog_limit" />'</pre>
 The command should not return any output. Is it the case that audit backlog limit is not configured?</td>
     <td>Configure the operating system to initiate session audits at system start-up.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>low</td>
@@ -31144,7 +31232,7 @@ depending on the OS version.</td>
     <td>This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
 after system reboot. From "pam_faillock" man pages:
 <pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
-boot so the access will be reenabled after system reboot. If that is undesirable, a different
+boot so the access will be re-enabled after system reboot. If that is undesirable, a different
 tally directory must be set with the "dir" option.</pre>
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
@@ -31165,7 +31253,7 @@ The output should show that dir is set to something other than "/var/run/failloc
     <td>This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
 after system reboot. From "pam_faillock" man pages:
 <pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
-boot so the access will be reenabled after system reboot. If that is undesirable, a different
+boot so the access will be re-enabled after system reboot. If that is undesirable, a different
 tally directory must be set with the "dir" option.</pre>
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
@@ -31452,50 +31540,50 @@ following command:
 
 The task of allocating audit record storage capacity is usually performed during initial installation of the operating system.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system allocates audit record storage capacity to store at least one week's worth of audit records, when audit records are not immediately sent to a central audit record storage facility. If it does not, this is a finding.</td>
     <td>Inspect the form of default GRUB 2 command line for the Linux operating system
-in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=8192</tt>,
+in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt>,
 then the parameter will be configured for newly installed kernels.
 First check if the GRUB recovery is enabled:
 <pre>$ sudo grep 'GRUB_DISABLE_RECOVERY' /etc/default/grub</pre>
 If this option is set to true, then check that a line is output by the following command:
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=8192.*' /etc/default/grub</pre>
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>
 If the recovery is disabled, check the line with
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=8192.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
 Run the following command:
-<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=8192'</pre>
+<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=<sub idref="var_audit_backlog_limit" />'</pre>
 The command should not return any output. Is it the case that audit backlog limit is not configured?</td>
     <td>Configure the operating system to allocate audit record storage capacity to store at least one week's worth of audit records, when audit records are not immediately sent to a central audit record storage facility.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>low</td>
@@ -31793,7 +31881,7 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+When using <tt>rsyslogd</tt> to off-load logs off a encryption system must be used.
 
 Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
 <pre>$ActionSendStreamDriverMode 1</pre>
@@ -31817,7 +31905,7 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+When using <tt>rsyslogd</tt> to off-load logs off a encryption system must be used.
 
 Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
 <pre>$ActionSendStreamDriverMode 1</pre>
@@ -32005,7 +32093,7 @@ via email for those situations:
 
 <pre>$ sudo grep action_mail_acct /etc/audit/auditd.conf
 
-action_mail_acct = <sub idref="var_auditd_action_mail_acct" /></pre> Is it the case that the value of the "action_mail_acct" keyword is not set to "<sub idref="var_auditd_action_mail_acct" />" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the retuned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?</td>
+action_mail_acct = <sub idref="var_auditd_action_mail_acct" /></pre> Is it the case that the value of the "action_mail_acct" keyword is not set to "<sub idref="var_auditd_action_mail_acct" />" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the returned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?</td>
     <td>Configure the operating system to immediately notify the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75% of the repository maximum audit record storage capacity.</td>
     <td>The <tt>auditd</tt> service can be configured to send email to
 a designated account in certain situations. Add or correct the following line
@@ -33168,50 +33256,6 @@ The operating system or software configuration management utility must enforce c
 
 
 
-
-  <tr>
-    <td>CCI-001744</td>
-    <td>SRG-OS-000363-GPOS-00150</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must notify designated personnel if baseline configurations are changed in an unauthorized manner.</td>
-
-    <td>CCE-83437-4: Configure Periodic Execution of AIDE</td>
-
-    <td>Unauthorized changes to the baseline configuration could make the system vulnerable to various attacks or allow unauthorized access to the operating system. Changes to operating system configurations can have unintended side effects, some of which may be relevant to security.
-
-Detecting such changes and providing an automated response can help avoid unintended, negative consequences that could ultimately affect the security state of the operating system. The operating system's IMO/ISSO and SAs must be notified via email and/or monitoring system trap when there is an unauthorized modification of a configuration item.</td>
-    <td>At a minimum, AIDE should be configured to run a weekly scan.
-To implement a daily execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
-To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
-AIDE can be executed periodically through other means; this is merely one example.
-The usage of cron's special time codes, such as  <tt>@daily</tt> and
-<tt>@weekly</tt> is acceptable.</td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system notifies designated personnel if baseline configurations are changed in an unauthorized manner. If it does not, this is a finding.</td>
-    <td>Verify the operating system routinely checks the baseline configuration for unauthorized changes.
-
-To determine that periodic AIDE execution has been scheduled, run the following command:
-<pre>$ grep aide /etc/crontab</pre>
-The output should return something similar to the following:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
-
-NOTE: The usage of special cron times, such as @daily or @weekly, is acceptable. Is it the case that AIDE is not configured to scan periodically?</td>
-    <td>Configure the operating system to notify designated personnel if baseline configurations are changed in an unauthorized manner.</td>
-    <td>At a minimum, AIDE should be configured to run a weekly scan.
-To implement a daily execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
-To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
-AIDE can be executed periodically through other means; this is merely one example.
-The usage of cron's special time codes, such as  <tt>@daily</tt> and
-<tt>@weekly</tt> is acceptable.</td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
 
   <tr>
     <td>CCI-001744</td>
@@ -35824,6 +35868,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/false</pre>
+This entry will cause a non-zero return value during a <code>usb-storage</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install usb-storage /bin/true</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -35844,6 +35893,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/false</pre>
+This entry will cause a non-zero return value during a <code>usb-storage</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install usb-storage /bin/true</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -37733,7 +37787,8 @@ This requirement addresses auditing-related issues associated with maintenance t
 Nonlocal maintenance and diagnostic activities are those activities conducted by individuals communicating through a network, either an external network (e.g., the Internet) or an internal network. Local maintenance and diagnostic activities are those activities carried out by individuals physically present at the information system or information system component and not communicating across a network connection.
 
 This requirement applies to hardware/software diagnostic test equipment or tools. This requirement does not cover hardware/software components that may support information system maintenance, yet are a part of the system, for example, the software implementing "ping," "ls," "ipconfig," or the hardware and software implementing the monitoring port of an Ethernet switch.</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -37753,7 +37808,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -37786,18 +37842,19 @@ This requirement addresses auditing-related issues associated with maintenance t
 Nonlocal maintenance and diagnostic activities are those activities conducted by individuals communicating through a network, either an external network (e.g., the Internet) or an internal network. Local maintenance and diagnostic activities are those activities carried out by individuals physically present at the information system or information system component and not communicating across a network connection.
 
 This requirement applies to hardware/software diagnostic test equipment or tools. This requirement does not cover hardware/software components that may support information system maintenance, yet are a part of the system, for example, the software implementing "ping," "ls," "ipconfig," or the hardware and software implementing the monitoring port of an Ethernet switch.</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system audits all activities performed during nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
     <td>To determine if the system is configured to audit calls to the
@@ -37806,18 +37863,19 @@ b64 as appropriate for your system:
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -37839,7 +37897,8 @@ This requirement addresses auditing-related issues associated with maintenance t
 Nonlocal maintenance and diagnostic activities are those activities conducted by individuals communicating through a network, either an external network (e.g., the Internet) or an internal network. Local maintenance and diagnostic activities are those activities carried out by individuals physically present at the information system or information system component and not communicating across a network connection.
 
 This requirement applies to hardware/software diagnostic test equipment or tools. This requirement does not cover hardware/software components that may support information system maintenance, yet are a part of the system, for example, the software implementing "ping," "ls," "ipconfig," or the hardware and software implementing the monitoring port of an Ethernet switch.</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -37859,7 +37918,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -40386,50 +40446,50 @@ Nonlocal maintenance and diagnostic activities are those activities conducted by
 
 This requirement applies to hardware/software diagnostic test equipment or tools. This requirement does not cover hardware/software components that may support information system maintenance, yet are a part of the system, for example, the software implementing "ping," "ls," "ipconfig," or the hardware and software implementing the monitoring port of an Ethernet switch.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system audits all activities performed during nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
     <td>Inspect the form of default GRUB 2 command line for the Linux operating system
-in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=8192</tt>,
+in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt>,
 then the parameter will be configured for newly installed kernels.
 First check if the GRUB recovery is enabled:
 <pre>$ sudo grep 'GRUB_DISABLE_RECOVERY' /etc/default/grub</pre>
 If this option is set to true, then check that a line is output by the following command:
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=8192.*' /etc/default/grub</pre>
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>
 If the recovery is disabled, check the line with
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=8192.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
 Run the following command:
-<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=8192'</pre>
+<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=<sub idref="var_audit_backlog_limit" />'</pre>
 The command should not return any output. Is it the case that audit backlog limit is not configured?</td>
     <td>Configure the operating system to audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>low</td>
@@ -42423,52 +42483,6 @@ Then reboot the system.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must perform verification of the correct operation of security functions: upon system start-up and/or restart; upon command by a user with privileged access; and/or every 30 days.</td>
 
-    <td>CCE-83437-4: Configure Periodic Execution of AIDE</td>
-
-    <td>Without verification of the security functions, security functions may not operate correctly and the failure may go unnoticed. Security function is defined as the hardware, software, and/or firmware of the information system responsible for enforcing the system security policy and supporting the isolation of code and data on which the protection is based. Security functionality includes, but is not limited to, establishing system accounts, configuring access authorizations (i.e., permissions, privileges), setting events to be audited, and setting intrusion detection parameters.
-
-Notifications provided by information systems include, for example, electronic alerts to system administrators, messages to local computer consoles, and/or hardware indications, such as lights.
-
-This requirement applies to operating systems performing security function verification/testing and/or systems and environments that require this functionality.</td>
-    <td>At a minimum, AIDE should be configured to run a weekly scan.
-To implement a daily execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
-To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
-AIDE can be executed periodically through other means; this is merely one example.
-The usage of cron's special time codes, such as  <tt>@daily</tt> and
-<tt>@weekly</tt> is acceptable.</td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system performs verification of the correct operation of security functions: upon system start-up and/or restart; upon command by a user with privileged access; and/or every 30 days. If it does not, this is a finding.</td>
-    <td>Verify the operating system routinely checks the baseline configuration for unauthorized changes.
-
-To determine that periodic AIDE execution has been scheduled, run the following command:
-<pre>$ grep aide /etc/crontab</pre>
-The output should return something similar to the following:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
-
-NOTE: The usage of special cron times, such as @daily or @weekly, is acceptable. Is it the case that AIDE is not configured to scan periodically?</td>
-    <td>Configure the operating system to perform verification of the correct operation of security functions: upon system start-up and/or restart; upon command by a user with privileged access; and/or every 30 days.</td>
-    <td>At a minimum, AIDE should be configured to run a weekly scan.
-To implement a daily execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
-To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
-AIDE can be executed periodically through other means; this is merely one example.
-The usage of cron's special time codes, such as  <tt>@daily</tt> and
-<tt>@weekly</tt> is acceptable.</td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-002699</td>
-    <td>SRG-OS-000446-GPOS-00200</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must perform verification of the correct operation of security functions: upon system start-up and/or restart; upon command by a user with privileged access; and/or every 30 days.</td>
-
     <td>CCE-90844-2: Configure Notification of Post-AIDE Scan Details</td>
 
     <td>Without verification of the security functions, security functions may not operate correctly and the failure may go unnoticed. Security function is defined as the hardware, software, and/or firmware of the information system responsible for enforcing the system security policy and supporting the isolation of code and data on which the protection is based. Security functionality includes, but is not limited to, establishing system accounts, configuring access authorizations (i.e., permissions, privileges), setting events to be audited, and setting intrusion detection parameters.
@@ -42570,54 +42584,6 @@ utility to read audit rules during daemon startup, add the following lines to
 
 
 
-
-  <tr>
-    <td>CCI-002702</td>
-    <td>SRG-OS-000447-GPOS-00201</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must shut down the information system, restart the information system, and/or notify the system administrator when anomalies in the operation of any security functions are discovered.</td>
-
-    <td>CCE-83437-4: Configure Periodic Execution of AIDE</td>
-
-    <td>If anomalies are not acted upon, security functions may fail to secure the system. 
-
-Security function is defined as the hardware, software, and/or firmware of the information system responsible for enforcing the system security policy and supporting the isolation of code and data on which the protection is based. Security functionality includes, but is not limited to, establishing system accounts, configuring access authorizations (i.e., permissions, privileges), setting events to be audited, and setting intrusion detection parameters.
-
-Notifications provided by information systems include messages to local computer consoles, and/or hardware indications, such as lights.
-
-This capability must take into account operational requirements for availability for selecting an appropriate response. The organization may choose to shut down or restart the information system upon security function anomaly detection.</td>
-    <td>At a minimum, AIDE should be configured to run a weekly scan.
-To implement a daily execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
-To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
-AIDE can be executed periodically through other means; this is merely one example.
-The usage of cron's special time codes, such as  <tt>@daily</tt> and
-<tt>@weekly</tt> is acceptable.</td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system shuts down the information system, restarts the information system, and/or notifies the system administrator when anomalies in the operation of any security functions are discovered. If it does not, this is a finding.</td>
-    <td>Verify the operating system routinely checks the baseline configuration for unauthorized changes.
-
-To determine that periodic AIDE execution has been scheduled, run the following command:
-<pre>$ grep aide /etc/crontab</pre>
-The output should return something similar to the following:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
-
-NOTE: The usage of special cron times, such as @daily or @weekly, is acceptable. Is it the case that AIDE is not configured to scan periodically?</td>
-    <td>Configure the operating system to shut down the information system, restart the information system, and/or notify the system administrator when anomalies in the operation of the security functions are discovered.</td>
-    <td>At a minimum, AIDE should be configured to run a weekly scan.
-To implement a daily execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
-To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
-AIDE can be executed periodically through other means; this is merely one example.
-The usage of cron's special time codes, such as  <tt>@daily</tt> and
-<tt>@weekly</tt> is acceptable.</td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
 
   <tr>
     <td>CCI-002702</td>
@@ -45940,7 +45906,8 @@ system, or having two lines for both b32 and b64 in case your system is 64-bit:
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -45960,7 +45927,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -45989,18 +45957,19 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify privileges occur. If it does not, this is a finding.</td>
     <td>To determine if the system is configured to audit calls to the
@@ -46009,18 +45978,19 @@ b64 as appropriate for your system:
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -46038,7 +46008,8 @@ b64 as appropriate for your system:
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -46058,7 +46029,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -48305,50 +48277,50 @@ For more details on configuring kernel arguments in bootable container images, p
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify privileges occur. If it does not, this is a finding.</td>
     <td>Inspect the form of default GRUB 2 command line for the Linux operating system
-in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=8192</tt>,
+in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt>,
 then the parameter will be configured for newly installed kernels.
 First check if the GRUB recovery is enabled:
 <pre>$ sudo grep 'GRUB_DISABLE_RECOVERY' /etc/default/grub</pre>
 If this option is set to true, then check that a line is output by the following command:
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=8192.*' /etc/default/grub</pre>
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>
 If the recovery is disabled, check the line with
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=8192.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
 Run the following command:
-<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=8192'</pre>
+<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=<sub idref="var_audit_backlog_limit" />'</pre>
 The command should not return any output. Is it the case that audit backlog limit is not configured?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>low</td>
@@ -53906,7 +53878,8 @@ system, or having two lines for both b32 and b64 in case your system is 64-bit:
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -53926,7 +53899,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to generate audit records for privileged activities or other system-level access.</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -53955,18 +53929,19 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records for privileged activities or other system-level access. If it does not, this is a finding.</td>
     <td>To determine if the system is configured to audit calls to the
@@ -53975,18 +53950,19 @@ b64 as appropriate for your system:
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to generate audit records for privileged activities or other system-level access.</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -54004,7 +53980,8 @@ b64 as appropriate for your system:
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -54024,7 +54001,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to generate audit records for privileged activities or other system-level access.</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -56304,50 +56282,50 @@ For more details on configuring kernel arguments in bootable container images, p
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records for privileged activities or other system-level access. If it does not, this is a finding.</td>
     <td>Inspect the form of default GRUB 2 command line for the Linux operating system
-in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=8192</tt>,
+in <tt>/etc/default/grub</tt>. If it includes <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt>,
 then the parameter will be configured for newly installed kernels.
 First check if the GRUB recovery is enabled:
 <pre>$ sudo grep 'GRUB_DISABLE_RECOVERY' /etc/default/grub</pre>
 If this option is set to true, then check that a line is output by the following command:
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=8192.*' /etc/default/grub</pre>
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>
 If the recovery is disabled, check the line with
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=8192.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
+<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=<sub idref="var_audit_backlog_limit" />.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
 Run the following command:
-<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=8192'</pre>
+<pre>$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=<sub idref="var_audit_backlog_limit" />'</pre>
 The command should not return any output. Is it the case that audit backlog limit is not configured?</td>
     <td>Configure the operating system to generate audit records for privileged activities or other system-level access.</td>
     <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<sub idref="var_audit_backlog_limit" /></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<sub idref="var_audit_backlog_limit" /> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"</pre>
 If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
 The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
 <pre>
 # /usr/lib/bootc/kargs.d/10-example.toml
-kargs = ["audit_backlog_limit=8192"]
+kargs = ["audit_backlog_limit=<sub idref="var_audit_backlog_limit" />"]
 </pre>
 For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://bootc-dev.github.io/bootc//building/kernel-arguments.html'>Bootc documentation</a>.</td>
     <td>low</td>
@@ -56372,7 +56350,8 @@ For more details on configuring kernel arguments in bootable container images, p
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one. 
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -56392,7 +56371,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the audit system to audit the loading and unloading of dynamic kernel modules.</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -56421,18 +56401,19 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one. 
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the audit system is configured to audit the loading and unloading of dynamic kernel modules. If it does not, this is a finding.</td>
     <td>To determine if the system is configured to audit calls to the
@@ -56441,18 +56422,19 @@ b64 as appropriate for your system:
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the audit system to audit the loading and unloading of dynamic kernel modules.</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -56470,7 +56452,8 @@ b64 as appropriate for your system:
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one. 
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -56490,7 +56473,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the audit system to audit the loading and unloading of dynamic kernel modules.</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -58129,7 +58113,8 @@ following form to <tt>/etc/audit/audit.rules</tt>:
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -58149,7 +58134,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to generate audit records for all kernel module load, unload, and restart actions, and also for all program initiations.</td>
-    <td>To capture kernel module unloading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -58178,18 +58164,19 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records for all kernel module load, unload, and restart actions, and also for all program initiations. If it does not, this is a finding.</td>
     <td>To determine if the system is configured to audit calls to the
@@ -58198,18 +58185,19 @@ b64 as appropriate for your system:
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to generate audit records for all kernel module load, unload, and restart actions, and also for all program initiations.</td>
-    <td>If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -58227,7 +58215,8 @@ b64 as appropriate for your system:
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -58247,7 +58236,8 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
 If the system is configured to audit this activity, it will return a line.
  Is it the case that no line is returned?</td>
     <td>Configure the operating system to generate audit records for all kernel module load, unload, and restart actions, and also for all program initiations.</td>
-    <td>To capture kernel module loading events, use following line, setting ARCH to
+    <td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -58628,7 +58618,7 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+When using <tt>rsyslogd</tt> to off-load logs off a encryption system must be used.
 
 Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
 <pre>$ActionSendStreamDriverMode 1</pre>
@@ -58652,7 +58642,7 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+When using <tt>rsyslogd</tt> to off-load logs off a encryption system must be used.
 
 Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
 <pre>$ActionSendStreamDriverMode 1</pre>
@@ -59185,7 +59175,7 @@ Configuration settings are the set of parameters that can be changed in hardware
 add or correct the <tt>umask</tt> setting in <tt>/etc/profile</tt> to read as follows:
 <pre>umask <sub idref="var_accounts_user_umask" /></pre>
 
-Note that <tt>/etc/profile</tt> also reads scrips within <tt>/etc/profile.d</tt> directory.
+Note that <tt>/etc/profile</tt> also reads scripts within <tt>/etc/profile.d</tt> directory.
 These scripts are also valid files to set umask value. Therefore, they should also be
 considered during the check and properly remediated, if necessary.</td>
     <td>Applicable - Configurable</td>
@@ -59200,7 +59190,7 @@ or the "umask" parameter is missing or is commented out?</td>
 add or correct the <tt>umask</tt> setting in <tt>/etc/profile</tt> to read as follows:
 <pre>umask <sub idref="var_accounts_user_umask" /></pre>
 
-Note that <tt>/etc/profile</tt> also reads scrips within <tt>/etc/profile.d</tt> directory.
+Note that <tt>/etc/profile</tt> also reads scripts within <tt>/etc/profile.d</tt> directory.
 These scripts are also valid files to set umask value. Therefore, they should also be
 considered during the check and properly remediated, if necessary.</td>
     <td>medium</td>
@@ -60305,7 +60295,7 @@ run the command:
 <pre>$ ls -lL /etc/group-</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/group- does not have a group owner of
 root
 ?</td>
@@ -60340,7 +60330,7 @@ run the command:
 <pre>$ ls -lL /etc/gshadow-</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/gshadow- does not have a group owner of
 root
 ?</td>
@@ -60375,7 +60365,7 @@ run the command:
 <pre>$ ls -lL /etc/passwd-</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/passwd- does not have a group owner of
 root
 ?</td>
@@ -60410,7 +60400,7 @@ run the command:
 <pre>$ ls -lL /etc/shadow-</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/shadow- does not have a group owner of
 root
 ?</td>
@@ -60447,7 +60437,7 @@ run the command:
 <pre>$ ls -lL /etc/cron.d</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/cron.d does not have a group owner of
 root
 ?</td>
@@ -60486,7 +60476,7 @@ run the command:
 <pre>$ ls -lL /etc/cron.daily</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/cron.daily does not have a group owner of
 root
 ?</td>
@@ -60525,7 +60515,7 @@ run the command:
 <pre>$ ls -lL /etc/cron.deny</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/cron.deny does not have a group owner of
 root
 ?</td>
@@ -60564,7 +60554,7 @@ run the command:
 <pre>$ ls -lL /etc/cron.hourly</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/cron.hourly does not have a group owner of
 root
 ?</td>
@@ -60603,7 +60593,7 @@ run the command:
 <pre>$ ls -lL /etc/cron.monthly</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/cron.monthly does not have a group owner of
 root
 ?</td>
@@ -60642,7 +60632,7 @@ run the command:
 <pre>$ ls -lL /etc/cron.weekly</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/cron.weekly does not have a group owner of
 root
 ?</td>
@@ -60681,7 +60671,7 @@ run the command:
 <pre>$ ls -lL /etc/crontab</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/crontab does not have a group owner of
 root
 ?</td>
@@ -60718,7 +60708,7 @@ run the command:
 <pre>$ ls -lL /etc/group</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/group does not have a group owner of
 root
 ?</td>
@@ -60753,7 +60743,7 @@ run the command:
 <pre>$ ls -lL /etc/gshadow</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/gshadow does not have a group owner of
 root
 ?</td>
@@ -60788,7 +60778,7 @@ run the command:
 <pre>$ ls -lL /etc/passwd</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/passwd does not have a group owner of
 root
 ?</td>
@@ -60823,7 +60813,7 @@ run the command:
 <pre>$ ls -lL /etc/shadow</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/shadow does not have a group owner of
 root
 ?</td>
@@ -60863,7 +60853,7 @@ run the command:
 <pre>$ ls -lL /boot/grub2/grub.cfg</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /boot/grub2/grub.cfg does not have a group owner of
 root
 ?</td>
@@ -60905,7 +60895,7 @@ run the command:
 <pre>$ ls -lL /etc/ssh/sshd_config</pre>
 If properly configured, the output should indicate the following group-owner:
 
-  <code>root</code> 
+  <code>root</code>
    Is it the case that /etc/ssh/sshd_config does not have a group owner of
 root
 ?</td>
@@ -62467,7 +62457,12 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/false</pre></td>
+<pre>install atm /bin/false</pre>
+This entry will cause a non-zero return value during a <code>atm</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install atm /bin/true</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
     <td>
@@ -62484,7 +62479,12 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/false</pre></td>
+<pre>install atm /bin/false</pre>
+This entry will cause a non-zero return value during a <code>atm</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install atm /bin/true</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -62508,7 +62508,12 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/false</pre></td>
+<pre>install can /bin/false</pre>
+This entry will cause a non-zero return value during a <code>can</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install can /bin/true</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
     <td>
@@ -62525,7 +62530,12 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/false</pre></td>
+<pre>install can /bin/false</pre>
+This entry will cause a non-zero return value during a <code>can</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install can /bin/true</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -62550,7 +62560,12 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/false</pre></td>
+<pre>install sctp /bin/false</pre>
+This entry will cause a non-zero return value during a <code>sctp</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install sctp /bin/true</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
     <td>
@@ -62568,7 +62583,12 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/false</pre></td>
+<pre>install sctp /bin/false</pre>
+This entry will cause a non-zero return value during a <code>sctp</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install sctp /bin/true</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -62592,6 +62612,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/false</pre>
+This entry will cause a non-zero return value during a <code>usb-storage</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install usb-storage /bin/true</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -62612,6 +62637,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/false</pre>
+This entry will cause a non-zero return value during a <code>usb-storage</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install usb-storage /bin/true</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -63042,7 +63072,7 @@ Configuration settings are the set of parameters that can be changed in hardware
 and set-group-identifier (SGID) permissions from taking effect. These permissions
 allow users to execute binaries with the same permissions as the owner and group
 of the file respectively. Users should not be allowed to introduce SUID and SGID
-files into the system via partitions mounted from removeable media.
+files into the system via partitions mounted from removable media.
 Add the <code>nosuid</code> option to the fourth column of
 <tt>/etc/fstab</tt> for the line which controls mounting of
 
@@ -63059,7 +63089,7 @@ UUID=2bc871e4-e2a3-4f29-9ece-3be60c835222 /mnt/usbflash vfat noauto,owner,ro,nos
 and set-group-identifier (SGID) permissions from taking effect. These permissions
 allow users to execute binaries with the same permissions as the owner and group
 of the file respectively. Users should not be allowed to introduce SUID and SGID
-files into the system via partitions mounted from removeable media.
+files into the system via partitions mounted from removable media.
 Add the <code>nosuid</code> option to the fourth column of
 <tt>/etc/fstab</tt> for the line which controls mounting of
 
@@ -65931,7 +65961,7 @@ To make sure that the setting is persistent, add the following line to a file in
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
-    <td>CCE-84014-0: Enable Kernel Paremeter to Log Martian Packets on all IPv4 Interfaces by Default</td>
+    <td>CCE-84014-0: Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
@@ -66545,7 +66575,7 @@ add or correct the <tt>UMASK</tt> setting in <tt>/etc/login.defs</tt> to read as
 add or correct the <tt>umask</tt> setting in <tt>/etc/profile</tt> to read as follows:
 <pre>umask <sub idref="var_accounts_user_umask" /></pre>
 
-Note that <tt>/etc/profile</tt> also reads scrips within <tt>/etc/profile.d</tt> directory.
+Note that <tt>/etc/profile</tt> also reads scripts within <tt>/etc/profile.d</tt> directory.
 These scripts are also valid files to set umask value. Therefore, they should also be
 considered during the check and properly remediated, if necessary.</td>
     <td>Applicable - Configurable</td>
@@ -66560,7 +66590,7 @@ or the "umask" parameter is missing or is commented out?</td>
 add or correct the <tt>umask</tt> setting in <tt>/etc/profile</tt> to read as follows:
 <pre>umask <sub idref="var_accounts_user_umask" /></pre>
 
-Note that <tt>/etc/profile</tt> also reads scrips within <tt>/etc/profile.d</tt> directory.
+Note that <tt>/etc/profile</tt> also reads scripts within <tt>/etc/profile.d</tt> directory.
 These scripts are also valid files to set umask value. Therefore, they should also be
 considered during the check and properly remediated, if necessary.</td>
     <td>medium</td>

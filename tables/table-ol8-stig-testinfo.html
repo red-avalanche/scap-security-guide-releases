@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Oracle Linux 8</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Oracle Linux 8 V2R4.</div>
+DISA STIG for Oracle Linux 8 V2R5.</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -652,7 +652,7 @@ attacks.
 <br>
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
-possble combinations that need to be tested before the password is compromised.
+possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of lowercase characters makes password guessing attacks
 more difficult by ensuring a larger search space.</td>
 <td>The pam_pwquality module's <code>lcredit</code> parameter controls requirements for
@@ -850,6 +850,31 @@ $ grep pam_pwquality /etc/pam.d/password-auth
 The output should be similar to the following:
 password requisite pam_pwquality.so
       Is it the case that pam_pwquality.so is not enabled in password-auth?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwquality_retry</td>
+<td>medium</td>
+<td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session in /etc/security/pwquality.conf</td>
+<td>Setting the password retry prompts that are permitted on a per-session basis to a low value
+requires some software, such as SSH, to re-connect. This can slow down and
+draw additional attention to some types of password-guessing attacks. Note that this
+is different from account lockout, which is provided by the pam_faillock module.</td>
+<td>To configure the number of retry prompts that are permitted per-session:
+Edit the <code>/etc/security/pwquality.conf</code> to include
+<code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
+                </code>, or a lower value if site
+policy is more restrictive. The profile requirement is a maximum of <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
+                </code> prompts
+per session.</td>
+<td><pre>Verify Oracle Linux 8 is configured to limit the "pwquality" retry option to .
+
+Check for the use of the "pwquality" retry option in the pwquality.conf file with the following command:
+$ grep retry /etc/security/pwquality.conf
+      Is it the case that the value of "retry" is set to "0" or greater than "&lt;sub idref="var_password_pam_retry" /&gt;", or is missing?
       </pre></td>
 <td></td>
 <td></td>
@@ -1065,7 +1090,7 @@ are also mitigated.</td>
 <td>This rule ensures that the system lock out accounts using <code>pam_faillock.so</code> persist
 after system reboot. From "pam_faillock" man pages:
 <pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
-boot so the access will be reenabled after system reboot. If that is undesirable, a different
+boot so the access will be re-enabled after system reboot. If that is undesirable, a different
 tally directory must be set with the "dir" option.</pre>
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
@@ -1266,7 +1291,7 @@ add or correct the <code>umask</code> setting in <code>/etc/profile</code> to re
 <pre>umask <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub>
               </pre>
 
-Note that <code>/etc/profile</code> also reads scrips within <code>/etc/profile.d</code> directory.
+Note that <code>/etc/profile</code> also reads scripts within <code>/etc/profile.d</code> directory.
 These scripts are also valid files to set umask value. Therefore, they should also be
 considered during the check and properly remediated, if necessary.</td>
 <td><pre>Verify the umask setting is configured correctly in the /etc/profile file
@@ -2124,6 +2149,46 @@ If the system is configured to audit this activity, it will return a line.
 <td></td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_etc_cron_d</td>
+<td>medium</td>
+<td>Ensure auditd Collects Changes to Cron Jobs - /etc/cron.d/</td>
+<td>The actions taken by system administrators should be audited to keep a record
+of what was executed on the system, as well as, for accountability purposes.
+Editing the sudoers file may be sign of an attacker trying to
+establish persistent methods to a system, auditing the editing of the sudoers
+files mitigates this risk.</td>
+<td>At a minimum, the audit system should collect administrator actions
+for all users and root.
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+        </td>
+<td><pre>
+Verify Oracle Linux 8 generates audit records for all events that affect "/etc/cron.d/" with the following command:
+
+$ sudo auditctl -l | grep /etc/cron.d/
+
+-w /etc/cron.d/ -p wa -k cronjobs
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_audit_rules_execution_chacl</td>
 <td>medium</td>
 <td>Record Any Attempts to Run chacl</td>
@@ -2602,7 +2667,8 @@ The following line should be returned:
 <td>The removal of kernel modules can be used to alter the behavior of
 the kernel and potentially introduce malicious code into kernel space. It is important
 to have an audit trail of modules that have been introduced into the kernel.</td>
-<td>To capture kernel module unloading events, use following line, setting ARCH to
+<td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid&gt;=1000 -F auid!=unset -F key=modules</pre>
@@ -2632,19 +2698,19 @@ If the system is configured to audit this activity, it will return a line.
 <td>The addition/removal of kernel modules can be used to alter the behavior of
 the kernel and potentially introduce malicious code into kernel space. It is important
 to have an audit trail of modules that have been introduced into the kernel.</td>
-<td>If the <code>auditd</code> daemon is configured to use the <code>augenrules</code> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+<td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid&gt;=1000 -F auid!=unset -F key=modules</pre>
-    If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility to read audit
-rules during daemon startup, add the following lines to <code>/etc/audit/audit.rules</code> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid&gt;=1000 -F auid!=unset -F key=modules</pre>
-          </td>
+
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
 <td><pre>To determine if the system is configured to audit calls to the
 finit_module system call, run the following command:
 $ sudo grep "finit_module" /etc/audit/audit.*
@@ -2663,7 +2729,8 @@ If the system is configured to audit this activity, it will return a line.
 <td>The addition of kernel modules can be used to alter the behavior of
 the kernel and potentially introduce malicious code into kernel space. It is important
 to have an audit trail of modules that have been introduced into the kernel.</td>
-<td>To capture kernel module loading events, use following line, setting ARCH to
+<td>
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid&gt;=1000 -F auid!=unset -F key=modules</pre>
@@ -4259,6 +4326,42 @@ $ sudo auditctl -l | grep /etc/shadow
 <td></td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_var_spool_cron</td>
+<td>medium</td>
+<td>Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+<td>In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+        </td>
+<td><pre>
+Verify Oracle Linux 8 generates audit records for all events that affect "/var/spool/cron" with the following command:
+
+$ sudo auditctl -l | grep /var/spool/cron
+
+-w /var/spool/cron -p wa -k cronjobs
+      Is it the case that command does not return a line, or the line is commented out?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_auditd_audispd_configure_sufficiently_large_partition</td>
 <td>medium</td>
 <td>Configure a Sufficiently Large Partition for Audit Logs</td>
@@ -4406,7 +4509,7 @@ via email for those situations:
 $ sudo grep action_mail_acct /etc/audit/auditd.conf
 
 action_mail_acct = 
-      Is it the case that the value of the "action_mail_acct" keyword is not set to "&lt;sub idref="var_auditd_action_mail_acct" /&gt;" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the retuned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?
+      Is it the case that the value of the "action_mail_acct" keyword is not set to "&lt;sub idref="var_auditd_action_mail_acct" /&gt;" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the returned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?
       </pre></td>
 <td></td>
 <td></td>
@@ -4913,7 +5016,7 @@ To check that Crypto Policies settings for Kerberos are configured correctly, ex
 If the symlink exists, Kerberos is configured to use the system-wide crypto policy settings.</td>
 <td><pre>Check that the symlink exists and target the correct Kerberos crypto policy, with the following command:
 file /etc/krb5.conf.d/crypto-policies
-If command ouput shows the following line, Kerberos is configured to use the system-wide crypto policy.
+If command output shows the following line, Kerberos is configured to use the system-wide crypto policy.
 /etc/krb5.conf.d/crypto-policies: symbolic link to /etc/crypto-policies/back-ends/krb5.config
       Is it the case that the symlink does not exist or points to a different target?
       </pre></td>
@@ -5114,7 +5217,7 @@ debug problems.
 
 Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
-debuging. Permitting temporary enablement of core dumps during such situations
+debugging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</td>
 <td>The <code>ProcessSizeMax</code> option in <code>[Coredump]</code> section
 of <code>/etc/systemd/coredump.conf</code> or in a drop-in file under
@@ -5141,7 +5244,7 @@ terminates an application. The memory image could contain sensitive data
 and is generally useful only for developers or system operators trying to
 debug problems. Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
-debuging. Permitting temporary enablement of core dumps during such situations
+debugging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</td>
 <td>The <code>Storage</code> option in <code>[Coredump]</code> section
 of <code>/etc/systemd/coredump.conf</code> or a drop-in file in
@@ -5371,7 +5474,7 @@ If properly configured, the output should be /org/gnome/desktop/session/idle-del
 <td>medium</td>
 <td>Set GNOME3 Screensaver Lock Delay After Activation Period</td>
 <td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.</td>
+of the information system but does not want to logout because of the temporary nature of the absence.</td>
 <td>To activate the locking delay of the screensaver in the GNOME3 desktop when
 the screensaver is activated, add or set <code>lock-delay</code> to <code>uint32 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_screensaver_lock_delay" use="legacy"></xccdf-1.2:sub>
               </code> in
@@ -5394,7 +5497,7 @@ If properly configured, the output should be 'uint32 '.
 <td>medium</td>
 <td>Enable GNOME3 Screensaver Lock After Idle Period</td>
 <td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.</td>
+of the information system but does not want to logout because of the temporary nature of the absence.</td>
 <td>
 To activate locking of the screensaver in the GNOME3 desktop when it is activated,
 add or set <code>lock-enabled</code> to <code>true</code> in
@@ -6341,7 +6444,7 @@ run the command:
 $ ls -lL /var/log
 If properly configured, the output should indicate the following group-owner:
 
-  root 
+  root
   
       Is it the case that /var/log does not have a group owner of
 root
@@ -6365,7 +6468,7 @@ run the command:
 $ ls -lL /var/log/messages
 If properly configured, the output should indicate the following group-owner:
 
-  root 
+  root
   
       Is it the case that /var/log/messages does not have a group owner of
 root
@@ -6417,7 +6520,7 @@ run the command:
 $ ls -lL /var/log/lastlog
 If properly configured, the output should indicate the following group-owner:
 
-  root 
+  root
   
       Is it the case that /var/log/lastlog does not have a group owner of
 root
@@ -6948,7 +7051,7 @@ If properly configured, the output should indicate the following permissions:
 <td>xccdf_org.ssgproject.content_rule_firewalld-backend</td>
 <td>medium</td>
 <td>Configure Firewalld to Use the Nftables Backend</td>
-<td>Nftables is modern kernel module for controling network connections coming into a system.
+<td>Nftables is modern kernel module for controlling network connections coming into a system.
 Utilizing the limit statement in "nftables" can help to mitigate DoS attacks.</td>
 <td>Firewalld can be configured with many backends, such as nftables.</td>
 <td><pre>Verify "nftables" is configured to allow rate limits on any connection to the system with the following command:
@@ -7078,26 +7181,29 @@ to the audit daemon. Until the audit daemon is up and running, all log messages
 are stored in this queue.  If the queue is overrun during boot process, the action
 defined by audit failure flag is taken.</td>
 <td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <code>audit_backlog_limit=8192</code> to the default
+prior to the audit daemon, add the argument <code>audit_backlog_limit=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_backlog_limit" use="legacy"></xccdf-1.2:sub>
+        </code> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <code>audit_backlog_limit=8192</code> is added as a kernel command line
-argument to newly installed kernels, add <code>audit_backlog_limit=8192</code> to the
+To ensure that <code>audit_backlog_limit=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_backlog_limit" use="legacy"></xccdf-1.2:sub>
+        </code> is added as a kernel command line
+argument to newly installed kernels, add <code>audit_backlog_limit=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_backlog_limit" use="legacy"></xccdf-1.2:sub>
+        </code> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_backlog_limit" use="legacy"></xccdf-1.2:sub> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_backlog_limit" use="legacy"></xccdf-1.2:sub>"</pre>
       </td>
 <td><pre>Inspect the form of default GRUB 2 command line for the Linux operating system
-in /etc/default/grub. If it includes audit_backlog_limit=8192,
+in /etc/default/grub. If it includes audit_backlog_limit=,
 then the parameter will be configured for newly installed kernels.
 First check if the GRUB recovery is enabled:
 $ sudo grep 'GRUB_DISABLE_RECOVERY' /etc/default/grub
 If this option is set to true, then check that a line is output by the following command:
-$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=8192.*' /etc/default/grub
+$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*audit_backlog_limit=.*' /etc/default/grub
 If the recovery is disabled, check the line with
-$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=8192.*' /etc/default/grub.Moreover, command line parameters for currently installed kernels should be checked as well.
+$ sudo grep 'GRUB_CMDLINE_LINUX.*audit_backlog_limit=.*' /etc/default/grub.Moreover, command line parameters for currently installed kernels should be checked as well.
 Run the following command:
-$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit=8192'
+$ sudo grubby --info=ALL | grep args | grep -v 'audit_backlog_limit='
 The command should not return any output.
       Is it the case that audit backlog limit is not configured?
       </pre></td>
@@ -7509,6 +7615,11 @@ and virtual paths.
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
 <pre>install atm /bin/false</pre>
+This entry will cause a non-zero return value during a <code>atm</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install atm /bin/true</pre>
 
 To configure the system to prevent the <code>atm</code> from being used,
 add the following line to file <code>/etc/modprobe.d/atm.conf</code>:
@@ -7570,6 +7681,11 @@ is now also used in marine, industrial, and medical applications.
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
 <pre>install can /bin/false</pre>
+This entry will cause a non-zero return value during a <code>can</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install can /bin/true</pre>
 
 To configure the system to prevent the <code>can</code> from being used,
 add the following line to file <code>/etc/modprobe.d/can.conf</code>:
@@ -7600,6 +7716,11 @@ of the server.</td>
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>cramfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install cramfs /bin/true</pre>
 
 To configure the system to prevent the <code>cramfs</code> from being used,
 add the following line to file <code>/etc/modprobe.d/cramfs.conf</code>:
@@ -7638,6 +7759,11 @@ high-speed real-time communication.
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
 <pre>install firewire-core /bin/false</pre>
+This entry will cause a non-zero return value during a <code>firewire-core</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install firewire-core /bin/true</pre>
 
 To configure the system to prevent the <code>firewire-core</code> from being used,
 add the following line to file <code>/etc/modprobe.d/firewire-core.conf</code>:
@@ -7672,6 +7798,11 @@ within one connection.
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
 <pre>install sctp /bin/false</pre>
+This entry will cause a non-zero return value during a <code>sctp</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install sctp /bin/true</pre>
 
 To configure the system to prevent the <code>sctp</code> from being used,
 add the following line to file <code>/etc/modprobe.d/sctp.conf</code>:
@@ -7705,6 +7836,11 @@ cluster.
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
 <pre>install tipc /bin/false</pre>
+This entry will cause a non-zero return value during a <code>tipc</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install tipc /bin/true</pre>
 
 To configure the system to prevent the <code>tipc</code> from being used,
 add the following line to file <code>/etc/modprobe.d/tipc.conf</code>:
@@ -7737,6 +7873,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/false</pre>
+This entry will cause a non-zero return value during a <code>usb-storage</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install usb-storage /bin/true</pre>
 
 To configure the system to prevent the <code>usb-storage</code> from being used,
 add the following line to file <code>/etc/modprobe.d/usb-storage.conf</code>:
@@ -8123,7 +8264,7 @@ removable media would allow them to introduce their own highly-privileged progra
 and set-group-identifier (SGID) permissions from taking effect. These permissions
 allow users to execute binaries with the same permissions as the owner and group
 of the file respectively. Users should not be allowed to introduce SUID and SGID
-files into the system via partitions mounted from removeable media.
+files into the system via partitions mounted from removable media.
 Add the <code>nosuid</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 
@@ -9047,7 +9188,7 @@ $ rpm -q sendmail
 <td>It is detrimental for operating systems to provide, or install by default,
 functionality exceeding requirements or mission objectives. These
 unnecessary capabilities are often overlooked and therefore may remain
-unsecure. They increase the risk to the platform by providing additional
+insecure. They increase the risk to the platform by providing additional
 attack vectors.
 <br>
 The telnet service provides an unencrypted remote access service which does
@@ -9079,7 +9220,7 @@ $ rpm -q telnet-server
             <br>
 If TFTP is required for operational support (such as transmission of router
 configurations), its use must be documented with the Information Systems
-Securty Manager (ISSM), restricted to only authorized personnel, and have
+Security Manager (ISSM), restricted to only authorized personnel, and have
 access control rules established.</td>
 <td>The <code>tftp-server</code> package can be removed with the following command: <pre> $ sudo yum erase tftp-server</pre>
           </td>
@@ -9506,7 +9647,7 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs off a encrpytion system must be used.
+When using <code>rsyslogd</code> to off-load logs off a encryption system must be used.
 
 Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
 <pre>$ActionSendStreamDriverMode 1</pre>
@@ -10774,7 +10915,7 @@ CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-n
 <td>SSH implementation in Oracle Linux 8 uses the openssl library, which doesn't use
 high-entropy sources by default. Randomness is needed to generate data-encryption keys, and as
 plaintext padding and initialization vectors in encryption algorithms, and high-quality
-entropy elliminates the possibility that the output of the random number generator used by SSH
+entropy eliminates the possibility that the output of the random number generator used by SSH
 would be known to potential attackers.</td>
 <td>To set up SSH server to use entropy from a high-quality source, edit the <code>/etc/sysconfig/sshd</code> file.
 The <code>SSH_USE_STRONG_RNG</code> configuration value determines how many bytes of entropy to use, so
@@ -11122,8 +11263,8 @@ $ sudo grep -PR '^\s*ALL\s+ALL\=\(ALL\:ALL\)\s+ALL\s*$' /etc/sudoers /etc/sudoer
 <td>xccdf_org.ssgproject.content_rule_sudoers_default_includedir</td>
 <td>medium</td>
 <td>Ensure sudo only includes the default configuration directory</td>
-<td>Some <code>sudo</code> configurtion options allow users to run programs without re-authenticating.
-Use of these configuration options makes it easier for one compromised accound to be used to
+<td>Some <code>sudo</code> configuration options allow users to run programs without re-authenticating.
+Use of these configuration options makes it easier for one compromised account to be used to
 compromise other accounts.</td>
 <td>Administrators can configure authorized <code>sudo</code> users via drop-in files, and it is possible to include
 other directories and configuration files from the file currently being parsed.
@@ -11888,35 +12029,31 @@ $ sysctl user.max_user_namespaces
 <td></td>
 </tr>
 <tr>
-<td>xccdf_org.ssgproject.content_rule_tftpd_uses_secure_mode</td>
+<td>xccdf_org.ssgproject.content_rule_tftp_uses_secure_mode_systemd</td>
 <td>medium</td>
-<td>Ensure tftp Daemon Uses Secure Mode</td>
+<td>Ensure tftp systemd Service Uses Secure Mode</td>
 <td>Using the <code>-s</code> option causes the TFTP service to only serve files from the
 given directory. Serving files from an intentionally-specified directory
 reduces the risk of sharing files which should remain private.</td>
 <td>If running the Trivial File Transfer Protocol (TFTP) service is necessary,
 it should be configured to change its root directory at startup. To do so,
-ensure <code>/etc/xinetd.d/tftp</code> includes <code>-s</code> as a command line argument,
-as shown in the following example:
-<pre>server_args = -s <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_tftpd_secure_directory" use="legacy"></xccdf-1.2:sub>
+find the path for the <code>tftp</code> systemd service:
+<pre>$ sudo systemctl show tftp | grep ExecStart=
+ExecStart={ path=/usr/sbin/in.tftpd ; argv[]=/usr/sbin/in.tftpd -s /var/lib/tftpboot ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }e
+</pre>
+
+and ensure the <code>ExecStart</code> line on that file includes the <code>-s</code> option with a subdirectory:
+<pre>ExecStart=/usr/sbin/in.tftpd -s <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_tftpd_secure_directory" use="legacy"></xccdf-1.2:sub>
             </pre>
           </td>
-<td><pre>Verify the TFTP daemon is configured to operate in secure mode.
-
-Check if a TFTP server is installed with the following command:
-
-$ rpm -qa | grep tftp
+<td><pre>Use sudo systemctl show tftp to verify that tftp service is using secure mode.
+$ sudo systemctl show tftp | grep ExecStart=
+ExecStart={ path=/usr/sbin/in.tftpd ; argv[]=/usr/sbin/in.tftpd -s /var/lib/tftpboot ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }e
 
 
-If a TFTP server is not installed, this is Not Applicable.
-
-
-If a TFTP server is installed, verify TFTP is configured by with
-the -s option by running the following command:
-
-grep "server_args" /etc/xinetd.d/tftp
-server_args = -s 
-      Is it the case that '"server_args" line does not have a "-s" option, and a subdirectory is not assigned'?
+and ensure the ExecStart line on that file includes the -s option with a subdirectory:
+ExecStart=/usr/sbin/in.tftpd -s 
+      Is it the case that the ExecStart property of tftp does not contain correctly set -s flag?
       </pre></td>
 <td></td>
 <td></td>

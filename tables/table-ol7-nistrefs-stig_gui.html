@@ -710,7 +710,8 @@ malicious processes that attempt to delete log files to conceal their presence.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on Kernel Module Unloading - delete_module</td>
   <td xml:lang="en-US">
-To capture kernel module unloading events, use following line, setting ARCH to
+
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -735,18 +736,19 @@ to have an audit trail of modules that have been introduced into the kernel.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on Kernel Module Loading and Unloading - finit_module</td>
   <td xml:lang="en-US">
-If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.
   </td>
   <td xml:lang="en-US">
 The addition/removal of kernel modules can be used to alter the behavior of
@@ -760,7 +762,8 @@ to have an audit trail of modules that have been introduced into the kernel.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on Kernel Module Loading - init_module</td>
   <td xml:lang="en-US">
-To capture kernel module loading events, use following line, setting ARCH to
+
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -2501,7 +2504,7 @@ attacks.
 <br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
-possble combinations that need to be tested before the password is compromised.
+possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of lowercase characters makes password guessing attacks
 more difficult by ensuring a larger search space.
   </td>
@@ -3438,7 +3441,7 @@ After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.
+of the information system but does not want to logout because of the temporary nature of the absence.
   </td>
   <td></td>
 </tr>
@@ -3462,7 +3465,7 @@ After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.
+of the information system but does not want to logout because of the temporary nature of the absence.
   </td>
   <td></td>
 </tr>
@@ -3480,7 +3483,7 @@ After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.
+of the information system but does not want to logout because of the temporary nature of the absence.
   </td>
   <td></td>
 </tr>
@@ -4810,6 +4813,11 @@ streaming media and telephony.
 To configure the system to prevent the <code>dccp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/dccp.conf</code>:
 <pre>install dccp /bin/false</pre>
+This entry will cause a non-zero return value during a <code>dccp</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install dccp /bin/true</pre>
 
 To configure the system to prevent the <code>dccp</code> from being used,
 add the following line to file <code>/etc/modprobe.d/dccp.conf</code>:
@@ -4832,6 +4840,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/false</pre>
+This entry will cause a non-zero return value during a <code>usb-storage</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install usb-storage /bin/true</pre>
 
 To configure the system to prevent the <code>usb-storage</code> from being used,
 add the following line to file <code>/etc/modprobe.d/usb-storage.conf</code>:
@@ -4945,7 +4958,7 @@ The <tt>nosuid</tt> mount option prevents set-user-identifier (SUID)
 and set-group-identifier (SGID) permissions from taking effect. These permissions
 allow users to execute binaries with the same permissions as the owner and group
 of the file respectively. Users should not be allowed to introduce SUID and SGID
-files into the system via partitions mounted from removeable media.
+files into the system via partitions mounted from removable media.
 Add the <code>nosuid</code> option to the fourth column of
 <tt>/etc/fstab</tt> for the line which controls mounting of
 
@@ -5014,7 +5027,7 @@ $ sudo yum erase telnet-server</pre>
 It is detrimental for operating systems to provide, or install by default,
 functionality exceeding requirements or mission objectives. These
 unnecessary capabilities are often overlooked and therefore may remain
-unsecure. They increase the risk to the platform by providing additional
+insecure. They increase the risk to the platform by providing additional
 attack vectors.
 <br />
 The telnet service provides an unencrypted remote access service which does
@@ -5040,7 +5053,7 @@ Removing the <tt>tftp-server</tt> package decreases the risk of the accidental
 <br /><br />
 If TFTP is required for operational support (such as transmission of router
 configurations), its use must be documented with the Information Systems
-Securty Manager (ISSM), restricted to only authorized personnel, and have
+Security Manager (ISSM), restricted to only authorized personnel, and have
 access control rules established.
   </td>
   <td></td>
@@ -5675,7 +5688,7 @@ After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.
+of the information system but does not want to logout because of the temporary nature of the absence.
   </td>
   <td>var_screensaver_lock_delay=5_seconds</td>
 </tr>
@@ -6440,9 +6453,12 @@ may be able to access or modify them.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on Kernel Module Unloading - create_module</td>
   <td xml:lang="en-US">
-To capture kernel module unloading events, use following line, setting ARCH to
+
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
-<pre>-a always,exit -F arch=<i>ARCH</i> -S create_module -F key=module-change</pre>
+
+<pre>-a always,exit -F arch=<i>ARCH</i> -S create_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
+
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
 to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
@@ -6679,11 +6695,11 @@ unauthorized access to user files by other users.
 <tr>
   <td></td>
   <td>N/A</td>
-  <td>Boot Loader Is Not Installed On Removeable Media</td>
+  <td>Boot Loader Is Not Installed On Removable Media</td>
   <td xml:lang="en-US">
 The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
-<tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removeable
+<tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removable
 media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre>
   </td>
@@ -6886,8 +6902,8 @@ Or the <tt>/etc/sudoers</tt> should not contain any <tt>#include</tt>,
 Note that the '#' character doesn't denote a comment in the configuration file.
   </td>
   <td xml:lang="en-US">
-Some <tt>sudo</tt> configurtion options allow users to run programs without re-authenticating.
-Use of these configuration options makes it easier for one compromised accound to be used to
+Some <tt>sudo</tt> configuration options allow users to run programs without re-authenticating.
+Use of these configuration options makes it easier for one compromised account to be used to
 compromise other accounts.
   </td>
   <td></td>
@@ -6895,11 +6911,11 @@ compromise other accounts.
 <tr>
   <td></td>
   <td>N/A</td>
-  <td>UEFI Boot Loader Is Not Installed On Removeable Media</td>
+  <td>UEFI Boot Loader Is Not Installed On Removable Media</td>
   <td xml:lang="en-US">
 The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
-<tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removeable
+<tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removable
 media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre>
   </td>

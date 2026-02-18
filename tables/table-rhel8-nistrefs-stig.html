@@ -710,7 +710,8 @@ malicious processes that attempt to delete log files to conceal their presence.
   <td>CCE-80711-5</td>
   <td>Ensure auditd Collects Information on Kernel Module Unloading - delete_module</td>
   <td xml:lang="en-US">
-To capture kernel module unloading events, use following line, setting ARCH to
+
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -735,18 +736,19 @@ to have an audit trail of modules that have been introduced into the kernel.
   <td>CCE-80712-3</td>
   <td>Ensure auditd Collects Information on Kernel Module Loading and Unloading - finit_module</td>
   <td xml:lang="en-US">
-If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.
   </td>
   <td xml:lang="en-US">
 The addition/removal of kernel modules can be used to alter the behavior of
@@ -760,7 +762,8 @@ to have an audit trail of modules that have been introduced into the kernel.
   <td>CCE-80713-1</td>
   <td>Ensure auditd Collects Information on Kernel Module Loading - init_module</td>
   <td xml:lang="en-US">
-To capture kernel module loading events, use following line, setting ARCH to
+
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -2337,7 +2340,7 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+When using <tt>rsyslogd</tt> to off-load logs off a encryption system must be used.
 
 Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
 <pre>$ActionSendStreamDriverMode 1</pre>
@@ -2546,7 +2549,7 @@ attacks.
 <br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
-possble combinations that need to be tested before the password is compromised.
+possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of lowercase characters makes password guessing attacks
 more difficult by ensuring a larger search space.
   </td>
@@ -2883,7 +2886,7 @@ of initiating changes, including upgrades and modifications.
 Firewalld can be configured with many backends, such as nftables.
   </td>
   <td xml:lang="en-US">
-Nftables is modern kernel module for controling network connections coming into a system.
+Nftables is modern kernel module for controlling network connections coming into a system.
 Utilizing the limit statement in "nftables" can help to mitigate DoS attacks.
   </td>
   <td></td>
@@ -3699,7 +3702,7 @@ debug problems.
 
 Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
-debuging. Permitting temporary enablement of core dumps during such situations
+debugging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.
   </td>
   <td></td>
@@ -3720,7 +3723,7 @@ terminates an application. The memory image could contain sensitive data
 and is generally useful only for developers or system operators trying to
 debug problems. Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
-debuging. Permitting temporary enablement of core dumps during such situations
+debugging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.
   </td>
   <td></td>
@@ -3800,7 +3803,7 @@ After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.
+of the information system but does not want to logout because of the temporary nature of the absence.
   </td>
   <td></td>
 </tr>
@@ -3818,7 +3821,7 @@ After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.
+of the information system but does not want to logout because of the temporary nature of the absence.
   </td>
   <td></td>
 </tr>
@@ -4252,14 +4255,14 @@ Having a non-default grub superuser username makes password-guessing attacks les
   <td>Extend Audit Backlog Limit for the Audit Daemon</td>
   <td xml:lang="en-US">
 To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<tt>8192</tt></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<tt>8192</tt></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<tt>8192</tt></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<tt>8192</tt> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<tt>8192</tt>"</pre>
   </td>
   <td xml:lang="en-US">
 audit_backlog_limit sets the queue length for audit events awaiting transfer
@@ -4267,7 +4270,7 @@ to the audit daemon. Until the audit daemon is up and running, all log messages
 are stored in this queue.  If the queue is overrun during boot process, the action
 defined by audit failure flag is taken.
   </td>
-  <td></td>
+  <td>var_audit_backlog_limit=8192</td>
 </tr>
 <tr>
   <td>CM-6(a)</td>
@@ -5263,7 +5266,7 @@ To ensure the default umask controlled by <tt>/etc/profile</tt> is set properly,
 add or correct the <tt>umask</tt> setting in <tt>/etc/profile</tt> to read as follows:
 <pre>umask <tt>077</tt></pre>
 
-Note that <tt>/etc/profile</tt> also reads scrips within <tt>/etc/profile.d</tt> directory.
+Note that <tt>/etc/profile</tt> also reads scripts within <tt>/etc/profile.d</tt> directory.
 These scripts are also valid files to set umask value. Therefore, they should also be
 considered during the check and properly remediated, if necessary.
   </td>
@@ -5398,7 +5401,7 @@ Without auditing of these events it may be harder or impossible to identify what
 This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
 after system reboot. From "pam_faillock" man pages:
 <pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
-boot so the access will be reenabled after system reboot. If that is undesirable, a different
+boot so the access will be re-enabled after system reboot. If that is undesirable, a different
 tally directory must be set with the "dir" option.</pre>
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
@@ -5511,6 +5514,11 @@ of the return instruction pointer.
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>cramfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install cramfs /bin/true</pre>
 
 To configure the system to prevent the <code>cramfs</code> from being used,
 add the following line to file <code>/etc/modprobe.d/cramfs.conf</code>:
@@ -5542,6 +5550,11 @@ within one connection.
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
 <pre>install sctp /bin/false</pre>
+This entry will cause a non-zero return value during a <code>sctp</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install sctp /bin/true</pre>
 
 To configure the system to prevent the <code>sctp</code> from being used,
 add the following line to file <code>/etc/modprobe.d/sctp.conf</code>:
@@ -5565,6 +5578,11 @@ cluster.
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
 <pre>install tipc /bin/false</pre>
+This entry will cause a non-zero return value during a <code>tipc</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install tipc /bin/true</pre>
 
 To configure the system to prevent the <code>tipc</code> from being used,
 add the following line to file <code>/etc/modprobe.d/tipc.conf</code>:
@@ -5587,6 +5605,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/false</pre>
+This entry will cause a non-zero return value during a <code>usb-storage</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install usb-storage /bin/true</pre>
 
 To configure the system to prevent the <code>usb-storage</code> from being used,
 add the following line to file <code>/etc/modprobe.d/usb-storage.conf</code>:
@@ -5781,7 +5804,7 @@ The <tt>nosuid</tt> mount option prevents set-user-identifier (SUID)
 and set-group-identifier (SGID) permissions from taking effect. These permissions
 allow users to execute binaries with the same permissions as the owner and group
 of the file respectively. Users should not be allowed to introduce SUID and SGID
-files into the system via partitions mounted from removeable media.
+files into the system via partitions mounted from removable media.
 Add the <code>nosuid</code> option to the fourth column of
 <tt>/etc/fstab</tt> for the line which controls mounting of
 
@@ -6051,7 +6074,7 @@ $ sudo yum erase telnet-server</pre>
 It is detrimental for operating systems to provide, or install by default,
 functionality exceeding requirements or mission objectives. These
 unnecessary capabilities are often overlooked and therefore may remain
-unsecure. They increase the risk to the platform by providing additional
+insecure. They increase the risk to the platform by providing additional
 attack vectors.
 <br />
 The telnet service provides an unencrypted remote access service which does
@@ -6077,7 +6100,7 @@ Removing the <tt>tftp-server</tt> package decreases the risk of the accidental
 <br /><br />
 If TFTP is required for operational support (such as transmission of router
 configurations), its use must be documented with the Information Systems
-Securty Manager (ISSM), restricted to only authorized personnel, and have
+Security Manager (ISSM), restricted to only authorized personnel, and have
 access control rules established.
   </td>
   <td></td>
@@ -6881,7 +6904,7 @@ After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.
+of the information system but does not want to logout because of the temporary nature of the absence.
   </td>
   <td>var_screensaver_lock_delay=5_seconds</td>
 </tr>
@@ -7572,6 +7595,11 @@ and virtual paths.
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
 <pre>install atm /bin/false</pre>
+This entry will cause a non-zero return value during a <code>atm</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install atm /bin/true</pre>
 
 To configure the system to prevent the <code>atm</code> from being used,
 add the following line to file <code>/etc/modprobe.d/atm.conf</code>:
@@ -7613,6 +7641,11 @@ is now also used in marine, industrial, and medical applications.
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
 <pre>install can /bin/false</pre>
+This entry will cause a non-zero return value during a <code>can</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install can /bin/true</pre>
 
 To configure the system to prevent the <code>can</code> from being used,
 add the following line to file <code>/etc/modprobe.d/can.conf</code>:
@@ -7635,6 +7668,11 @@ high-speed real-time communication.
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
 <pre>install firewire-core /bin/false</pre>
+This entry will cause a non-zero return value during a <code>firewire-core</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install firewire-core /bin/true</pre>
 
 To configure the system to prevent the <code>firewire-core</code> from being used,
 add the following line to file <code>/etc/modprobe.d/firewire-core.conf</code>:
@@ -9127,7 +9165,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_rekey_limit_time=1hour<br/>var_rekey_limit_size=1G</td>
+  <td>var_rekey_limit_size=1G<br/>var_rekey_limit_time=1hour</td>
 </tr>
 <tr>
   <td></td>
@@ -9143,7 +9181,7 @@ make sure that the file contains line
 SSH implementation in Red Hat Enterprise Linux 8 uses the openssl library, which doesn't use
 high-entropy sources by default. Randomness is needed to generate data-encryption keys, and as
 plaintext padding and initialization vectors in encryption algorithms, and high-quality
-entropy elliminates the possibility that the output of the random number generator used by SSH
+entropy eliminates the possibility that the output of the random number generator used by SSH
 would be known to potential attackers.
   </td>
   <td></td>
@@ -9199,8 +9237,8 @@ Or the <tt>/etc/sudoers</tt> should not contain any <tt>#include</tt>,
 Note that the '#' character doesn't denote a comment in the configuration file.
   </td>
   <td xml:lang="en-US">
-Some <tt>sudo</tt> configurtion options allow users to run programs without re-authenticating.
-Use of these configuration options makes it easier for one compromised accound to be used to
+Some <tt>sudo</tt> configuration options allow users to run programs without re-authenticating.
+Use of these configuration options makes it easier for one compromised account to be used to
 compromise other accounts.
   </td>
   <td></td>
