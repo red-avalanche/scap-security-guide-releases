@@ -7,7 +7,7 @@
 # This is a profile for the vsftpd FTP server.
 #
 # Benchmark ID:  RHEL-6
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #
@@ -25,6 +25,13 @@
 
 
  - hosts: all
+   pre_tasks:
+     - name: Verify Ansible meets SCAP-Security-Guide version requirements.
+       assert:
+         that: "ansible_version.full | version_compare('2.3', '>=')"
+         msg: >
+           "You must update Ansible to at least version 2.3 to use this role."
+          
    vars:
       var_selinux_state: enforcing
       var_selinux_policy_name: targeted
@@ -33,6 +40,9 @@
       var_accounts_maximum_age_login_defs: 90
       var_accounts_password_warn_age_login_defs: 7
       var_password_pam_retry: 3
+      var_accounts_passwords_pam_faillock_deny: 3
+      var_accounts_passwords_pam_faillock_unlock_time: 604800
+      var_accounts_passwords_pam_faillock_fail_interval: 900
       var_password_pam_unix_remember: 5
       var_accounts_tmout: 600
       sysctl_net_ipv4_conf_all_accept_source_route_value: 0
@@ -248,6 +258,8 @@
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - autofs
       tags:
@@ -261,7 +273,6 @@
         - NIST-800-53-AC-19(d)
         - NIST-800-53-AC-19(e)
         - DISA-STIG-RHEL-06-000526
-    
     
     - name: Ensure permission 0000 on /etc/shadow
       file:
@@ -993,6 +1004,98 @@
         - medium_disruption
         - CCE-27123-9
         - NIST-800-53-IA-5(c)
+    
+    
+    - name: XCCDF Value var_accounts_passwords_pam_faillock_unlock_time # promote to variable
+      set_fact:
+        var_accounts_passwords_pam_faillock_unlock_time: 604800
+      
+    - name: XCCDF Value var_accounts_passwords_pam_faillock_fail_interval # promote to variable
+      set_fact:
+        var_accounts_passwords_pam_faillock_fail_interval: 900
+      tags:
+        - always
+    
+    - name: set auth pam_faillock before pam_unix.so
+      pamd:
+        name: system-auth
+        type: auth
+        control: sufficient
+        module_path: pam_unix.so
+        new_type: a
+    
+    - name: set auth pam_faillock before pam_unix.so
+      pamd:
+        name: system-auth
+        type: auth
+        control: sufficient
+        module_path: pam_unix.so
+        new_type: auth
+        new_control: required
+        new_module_path: pam_faillock.so
+        module_arguments: 'preauth
+            silent
+            deny={{ var_accounts_passwords_pam_faillock_deny }}
+            unlock_time={{ var_accounts_passwords_pam_faillock_unlock_time }}
+            fail_interval={{ var_accounts_passwords_pam_faillock_fail_interval }}'
+        state: before
+      tags:
+        - accounts_passwords_pam_faillock_deny
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26844-1
+        - NIST-800-53-AC-7(a)
+        - PCI-DSS-Req-8.1.6
+        - DISA-STIG-RHEL-06-000061
+    
+    - name: set auth pam_faillock after pam_unix.so
+      pamd:
+        name: system-auth
+        type: auth
+        control: sufficient
+        module_path: pam_unix.so
+        new_type: auth
+        new_control: '[default=die]'
+        new_module_path: pam_faillock.so
+        module_arguments: 'preauth
+            silent
+            deny={{ var_accounts_passwords_pam_faillock_deny }}
+            unlock_time={{ var_accounts_passwords_pam_faillock_unlock_time }}
+            fail_interval={{ var_accounts_passwords_pam_faillock_fail_interval }}'
+        state: after
+      tags:
+        - accounts_passwords_pam_faillock_deny
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26844-1
+        - NIST-800-53-AC-7(a)
+        - PCI-DSS-Req-8.1.6
+        - DISA-STIG-RHEL-06-000061
+    
+    - name: set account pam_faillock before pam_unix.so
+      pamd:
+        name: system-auth
+        type: account
+        control: required
+        module_path: pam_unix.so
+        new_type: account
+        new_control: required
+        new_module_path: pam_faillock.so
+        state: before
+      tags:
+        - accounts_passwords_pam_faillock_deny
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26844-1
+        - NIST-800-53-AC-7(a)
+        - PCI-DSS-Req-8.1.6
+        - DISA-STIG-RHEL-06-000061
     
     
     
@@ -3571,6 +3674,8 @@
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - xinetd
       tags:
@@ -3582,7 +3687,6 @@
         - CCE-27046-2
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000203
-    
     
     - name: Ensure xinetd is removed
       package:
@@ -3682,6 +3786,8 @@
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - ypbind
       tags:
@@ -3694,12 +3800,13 @@
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000221
     
-    
     - name: Disable service tftp
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - tftp
       tags:
@@ -3711,7 +3818,6 @@
         - CCE-27055-3
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000223
-    
     
     - name: Ensure tftp-server is removed
       package:
@@ -3735,6 +3841,8 @@
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - abrtd
       tags:
@@ -3747,12 +3855,13 @@
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000261
     
-    
     - name: Disable service ntpdate
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - ntpdate
       tags:
@@ -3765,12 +3874,13 @@
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000265
     
-    
     - name: Disable service oddjobd
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - oddjobd
       tags:
@@ -3783,12 +3893,13 @@
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000266
     
-    
     - name: Disable service qpidd
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - qpidd
       tags:
@@ -3801,12 +3912,13 @@
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000267
     
-    
     - name: Disable service rdisc
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - rdisc
       tags:
@@ -3820,12 +3932,13 @@
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000268
     
-    
     - name: Disable service rhnsd
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - rhnsd
       tags:
@@ -3837,7 +3950,6 @@
         - CCE-26846-6
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000009
-    
     
     - name: Enable service crond
       service:
@@ -3862,6 +3974,8 @@
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - atd
       tags:
@@ -3873,7 +3987,6 @@
         - CCE-27249-2
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000262
-    
     
     
     - name: "Allow Only SSH Protocol 2"
@@ -4082,6 +4195,8 @@
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - avahi-daemon
       tags:
@@ -4093,7 +4208,6 @@
         - CCE-27087-6
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000246
-    
     
     - name: Enable service ntpd
       service:

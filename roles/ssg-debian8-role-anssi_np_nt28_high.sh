@@ -6,7 +6,7 @@
 # This profile contains items for GNU/Linux installations storing sensitive informations that can be accessible from unauthenticated or uncontroled networks.
 #
 # Benchmark ID:  DEBIAN-8
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #

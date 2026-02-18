@@ -1,11 +1,8 @@
 ###############################################################################
 #
 # Bash remediation role for profile stig-satellite-upstream
-# Profile Title:  DISA STIG for Apache HTTP on Red Hat Enterprise Linux 7Upstream DISA STIG for Red Hat Satellite
+# Profile Title:  Upstream DISA STIG for Red Hat Satellite
 # Profile Description:
-# 
-# This profile contains configuration checks that align to the
-# DISA STIG for Apache HTTP web server.
 # 
 # This is a *draft* profile for STIG. This profile is being
 # developed under the DoD consensus model to become a STIG in
@@ -13,7 +10,7 @@
 # 
 #
 # Benchmark ID:  RHEL-7
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #

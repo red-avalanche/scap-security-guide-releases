@@ -32,7 +32,7 @@
 # 
 #
 # Benchmark ID:  RHEL-7
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #
@@ -73,6 +73,8 @@ then
   # (to ensure there won't be e.g. CRC error).
   IFS=$'\n' GPG_OUT=($(gpg --with-fingerprint "${REDHAT_RELEASE_KEY}" | grep 'Key fingerprint ='))
   GPG_RESULT=$?
+  # Reset IFS back to default
+  unset IFS
   # No CRC error, safe to proceed
   if [ "${GPG_RESULT}" -eq "0" ]
   then
@@ -224,21 +226,17 @@ fi
 # BEGIN fix (9 / 359) for 'disable_prelink'
 ###############################################################################
 (>&2 echo "Remediating rule 9/359: 'disable_prelink'")
-#
-# Disable prelinking altogether
-#
-if grep -q ^PRELINKING /etc/sysconfig/prelink
-then
-  sed -i 's/PRELINKING.*/PRELINKING=no/g' /etc/sysconfig/prelink
-else
-  echo -e "\n# Set PRELINKING=no per security requirements" >> /etc/sysconfig/prelink
-  echo "PRELINKING=no" >> /etc/sysconfig/prelink
-fi
 
-#
-# Undo previous prelink changes to binaries
-#
-/usr/sbin/prelink -ua
+if rpm --quiet -q prelink; then
+	if grep -q ^PRELINKING /etc/sysconfig/prelink
+	then
+		sed -i 's/PRELINKING.*/PRELINKING=no/g' /etc/sysconfig/prelink
+	else
+		echo -e '\n# Set PRELINKING=no per security requirements' >> /etc/sysconfig/prelink
+		echo 'PRELINKING=no' >> /etc/sysconfig/prelink
+	fi
+	/usr/sbin/prelink -ua
+fi
 # END fix for 'disable_prelink'
 
 ###############################################################################
@@ -679,7 +677,7 @@ declare -a SETPERMS_RPM_LIST
 
 # Create a list of files on the system having permissions different from what
 # is expected by the RPM database
-FILES_WITH_INCORRECT_PERMS=($(rpm -Va --nofiledigest | grep '^.M' | cut -d ' ' -f5-))
+FILES_WITH_INCORRECT_PERMS=($(rpm -Va --nofiledigest | grep '^.M' | cut -d ' ' -f4-))
 
 # For each file path from that list:
 # * Determine the RPM package the file path is shipped by,
@@ -868,14 +866,34 @@ fi
 # BEGIN fix (25 / 359) for 'gnome_gdm_disable_automatic_login'
 ###############################################################################
 (>&2 echo "Remediating rule 25/359: 'gnome_gdm_disable_automatic_login'")
-# FIX FOR THIS RULE IS MISSING
+
+if rpm --quiet -q gdm
+then
+	if ! grep -q "^AutomaticLoginEnable=" /etc/gdm/custom.conf
+	then
+		sed -i "/^\[daemon\]/a \
+		AutomaticLoginEnable=False" /etc/gdm/custom.conf
+	else
+		sed -i "s/^AutomaticLoginEnable=.*/AutomaticLoginEnable=False/g" /etc/gdm/custom.conf
+	fi
+fi
 # END fix for 'gnome_gdm_disable_automatic_login'
 
 ###############################################################################
 # BEGIN fix (26 / 359) for 'gnome_gdm_disable_guest_login'
 ###############################################################################
 (>&2 echo "Remediating rule 26/359: 'gnome_gdm_disable_guest_login'")
-# FIX FOR THIS RULE IS MISSING
+
+if rpm --quiet -q gdm
+then
+	if ! grep -q "^TimedLoginEnable=" /etc/gdm/custom.conf
+	then
+		sed -i "/^\[daemon\]/a \
+		TimedLoginEnable=False" /etc/gdm/custom.conf
+	else
+		sed -i "s/^TimedLoginEnable=.*/TimedLoginEnable=False/g" /etc/gdm/custom.conf
+	fi
+fi
 # END fix for 'gnome_gdm_disable_guest_login'
 
 ###############################################################################
@@ -2073,7 +2091,7 @@ replace_or_append '/etc/sysconfig/selinux' '^SELINUXTYPE=' $var_selinux_policy_n
 
 var_abrt_anon_write="false"
 
-setsebool -P abrt_anon_write var_abrt_anon_write
+setsebool -P abrt_anon_write $var_abrt_anon_write
 # END fix for 'sebool_abrt_anon_write'
 
 ###############################################################################
@@ -2083,7 +2101,7 @@ setsebool -P abrt_anon_write var_abrt_anon_write
 
 var_abrt_handle_event="false"
 
-setsebool -P abrt_handle_event var_abrt_handle_event
+setsebool -P abrt_handle_event $var_abrt_handle_event
 # END fix for 'sebool_abrt_handle_event'
 
 ###############################################################################
@@ -2093,7 +2111,7 @@ setsebool -P abrt_handle_event var_abrt_handle_event
 
 var_abrt_upload_watch_anon_write="true"
 
-setsebool -P abrt_upload_watch_anon_write var_abrt_upload_watch_anon_write
+setsebool -P abrt_upload_watch_anon_write $var_abrt_upload_watch_anon_write
 # END fix for 'sebool_abrt_upload_watch_anon_write'
 
 ###############################################################################
@@ -2103,7 +2121,7 @@ setsebool -P abrt_upload_watch_anon_write var_abrt_upload_watch_anon_write
 
 var_auditadm_exec_content="true"
 
-setsebool -P auditadm_exec_content var_auditadm_exec_content
+setsebool -P auditadm_exec_content $var_auditadm_exec_content
 # END fix for 'sebool_auditadm_exec_content'
 
 ###############################################################################
@@ -2113,7 +2131,7 @@ setsebool -P auditadm_exec_content var_auditadm_exec_content
 
 var_cron_can_relabel="false"
 
-setsebool -P cron_can_relabel var_cron_can_relabel
+setsebool -P cron_can_relabel $var_cron_can_relabel
 # END fix for 'sebool_cron_can_relabel'
 
 ###############################################################################
@@ -2123,7 +2141,7 @@ setsebool -P cron_can_relabel var_cron_can_relabel
 
 var_cron_system_cronjob_use_shares="false"
 
-setsebool -P cron_system_cronjob_use_shares var_cron_system_cronjob_use_shares
+setsebool -P cron_system_cronjob_use_shares $var_cron_system_cronjob_use_shares
 # END fix for 'sebool_cron_system_cronjob_use_shares'
 
 ###############################################################################
@@ -2133,7 +2151,7 @@ setsebool -P cron_system_cronjob_use_shares var_cron_system_cronjob_use_shares
 
 var_cron_userdomain_transition="true"
 
-setsebool -P cron_userdomain_transition var_cron_userdomain_transition
+setsebool -P cron_userdomain_transition $var_cron_userdomain_transition
 # END fix for 'sebool_cron_userdomain_transition'
 
 ###############################################################################
@@ -2143,7 +2161,7 @@ setsebool -P cron_userdomain_transition var_cron_userdomain_transition
 
 var_daemons_dump_core="false"
 
-setsebool -P daemons_dump_core var_daemons_dump_core
+setsebool -P daemons_dump_core $var_daemons_dump_core
 # END fix for 'sebool_daemons_dump_core'
 
 ###############################################################################
@@ -2153,7 +2171,7 @@ setsebool -P daemons_dump_core var_daemons_dump_core
 
 var_daemons_use_tcp_wrapper="false"
 
-setsebool -P daemons_use_tcp_wrapper var_daemons_use_tcp_wrapper
+setsebool -P daemons_use_tcp_wrapper $var_daemons_use_tcp_wrapper
 # END fix for 'sebool_daemons_use_tcp_wrapper'
 
 ###############################################################################
@@ -2163,7 +2181,7 @@ setsebool -P daemons_use_tcp_wrapper var_daemons_use_tcp_wrapper
 
 var_daemons_use_tty="false"
 
-setsebool -P daemons_use_tty var_daemons_use_tty
+setsebool -P daemons_use_tty $var_daemons_use_tty
 # END fix for 'sebool_daemons_use_tty'
 
 ###############################################################################
@@ -2173,7 +2191,7 @@ setsebool -P daemons_use_tty var_daemons_use_tty
 
 var_deny_execmem="false"
 
-setsebool -P deny_execmem var_deny_execmem
+setsebool -P deny_execmem $var_deny_execmem
 # END fix for 'sebool_deny_execmem'
 
 ###############################################################################
@@ -2183,7 +2201,7 @@ setsebool -P deny_execmem var_deny_execmem
 
 var_deny_ptrace="false"
 
-setsebool -P deny_ptrace var_deny_ptrace
+setsebool -P deny_ptrace $var_deny_ptrace
 # END fix for 'sebool_deny_ptrace'
 
 ###############################################################################
@@ -2193,7 +2211,7 @@ setsebool -P deny_ptrace var_deny_ptrace
 
 var_domain_fd_use="true"
 
-setsebool -P domain_fd_use var_domain_fd_use
+setsebool -P domain_fd_use $var_domain_fd_use
 # END fix for 'sebool_domain_fd_use'
 
 ###############################################################################
@@ -2203,7 +2221,7 @@ setsebool -P domain_fd_use var_domain_fd_use
 
 var_domain_kernel_load_modules="false"
 
-setsebool -P domain_kernel_load_modules var_domain_kernel_load_modules
+setsebool -P domain_kernel_load_modules $var_domain_kernel_load_modules
 # END fix for 'sebool_domain_kernel_load_modules'
 
 ###############################################################################
@@ -2213,7 +2231,7 @@ setsebool -P domain_kernel_load_modules var_domain_kernel_load_modules
 
 var_fips_mode="true"
 
-setsebool -P fips_mode var_fips_mode
+setsebool -P fips_mode $var_fips_mode
 # END fix for 'sebool_fips_mode'
 
 ###############################################################################
@@ -2223,7 +2241,7 @@ setsebool -P fips_mode var_fips_mode
 
 var_gpg_web_anon_write="false"
 
-setsebool -P gpg_web_anon_write var_gpg_web_anon_write
+setsebool -P gpg_web_anon_write $var_gpg_web_anon_write
 # END fix for 'sebool_gpg_web_anon_write'
 
 ###############################################################################
@@ -2233,7 +2251,7 @@ setsebool -P gpg_web_anon_write var_gpg_web_anon_write
 
 var_guest_exec_content="true"
 
-setsebool -P guest_exec_content var_guest_exec_content
+setsebool -P guest_exec_content $var_guest_exec_content
 # END fix for 'sebool_guest_exec_content'
 
 ###############################################################################
@@ -2243,7 +2261,7 @@ setsebool -P guest_exec_content var_guest_exec_content
 
 var_kerberos_enabled="true"
 
-setsebool -P kerberos_enabled var_kerberos_enabled
+setsebool -P kerberos_enabled $var_kerberos_enabled
 # END fix for 'sebool_kerberos_enabled'
 
 ###############################################################################
@@ -2253,7 +2271,7 @@ setsebool -P kerberos_enabled var_kerberos_enabled
 
 var_logadm_exec_content="true"
 
-setsebool -P logadm_exec_content var_logadm_exec_content
+setsebool -P logadm_exec_content $var_logadm_exec_content
 # END fix for 'sebool_logadm_exec_content'
 
 ###############################################################################
@@ -2263,7 +2281,7 @@ setsebool -P logadm_exec_content var_logadm_exec_content
 
 var_logging_syslogd_can_sendmail="false"
 
-setsebool -P logging_syslogd_can_sendmail var_logging_syslogd_can_sendmail
+setsebool -P logging_syslogd_can_sendmail $var_logging_syslogd_can_sendmail
 # END fix for 'sebool_logging_syslogd_can_sendmail'
 
 ###############################################################################
@@ -2273,7 +2291,7 @@ setsebool -P logging_syslogd_can_sendmail var_logging_syslogd_can_sendmail
 
 var_logging_syslogd_use_tty="true"
 
-setsebool -P logging_syslogd_use_tty var_logging_syslogd_use_tty
+setsebool -P logging_syslogd_use_tty $var_logging_syslogd_use_tty
 # END fix for 'sebool_logging_syslogd_use_tty'
 
 ###############################################################################
@@ -2283,7 +2301,7 @@ setsebool -P logging_syslogd_use_tty var_logging_syslogd_use_tty
 
 var_login_console_enabled="true"
 
-setsebool -P login_console_enabled var_login_console_enabled
+setsebool -P login_console_enabled $var_login_console_enabled
 # END fix for 'sebool_login_console_enabled'
 
 ###############################################################################
@@ -2293,7 +2311,7 @@ setsebool -P login_console_enabled var_login_console_enabled
 
 var_mmap_low_allowed="false"
 
-setsebool -P mmap_low_allowed var_mmap_low_allowed
+setsebool -P mmap_low_allowed $var_mmap_low_allowed
 # END fix for 'sebool_mmap_low_allowed'
 
 ###############################################################################
@@ -2303,7 +2321,7 @@ setsebool -P mmap_low_allowed var_mmap_low_allowed
 
 var_mock_enable_homedirs="false"
 
-setsebool -P mock_enable_homedirs var_mock_enable_homedirs
+setsebool -P mock_enable_homedirs $var_mock_enable_homedirs
 # END fix for 'sebool_mock_enable_homedirs'
 
 ###############################################################################
@@ -2313,7 +2331,7 @@ setsebool -P mock_enable_homedirs var_mock_enable_homedirs
 
 var_mount_anyfile="true"
 
-setsebool -P mount_anyfile var_mount_anyfile
+setsebool -P mount_anyfile $var_mount_anyfile
 # END fix for 'sebool_mount_anyfile'
 
 ###############################################################################
@@ -2323,7 +2341,7 @@ setsebool -P mount_anyfile var_mount_anyfile
 
 var_polyinstantiation_enabled="false"
 
-setsebool -P polyinstantiation_enabled var_polyinstantiation_enabled
+setsebool -P polyinstantiation_enabled $var_polyinstantiation_enabled
 # END fix for 'sebool_polyinstantiation_enabled'
 
 ###############################################################################
@@ -2333,7 +2351,7 @@ setsebool -P polyinstantiation_enabled var_polyinstantiation_enabled
 
 var_secadm_exec_content="true"
 
-setsebool -P secadm_exec_content var_secadm_exec_content
+setsebool -P secadm_exec_content $var_secadm_exec_content
 # END fix for 'sebool_secadm_exec_content'
 
 ###############################################################################
@@ -2343,7 +2361,7 @@ setsebool -P secadm_exec_content var_secadm_exec_content
 
 var_secure_mode_insmod="false"
 
-setsebool -P secure_mode_insmod var_secure_mode_insmod
+setsebool -P secure_mode_insmod $var_secure_mode_insmod
 # END fix for 'sebool_secure_mode_insmod'
 
 ###############################################################################
@@ -2353,7 +2371,7 @@ setsebool -P secure_mode_insmod var_secure_mode_insmod
 
 var_secure_mode="false"
 
-setsebool -P secure_mode var_secure_mode
+setsebool -P secure_mode $var_secure_mode
 # END fix for 'sebool_secure_mode'
 
 ###############################################################################
@@ -2363,7 +2381,7 @@ setsebool -P secure_mode var_secure_mode
 
 var_secure_mode_policyload="false"
 
-setsebool -P secure_mode_policyload var_secure_mode_policyload
+setsebool -P secure_mode_policyload $var_secure_mode_policyload
 # END fix for 'sebool_secure_mode_policyload'
 
 ###############################################################################
@@ -2373,7 +2391,7 @@ setsebool -P secure_mode_policyload var_secure_mode_policyload
 
 var_selinuxuser_direct_dri_enabled="true"
 
-setsebool -P selinuxuser_direct_dri_enabled var_selinuxuser_direct_dri_enabled
+setsebool -P selinuxuser_direct_dri_enabled $var_selinuxuser_direct_dri_enabled
 # END fix for 'sebool_selinuxuser_direct_dri_enabled'
 
 ###############################################################################
@@ -2383,7 +2401,7 @@ setsebool -P selinuxuser_direct_dri_enabled var_selinuxuser_direct_dri_enabled
 
 var_selinuxuser_execheap="false"
 
-setsebool -P selinuxuser_execheap var_selinuxuser_execheap
+setsebool -P selinuxuser_execheap $var_selinuxuser_execheap
 # END fix for 'sebool_selinuxuser_execheap'
 
 ###############################################################################
@@ -2393,7 +2411,7 @@ setsebool -P selinuxuser_execheap var_selinuxuser_execheap
 
 var_selinuxuser_execmod="true"
 
-setsebool -P selinuxuser_execmod var_selinuxuser_execmod
+setsebool -P selinuxuser_execmod $var_selinuxuser_execmod
 # END fix for 'sebool_selinuxuser_execmod'
 
 ###############################################################################
@@ -2403,7 +2421,7 @@ setsebool -P selinuxuser_execmod var_selinuxuser_execmod
 
 var_selinuxuser_execstack="true"
 
-setsebool -P selinuxuser_execstack var_selinuxuser_execstack
+setsebool -P selinuxuser_execstack $var_selinuxuser_execstack
 # END fix for 'sebool_selinuxuser_execstack'
 
 ###############################################################################
@@ -2413,7 +2431,7 @@ setsebool -P selinuxuser_execstack var_selinuxuser_execstack
 
 var_selinuxuser_mysql_connect_enabled="false"
 
-setsebool -P selinuxuser_mysql_connect_enabled var_selinuxuser_mysql_connect_enabled
+setsebool -P selinuxuser_mysql_connect_enabled $var_selinuxuser_mysql_connect_enabled
 # END fix for 'sebool_selinuxuser_mysql_connect_enabled'
 
 ###############################################################################
@@ -2423,7 +2441,7 @@ setsebool -P selinuxuser_mysql_connect_enabled var_selinuxuser_mysql_connect_ena
 
 var_selinuxuser_ping="true"
 
-setsebool -P selinuxuser_ping var_selinuxuser_ping
+setsebool -P selinuxuser_ping $var_selinuxuser_ping
 # END fix for 'sebool_selinuxuser_ping'
 
 ###############################################################################
@@ -2433,7 +2451,7 @@ setsebool -P selinuxuser_ping var_selinuxuser_ping
 
 var_selinuxuser_postgresql_connect_enabled="false"
 
-setsebool -P selinuxuser_postgresql_connect_enabled var_selinuxuser_postgresql_connect_enabled
+setsebool -P selinuxuser_postgresql_connect_enabled $var_selinuxuser_postgresql_connect_enabled
 # END fix for 'sebool_selinuxuser_postgresql_connect_enabled'
 
 ###############################################################################
@@ -2443,7 +2461,7 @@ setsebool -P selinuxuser_postgresql_connect_enabled var_selinuxuser_postgresql_c
 
 var_selinuxuser_rw_noexattrfile="true"
 
-setsebool -P selinuxuser_rw_noexattrfile var_selinuxuser_rw_noexattrfile
+setsebool -P selinuxuser_rw_noexattrfile $var_selinuxuser_rw_noexattrfile
 # END fix for 'sebool_selinuxuser_rw_noexattrfile'
 
 ###############################################################################
@@ -2453,7 +2471,7 @@ setsebool -P selinuxuser_rw_noexattrfile var_selinuxuser_rw_noexattrfile
 
 var_selinuxuser_share_music="false"
 
-setsebool -P selinuxuser_share_music var_selinuxuser_share_music
+setsebool -P selinuxuser_share_music $var_selinuxuser_share_music
 # END fix for 'sebool_selinuxuser_share_music'
 
 ###############################################################################
@@ -2463,7 +2481,7 @@ setsebool -P selinuxuser_share_music var_selinuxuser_share_music
 
 var_selinuxuser_tcp_server="false"
 
-setsebool -P selinuxuser_tcp_server var_selinuxuser_tcp_server
+setsebool -P selinuxuser_tcp_server $var_selinuxuser_tcp_server
 # END fix for 'sebool_selinuxuser_tcp_server'
 
 ###############################################################################
@@ -2473,7 +2491,7 @@ setsebool -P selinuxuser_tcp_server var_selinuxuser_tcp_server
 
 var_selinuxuser_udp_server="false"
 
-setsebool -P selinuxuser_udp_server var_selinuxuser_udp_server
+setsebool -P selinuxuser_udp_server $var_selinuxuser_udp_server
 # END fix for 'sebool_selinuxuser_udp_server'
 
 ###############################################################################
@@ -2483,7 +2501,7 @@ setsebool -P selinuxuser_udp_server var_selinuxuser_udp_server
 
 var_selinuxuser_use_ssh_chroot="false"
 
-setsebool -P selinuxuser_use_ssh_chroot var_selinuxuser_use_ssh_chroot
+setsebool -P selinuxuser_use_ssh_chroot $var_selinuxuser_use_ssh_chroot
 # END fix for 'sebool_selinuxuser_use_ssh_chroot'
 
 ###############################################################################
@@ -2493,7 +2511,7 @@ setsebool -P selinuxuser_use_ssh_chroot var_selinuxuser_use_ssh_chroot
 
 var_ssh_chroot_rw_homedirs="false"
 
-setsebool -P ssh_chroot_rw_homedirs var_ssh_chroot_rw_homedirs
+setsebool -P ssh_chroot_rw_homedirs $var_ssh_chroot_rw_homedirs
 # END fix for 'sebool_ssh_chroot_rw_homedirs'
 
 ###############################################################################
@@ -2503,7 +2521,7 @@ setsebool -P ssh_chroot_rw_homedirs var_ssh_chroot_rw_homedirs
 
 var_ssh_keysign="false"
 
-setsebool -P ssh_keysign var_ssh_keysign
+setsebool -P ssh_keysign $var_ssh_keysign
 # END fix for 'sebool_ssh_keysign'
 
 ###############################################################################
@@ -2513,7 +2531,7 @@ setsebool -P ssh_keysign var_ssh_keysign
 
 var_ssh_sysadm_login="false"
 
-setsebool -P ssh_sysadm_login var_ssh_sysadm_login
+setsebool -P ssh_sysadm_login $var_ssh_sysadm_login
 # END fix for 'sebool_ssh_sysadm_login'
 
 ###############################################################################
@@ -2523,7 +2541,7 @@ setsebool -P ssh_sysadm_login var_ssh_sysadm_login
 
 var_staff_exec_content="true"
 
-setsebool -P staff_exec_content var_staff_exec_content
+setsebool -P staff_exec_content $var_staff_exec_content
 # END fix for 'sebool_staff_exec_content'
 
 ###############################################################################
@@ -2533,7 +2551,7 @@ setsebool -P staff_exec_content var_staff_exec_content
 
 var_sysadm_exec_content="true"
 
-setsebool -P sysadm_exec_content var_sysadm_exec_content
+setsebool -P sysadm_exec_content $var_sysadm_exec_content
 # END fix for 'sebool_sysadm_exec_content'
 
 ###############################################################################
@@ -2543,7 +2561,7 @@ setsebool -P sysadm_exec_content var_sysadm_exec_content
 
 var_unconfined_login="true"
 
-setsebool -P unconfined_login var_unconfined_login
+setsebool -P unconfined_login $var_unconfined_login
 # END fix for 'sebool_unconfined_login'
 
 ###############################################################################
@@ -2553,7 +2571,7 @@ setsebool -P unconfined_login var_unconfined_login
 
 var_use_ecryptfs_home_dirs="false"
 
-setsebool -P use_ecryptfs_home_dirs var_use_ecryptfs_home_dirs
+setsebool -P use_ecryptfs_home_dirs $var_use_ecryptfs_home_dirs
 # END fix for 'sebool_use_ecryptfs_home_dirs'
 
 ###############################################################################
@@ -2563,7 +2581,7 @@ setsebool -P use_ecryptfs_home_dirs var_use_ecryptfs_home_dirs
 
 var_user_exec_content="true"
 
-setsebool -P user_exec_content var_user_exec_content
+setsebool -P user_exec_content $var_user_exec_content
 # END fix for 'sebool_user_exec_content'
 
 ###############################################################################
@@ -2573,7 +2591,7 @@ setsebool -P user_exec_content var_user_exec_content
 
 var_xdm_bind_vnc_tcp_port="false"
 
-setsebool -P xdm_bind_vnc_tcp_port var_xdm_bind_vnc_tcp_port
+setsebool -P xdm_bind_vnc_tcp_port $var_xdm_bind_vnc_tcp_port
 # END fix for 'sebool_xdm_bind_vnc_tcp_port'
 
 ###############################################################################
@@ -2583,7 +2601,7 @@ setsebool -P xdm_bind_vnc_tcp_port var_xdm_bind_vnc_tcp_port
 
 var_xdm_exec_bootloader="false"
 
-setsebool -P xdm_exec_bootloader var_xdm_exec_bootloader
+setsebool -P xdm_exec_bootloader $var_xdm_exec_bootloader
 # END fix for 'sebool_xdm_exec_bootloader'
 
 ###############################################################################
@@ -2593,7 +2611,7 @@ setsebool -P xdm_exec_bootloader var_xdm_exec_bootloader
 
 var_xdm_sysadm_login="false"
 
-setsebool -P xdm_sysadm_login var_xdm_sysadm_login
+setsebool -P xdm_sysadm_login $var_xdm_sysadm_login
 # END fix for 'sebool_xdm_sysadm_login'
 
 ###############################################################################
@@ -2603,7 +2621,7 @@ setsebool -P xdm_sysadm_login var_xdm_sysadm_login
 
 var_xdm_write_home="false"
 
-setsebool -P xdm_write_home var_xdm_write_home
+setsebool -P xdm_write_home $var_xdm_write_home
 # END fix for 'sebool_xdm_write_home'
 
 ###############################################################################
@@ -2613,7 +2631,7 @@ setsebool -P xdm_write_home var_xdm_write_home
 
 var_xguest_connect_network="true"
 
-setsebool -P xguest_connect_network var_xguest_connect_network
+setsebool -P xguest_connect_network $var_xguest_connect_network
 # END fix for 'sebool_xguest_connect_network'
 
 ###############################################################################
@@ -2623,7 +2641,7 @@ setsebool -P xguest_connect_network var_xguest_connect_network
 
 var_xguest_exec_content="true"
 
-setsebool -P xguest_exec_content var_xguest_exec_content
+setsebool -P xguest_exec_content $var_xguest_exec_content
 # END fix for 'sebool_xguest_exec_content'
 
 ###############################################################################
@@ -2633,7 +2651,7 @@ setsebool -P xguest_exec_content var_xguest_exec_content
 
 var_xguest_mount_media="true"
 
-setsebool -P xguest_mount_media var_xguest_mount_media
+setsebool -P xguest_mount_media $var_xguest_mount_media
 # END fix for 'sebool_xguest_mount_media'
 
 ###############################################################################
@@ -2643,7 +2661,7 @@ setsebool -P xguest_mount_media var_xguest_mount_media
 
 var_xguest_use_bluetooth="true"
 
-setsebool -P xguest_use_bluetooth var_xguest_use_bluetooth
+setsebool -P xguest_use_bluetooth $var_xguest_use_bluetooth
 # END fix for 'sebool_xguest_use_bluetooth'
 
 ###############################################################################
@@ -2653,7 +2671,7 @@ setsebool -P xguest_use_bluetooth var_xguest_use_bluetooth
 
 var_xserver_clients_write_xshm="false"
 
-setsebool -P xserver_clients_write_xshm var_xserver_clients_write_xshm
+setsebool -P xserver_clients_write_xshm $var_xserver_clients_write_xshm
 # END fix for 'sebool_xserver_clients_write_xshm'
 
 ###############################################################################
@@ -2663,7 +2681,7 @@ setsebool -P xserver_clients_write_xshm var_xserver_clients_write_xshm
 
 var_xserver_execmem="false"
 
-setsebool -P xserver_execmem var_xserver_execmem
+setsebool -P xserver_execmem $var_xserver_execmem
 # END fix for 'sebool_xserver_execmem'
 
 ###############################################################################
@@ -2673,7 +2691,7 @@ setsebool -P xserver_execmem var_xserver_execmem
 
 var_xserver_object_manager="false"
 
-setsebool -P xserver_object_manager var_xserver_object_manager
+setsebool -P xserver_object_manager $var_xserver_object_manager
 # END fix for 'sebool_xserver_object_manager'
 
 ###############################################################################
@@ -3918,20 +3936,33 @@ done
 
 var_password_pam_unix_remember="5"
 
-if grep -q "remember=" /etc/pam.d/system-auth; then   
-	sed -i --follow-symlinks "s/\(^password.*sufficient.*pam_unix.so.*\)\(\(remember *= *\)[^ $]*\)/\1remember=$var_password_pam_unix_remember/" /etc/pam.d/system-auth
-else
-	sed -i --follow-symlinks "/^password[[:space:]]\+sufficient[[:space:]]\+pam_unix.so/ s/$/ remember=$var_password_pam_unix_remember/" /etc/pam.d/system-auth
-fi
+AUTH_FILES[0]="/etc/pam.d/system-auth"
+AUTH_FILES[1]="/etc/pam.d/password-auth"
+
+for pamFile in "${AUTH_FILES[@]}"
+do
+	if grep -q "remember=" $pamFile; then
+		sed -i --follow-symlinks "s/\(^password.*sufficient.*pam_unix.so.*\)\(\(remember *= *\)[^ $]*\)/\1remember=$var_password_pam_unix_remember/" $pamFile
+	else
+		sed -i --follow-symlinks "/^password[[:space:]]\+sufficient[[:space:]]\+pam_unix.so/ s/$/ remember=$var_password_pam_unix_remember/" $pamFile
+	fi
+done
 # END fix for 'accounts_password_pam_unix_remember'
 
 ###############################################################################
 # BEGIN fix (162 / 359) for 'set_password_hashing_algorithm_systemauth'
 ###############################################################################
 (>&2 echo "Remediating rule 162/359: 'set_password_hashing_algorithm_systemauth'")
-if ! grep -q "^password.*sufficient.*pam_unix.so.*sha512" /etc/pam.d/system-auth; then   
-	sed -i --follow-symlinks "/^password.*sufficient.*pam_unix.so/ s/$/ sha512/" /etc/pam.d/system-auth
-fi
+
+AUTH_FILES[0]="/etc/pam.d/system-auth"
+AUTH_FILES[1]="/etc/pam.d/password-auth"
+
+for pamFile in "${AUTH_FILES[@]}"
+do
+	if ! grep -q "^password.*sufficient.*pam_unix.so.*sha512" $pamFile; then
+		sed -i --follow-symlinks "/^password.*sufficient.*pam_unix.so/ s/$/ sha512/" $pamFile
+	fi
+done
 # END fix for 'set_password_hashing_algorithm_systemauth'
 
 ###############################################################################
@@ -4386,7 +4417,7 @@ replace_or_append '/etc/systemd/system.conf' '^CtrlAltDelBurstAction=' 'none' 'C
 (>&2 echo "Remediating rule 177/359: 'disable_ctrlaltdel_reboot'")
 # The process to disable ctrl+alt+del has changed in RHEL7. 
 # Reference: https://access.redhat.com/solutions/1123873
-ln -sf /dev/null /etc/systemd/system/ctrl-alt-del.target
+systemctl mask ctrl-alt-del.target
 # END fix for 'disable_ctrlaltdel_reboot'
 
 ###############################################################################
@@ -7198,7 +7229,10 @@ fi
 # BEGIN fix (219 / 359) for 'rsyslog_cron_logging'
 ###############################################################################
 (>&2 echo "Remediating rule 219/359: 'rsyslog_cron_logging'")
-# FIX FOR THIS RULE IS MISSING
+
+if ! grep "^\s*cron\.\*\s*/var/log/cron$" /etc/rsyslog.conf /etc/rsyslog.d/*.conf; then
+	echo "cron.*                                                  /var/log/cron\n" >> /etc/rsyslog.d/cron.conf
+fi
 # END fix for 'rsyslog_cron_logging'
 
 ###############################################################################
@@ -7647,7 +7681,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -7908,7 +7942,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -8169,7 +8203,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -8442,7 +8476,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -9531,7 +9565,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -10490,7 +10524,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -10732,7 +10766,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -10974,7 +11008,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -11216,7 +11250,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -11458,7 +11492,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -11700,7 +11734,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -11942,7 +11976,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -12184,7 +12218,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -12426,7 +12460,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -12668,7 +12702,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -12910,7 +12944,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -13152,7 +13186,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -13394,7 +13428,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -13815,8 +13849,8 @@ do
 done
 }
 
-fix_audit_watch_rule "auditctl" "/var/run/faillock" "wa" "logins"
-fix_audit_watch_rule "augenrules" "/var/run/faillock" "wa" "logins"
+fix_audit_watch_rule "auditctl" "/var/run/faillock/" "wa" "logins"
+fix_audit_watch_rule "augenrules" "/var/run/faillock/" "wa" "logins"
 # END fix for 'audit_rules_login_events_faillock'
 
 ###############################################################################
@@ -14465,7 +14499,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -14696,7 +14730,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -14938,7 +14972,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -15169,7 +15203,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -15411,7 +15445,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -15642,7 +15676,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -15884,7 +15918,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -16115,7 +16149,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -16357,7 +16391,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -16588,7 +16622,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -16830,7 +16864,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -17061,7 +17095,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -17297,7 +17331,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -17532,7 +17566,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -17767,7 +17801,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -18002,7 +18036,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -18243,10 +18277,10 @@ do
 		# * existing rule contains all arguments from expected rule form (though can contain
 		#   them in arbitrary order)
 	
-		base_search=$(sed -e "/-a always,exit/!d" -e "/-F path=${sbinary_esc}$/!d"   \
-		    		  -e "/-F path=[^[:space:]]\+/!d" -e "/-F perm=.*/!d"       \
-				  -e "/-F auid>=${min_auid}/!d" -e "/-F auid!=4294967295/!d"  \
-				  -e "/-k privileged/!d" $afile)
+		base_search=$(sed -e '/-a always,exit/!d' -e '/-F path='"${sbinary_esc}"'/!d' \
+				-e '/-F path=[^[:space:]]\+/!d'   -e '/-F perm=.*/!d'                 \
+				-e '/-F auid>='"${min_auid}"'/!d' -e '/-F auid!=4294967295/!d'        \
+				-e '/-k privileged/!d' $afile)
 
 		# Increase the count of inspected files for this sbinary
 		count_of_inspected_files=$((count_of_inspected_files + 1))
@@ -18414,7 +18448,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -18649,7 +18683,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -18884,7 +18918,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -19119,7 +19153,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -19354,7 +19388,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -19589,7 +19623,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -19824,7 +19858,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -20059,7 +20093,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -20294,7 +20328,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -20529,7 +20563,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -20764,7 +20798,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -20999,7 +21033,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -21234,7 +21268,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -21469,7 +21503,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -21704,7 +21738,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -21939,7 +21973,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -22180,7 +22214,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -22423,7 +22457,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -22665,7 +22699,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -22907,7 +22941,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -23149,7 +23183,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -23391,7 +23425,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -23633,7 +23667,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -23925,11 +23959,11 @@ fix_audit_watch_rule "augenrules" "/etc/sudoers" "wa" "actions"
 
 # First perform the remediation of the syscall rule
 # Retrieve hardware architecture of the underlying system
-# Note: 32-bit kernel modules can't be loaded / unloaded on 64-bit kernel =>
-#       it's not required on a 64-bit system to check also for the presence
-#       of 32-bit's equivalent of the corresponding rule. Therefore for
-#       each system it's enought to check presence of system's native rule form.
-[ "$(getconf LONG_BIT)" = "32" ] && RULE_ARCHS=("b32") || RULE_ARCHS=("b64")
+# Note: 32-bit and 64-bit kernel syscall numbers not always line up =>
+#       it's required on a 64-bit system to check also for the presence
+#       of 32-bit's equivalent of the corresponding rule.
+#       (See `man 7 audit.rules` for details )
+[ "$(getconf LONG_BIT)" = "32" ] && RULE_ARCHS=("b32") || RULE_ARCHS=("b32" "b64")
 
 for ARCH in "${RULE_ARCHS[@]}"
 do
@@ -24020,7 +24054,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -24171,11 +24205,11 @@ done
 
 # First perform the remediation of the syscall rule
 # Retrieve hardware architecture of the underlying system
-# Note: 32-bit kernel modules can't be loaded / unloaded on 64-bit kernel =>
-#       it's not required on a 64-bit system to check also for the presence
-#       of 32-bit's equivalent of the corresponding rule. Therefore for
-#       each system it's enought to check presence of system's native rule form.
-[ "$(getconf LONG_BIT)" = "32" ] && RULE_ARCHS=("b32") || RULE_ARCHS=("b64")
+# Note: 32-bit and 64-bit kernel syscall numbers not always line up =>
+#       it's required on a 64-bit system to check also for the presence
+#       of 32-bit's equivalent of the corresponding rule.
+#       (See `man 7 audit.rules` for details )
+[ "$(getconf LONG_BIT)" = "32" ] && RULE_ARCHS=("b32") || RULE_ARCHS=("b32" "b64")
 
 for ARCH in "${RULE_ARCHS[@]}"
 do
@@ -24266,7 +24300,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -25260,7 +25294,10 @@ systemctl stop rlogin.socket
 ###############################################################################
 (>&2 echo "Remediating rule 315/359: 'no_rsh_trust_files'")
 find /home -maxdepth 2 -type f -name .rhosts -exec rm -f '{}' \;
-rm -f /etc/hosts.equiv
+
+if [ -f /etc/hosts.equiv ]; then
+	/bin/rm -f /etc/hosts.equiv
+fi
 # END fix for 'no_rsh_trust_files'
 
 ###############################################################################

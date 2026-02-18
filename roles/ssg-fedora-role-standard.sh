@@ -7,7 +7,7 @@
 # Regardless of your system's workload all of these checks should pass.
 #
 # Benchmark ID:  FEDORA
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #

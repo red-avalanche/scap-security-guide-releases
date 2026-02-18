@@ -17,7 +17,7 @@
 # 
 #
 # Benchmark ID:  RHEL-6
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #
@@ -35,6 +35,13 @@
 
 
  - hosts: all
+   pre_tasks:
+     - name: Verify Ansible meets SCAP-Security-Guide version requirements.
+       assert:
+         that: "ansible_version.full | version_compare('2.3', '>=')"
+         msg: >
+           "You must update Ansible to at least version 2.3 to use this role."
+          
    vars:
       var_selinux_state: enforcing
       var_selinux_policy_name: targeted
@@ -42,6 +49,9 @@
       var_accounts_maximum_age_login_defs: 90
       var_accounts_password_warn_age_login_defs: 7
       var_account_disable_post_pw_expiration: 35
+      var_accounts_passwords_pam_faillock_deny: 3
+      var_accounts_passwords_pam_faillock_unlock_time: 604800
+      var_accounts_passwords_pam_faillock_fail_interval: 900
       var_password_pam_unix_remember: 5
       sysctl_net_ipv4_conf_all_accept_source_route_value: 0
       sysctl_net_ipv4_conf_all_accept_redirects_value: 0
@@ -215,11 +225,28 @@
         - PCI-DSS-Req-6.2
         - DISA-STIG-RHEL-06-000015
     
+    - name: Does prelink file exist
+      stat:
+        path=/etc/sysconfig/prelink
+      register: prelink_exists
+      tags:
+        - disable_prelink
+        - low_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27221-1
+        - NIST-800-53-CM-6(d)
+        - NIST-800-53-SC-28
+        - NIST-800-53-SI-7
+        - PCI-DSS-Req-11.5  
+    
     - name: disable prelinking
       lineinfile:
         path: /etc/sysconfig/prelink
         regexp: '^PRELINKING='
         line: 'PRELINKING=no'
+      when: prelink_exists.stat.exists == True
       tags:
         - disable_prelink
         - low_severity
@@ -1579,6 +1606,98 @@
         - DISA-STIG-RHEL-06-000334
     
     
+    - name: XCCDF Value var_accounts_passwords_pam_faillock_unlock_time # promote to variable
+      set_fact:
+        var_accounts_passwords_pam_faillock_unlock_time: 604800
+      
+    - name: XCCDF Value var_accounts_passwords_pam_faillock_fail_interval # promote to variable
+      set_fact:
+        var_accounts_passwords_pam_faillock_fail_interval: 900
+      tags:
+        - always
+    
+    - name: set auth pam_faillock before pam_unix.so
+      pamd:
+        name: system-auth
+        type: auth
+        control: sufficient
+        module_path: pam_unix.so
+        new_type: a
+    
+    - name: set auth pam_faillock before pam_unix.so
+      pamd:
+        name: system-auth
+        type: auth
+        control: sufficient
+        module_path: pam_unix.so
+        new_type: auth
+        new_control: required
+        new_module_path: pam_faillock.so
+        module_arguments: 'preauth
+            silent
+            deny={{ var_accounts_passwords_pam_faillock_deny }}
+            unlock_time={{ var_accounts_passwords_pam_faillock_unlock_time }}
+            fail_interval={{ var_accounts_passwords_pam_faillock_fail_interval }}'
+        state: before
+      tags:
+        - accounts_passwords_pam_faillock_deny
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26844-1
+        - NIST-800-53-AC-7(a)
+        - PCI-DSS-Req-8.1.6
+        - DISA-STIG-RHEL-06-000061
+    
+    - name: set auth pam_faillock after pam_unix.so
+      pamd:
+        name: system-auth
+        type: auth
+        control: sufficient
+        module_path: pam_unix.so
+        new_type: auth
+        new_control: '[default=die]'
+        new_module_path: pam_faillock.so
+        module_arguments: 'preauth
+            silent
+            deny={{ var_accounts_passwords_pam_faillock_deny }}
+            unlock_time={{ var_accounts_passwords_pam_faillock_unlock_time }}
+            fail_interval={{ var_accounts_passwords_pam_faillock_fail_interval }}'
+        state: after
+      tags:
+        - accounts_passwords_pam_faillock_deny
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26844-1
+        - NIST-800-53-AC-7(a)
+        - PCI-DSS-Req-8.1.6
+        - DISA-STIG-RHEL-06-000061
+    
+    - name: set account pam_faillock before pam_unix.so
+      pamd:
+        name: system-auth
+        type: account
+        control: required
+        module_path: pam_unix.so
+        new_type: account
+        new_control: required
+        new_module_path: pam_faillock.so
+        state: before
+      tags:
+        - accounts_passwords_pam_faillock_deny
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26844-1
+        - NIST-800-53-AC-7(a)
+        - PCI-DSS-Req-8.1.6
+        - DISA-STIG-RHEL-06-000061
+    
+    
     
     - name: "Do not allow users to reuse recent passwords - system-auth (change)"
       replace:
@@ -2628,6 +2747,8 @@
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - rhnsd
       tags:
@@ -2639,7 +2760,6 @@
         - CCE-26846-6
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000009
-    
     
     - name: Enable service crond
       service:
@@ -2664,6 +2784,8 @@
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - atd
       tags:
@@ -2675,7 +2797,6 @@
         - CCE-27249-2
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000262
-    
     
     
     - name: "Allow Only SSH Protocol 2"
@@ -2849,6 +2970,8 @@
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - avahi-daemon
       tags:
@@ -2861,12 +2984,13 @@
         - NIST-800-53-CM-7
         - DISA-STIG-RHEL-06-000246
     
-    
     - name: Disable service cups
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - cups
       tags:
@@ -2877,7 +3001,6 @@
         - low_disruption
         - CCE-26899-5
         - NIST-800-53-CM-7
-    
     
     - name: Ensure dhcp is removed
       package:
@@ -2936,6 +3059,8 @@
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - nfslock
       tags:
@@ -2946,12 +3071,13 @@
         - low_disruption
         - CCE-27104-9
     
-    
     - name: Disable service rpcgssd
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - rpcgssd
       tags:
@@ -2962,12 +3088,13 @@
         - low_disruption
         - CCE-26864-9
     
-    
     - name: Disable service rpcidmapd
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - rpcidmapd
       tags:
@@ -2978,12 +3105,13 @@
         - low_disruption
         - CCE-26870-6
     
-    
     - name: Disable service rpcbind
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - rpcbind
       tags:
@@ -2994,12 +3122,13 @@
         - low_disruption
         - CCE-27430-8
     
-    
     - name: Disable service rpcsvcgssd
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - rpcsvcgssd
       tags:
@@ -3009,7 +3138,6 @@
         - low_complexity
         - low_disruption
         - CCE-27122-1
-    
     
     - name: Ensure bind is removed
       package:

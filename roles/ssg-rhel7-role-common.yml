@@ -7,7 +7,7 @@
 # This profile contains items common to general-purpose desktop and server installations.
 #
 # Benchmark ID:  RHEL-7
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #
@@ -25,6 +25,13 @@
 
 
  - hosts: all
+   pre_tasks:
+     - name: Verify Ansible meets SCAP-Security-Guide version requirements.
+       assert:
+         that: "ansible_version.full | version_compare('2.3', '>=')"
+         msg: >
+           "You must update Ansible to at least version 2.3 to use this role."
+          
    vars:
    tasks:
     - name: Disable service autofs
@@ -32,6 +39,8 @@
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - autofs
       tags:
@@ -41,13 +50,7 @@
         - low_complexity
         - low_disruption
         - CCE-27498-5
-        - NIST-800-53-AC-19(a)
-        - NIST-800-53-AC-19(d)
-        - NIST-800-53-AC-19(e)
-        - NIST-800-53-IA-3
-        - NIST-800-171-3.4.6
         - DISA-STIG-RHEL-07-020110
-    
     
     - name: Ensure rsyslog is installed
       package:
@@ -126,17 +129,6 @@
         - low_complexity
         - low_disruption
         - CCE-27339-1
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030410
     
     - name: Inserts/replaces the chmod rule in rules.d when on x86_64
@@ -152,17 +144,6 @@
         - low_complexity
         - low_disruption
         - CCE-27339-1
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030410
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -181,17 +162,6 @@
         - low_complexity
         - low_disruption
         - CCE-27339-1
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030410
     
     - name: Inserts/replaces the chmod rule in audit.rules when on x86_64
@@ -210,17 +180,6 @@
         - low_complexity
         - low_disruption
         - CCE-27339-1
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030410
     
     
@@ -266,17 +225,6 @@
         - low_complexity
         - low_disruption
         - CCE-27364-9
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030370
     
     - name: Inserts/replaces the chown rule in rules.d when on x86_64
@@ -292,17 +240,6 @@
         - low_complexity
         - low_disruption
         - CCE-27364-9
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030370
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -321,17 +258,6 @@
         - low_complexity
         - low_disruption
         - CCE-27364-9
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030370
     
     - name: Inserts/replaces the chown rule in audit.rules when on x86_64
@@ -350,17 +276,6 @@
         - low_complexity
         - low_disruption
         - CCE-27364-9
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030370
     
     
@@ -406,17 +321,6 @@
         - low_complexity
         - low_disruption
         - CCE-27393-8
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030420
     
     - name: Inserts/replaces the fchmod rule in rules.d when on x86_64
@@ -432,17 +336,6 @@
         - low_complexity
         - low_disruption
         - CCE-27393-8
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030420
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -461,17 +354,6 @@
         - low_complexity
         - low_disruption
         - CCE-27393-8
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030420
     
     - name: Inserts/replaces the fchmod rule in audit.rules when on x86_64
@@ -490,17 +372,6 @@
         - low_complexity
         - low_disruption
         - CCE-27393-8
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030420
     
     
@@ -546,17 +417,6 @@
         - low_complexity
         - low_disruption
         - CCE-27388-8
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030430
     
     - name: Inserts/replaces the fchmodat rule in rules.d when on x86_64
@@ -572,17 +432,6 @@
         - low_complexity
         - low_disruption
         - CCE-27388-8
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030430
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -601,17 +450,6 @@
         - low_complexity
         - low_disruption
         - CCE-27388-8
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030430
     
     - name: Inserts/replaces the fchmodat rule in audit.rules when on x86_64
@@ -630,17 +468,6 @@
         - low_complexity
         - low_disruption
         - CCE-27388-8
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030430
     
     
@@ -686,17 +513,6 @@
         - low_complexity
         - low_disruption
         - CCE-27356-5
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030380
     
     - name: Inserts/replaces the fchown rule in rules.d when on x86_64
@@ -712,17 +528,6 @@
         - low_complexity
         - low_disruption
         - CCE-27356-5
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030380
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -741,17 +546,6 @@
         - low_complexity
         - low_disruption
         - CCE-27356-5
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030380
     
     - name: Inserts/replaces the fchown rule in audit.rules when on x86_64
@@ -770,17 +564,6 @@
         - low_complexity
         - low_disruption
         - CCE-27356-5
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030380
     
     
@@ -826,17 +609,6 @@
         - low_complexity
         - low_disruption
         - CCE-27387-0
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030400
     
     - name: Inserts/replaces the fchownat rule in rules.d when on x86_64
@@ -852,17 +624,6 @@
         - low_complexity
         - low_disruption
         - CCE-27387-0
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030400
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -881,17 +642,6 @@
         - low_complexity
         - low_disruption
         - CCE-27387-0
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030400
     
     - name: Inserts/replaces the fchownat rule in audit.rules when on x86_64
@@ -910,17 +660,6 @@
         - low_complexity
         - low_disruption
         - CCE-27387-0
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030400
     
     
@@ -966,17 +705,6 @@
         - low_complexity
         - low_disruption
         - CCE-27353-2
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030480
     
     - name: Inserts/replaces the fremovexattr rule in rules.d when on x86_64
@@ -992,17 +720,6 @@
         - low_complexity
         - low_disruption
         - CCE-27353-2
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030480
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -1021,17 +738,6 @@
         - low_complexity
         - low_disruption
         - CCE-27353-2
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030480
     
     - name: Inserts/replaces the fremovexattr rule in audit.rules when on x86_64
@@ -1050,17 +756,6 @@
         - low_complexity
         - low_disruption
         - CCE-27353-2
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030480
     
     
@@ -1106,17 +801,6 @@
         - low_complexity
         - low_disruption
         - CCE-27389-6
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030450
     
     - name: Inserts/replaces the fsetxattr rule in rules.d when on x86_64
@@ -1132,17 +816,6 @@
         - low_complexity
         - low_disruption
         - CCE-27389-6
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030450
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -1161,17 +834,6 @@
         - low_complexity
         - low_disruption
         - CCE-27389-6
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030450
     
     - name: Inserts/replaces the fsetxattr rule in audit.rules when on x86_64
@@ -1190,17 +852,6 @@
         - low_complexity
         - low_disruption
         - CCE-27389-6
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030450
     
     
@@ -1246,17 +897,6 @@
         - low_complexity
         - low_disruption
         - CCE-27083-5
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030390
     
     - name: Inserts/replaces the lchown rule in rules.d when on x86_64
@@ -1272,17 +912,6 @@
         - low_complexity
         - low_disruption
         - CCE-27083-5
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030390
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -1301,17 +930,6 @@
         - low_complexity
         - low_disruption
         - CCE-27083-5
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030390
     
     - name: Inserts/replaces the lchown rule in audit.rules when on x86_64
@@ -1330,17 +948,6 @@
         - low_complexity
         - low_disruption
         - CCE-27083-5
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030390
     
     
@@ -1386,17 +993,6 @@
         - low_complexity
         - low_disruption
         - CCE-27410-0
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030490
     
     - name: Inserts/replaces the lremovexattr rule in rules.d when on x86_64
@@ -1412,17 +1008,6 @@
         - low_complexity
         - low_disruption
         - CCE-27410-0
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030490
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -1441,17 +1026,6 @@
         - low_complexity
         - low_disruption
         - CCE-27410-0
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030490
     
     - name: Inserts/replaces the lremovexattr rule in audit.rules when on x86_64
@@ -1470,17 +1044,6 @@
         - low_complexity
         - low_disruption
         - CCE-27410-0
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030490
     
     
@@ -1526,17 +1089,6 @@
         - low_complexity
         - low_disruption
         - CCE-27280-7
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030460
     
     - name: Inserts/replaces the lsetxattr rule in rules.d when on x86_64
@@ -1552,17 +1104,6 @@
         - low_complexity
         - low_disruption
         - CCE-27280-7
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030460
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -1581,17 +1122,6 @@
         - low_complexity
         - low_disruption
         - CCE-27280-7
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030460
     
     - name: Inserts/replaces the lsetxattr rule in audit.rules when on x86_64
@@ -1610,17 +1140,6 @@
         - low_complexity
         - low_disruption
         - CCE-27280-7
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030460
     
     
@@ -1666,17 +1185,6 @@
         - low_complexity
         - low_disruption
         - CCE-27367-2
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030470
     
     - name: Inserts/replaces the removexattr rule in rules.d when on x86_64
@@ -1692,17 +1200,6 @@
         - low_complexity
         - low_disruption
         - CCE-27367-2
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030470
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -1721,17 +1218,6 @@
         - low_complexity
         - low_disruption
         - CCE-27367-2
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030470
     
     - name: Inserts/replaces the removexattr rule in audit.rules when on x86_64
@@ -1750,17 +1236,6 @@
         - low_complexity
         - low_disruption
         - CCE-27367-2
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030470
     
     
@@ -1806,17 +1281,6 @@
         - low_complexity
         - low_disruption
         - CCE-27213-8
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030440
     
     - name: Inserts/replaces the setxattr rule in rules.d when on x86_64
@@ -1832,17 +1296,6 @@
         - low_complexity
         - low_disruption
         - CCE-27213-8
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030440
     #    
     # Inserts/replaces the rule in /etc/audit/audit.rules
@@ -1861,17 +1314,6 @@
         - low_complexity
         - low_disruption
         - CCE-27213-8
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030440
     
     - name: Inserts/replaces the setxattr rule in audit.rules when on x86_64
@@ -1890,17 +1332,6 @@
         - low_complexity
         - low_disruption
         - CCE-27213-8
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.5.5
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030440
     
     
@@ -1915,19 +1346,6 @@
         - low_complexity
         - low_disruption
         - CCE-27437-3
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-2(4)
-        - NIST-800-53-AU-6(9)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.2.2
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030360
     
     # Inserts/replaces the rule in /etc/audit/rules.d
@@ -1948,19 +1366,6 @@
         - low_complexity
         - low_disruption
         - CCE-27437-3
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-2(4)
-        - NIST-800-53-AU-6(9)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.2.2
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030360
       
     - name: Overwrites the rule in rules.d
@@ -1979,19 +1384,6 @@
         - low_complexity
         - low_disruption
         - CCE-27437-3
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-2(4)
-        - NIST-800-53-AU-6(9)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.2.2
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030360
         
     - name: Adds the rule in rules.d
@@ -2009,19 +1401,6 @@
         - low_complexity
         - low_disruption
         - CCE-27437-3
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-2(4)
-        - NIST-800-53-AU-6(9)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.2.2
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030360
       
     # Adds/overwrites the rule in /etc/audit/audit.rules
@@ -2041,19 +1420,6 @@
         - low_complexity
         - low_disruption
         - CCE-27437-3
-        - NIST-800-53-AC-17(7)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-2(a)
-        - NIST-800-53-AU-2(c)
-        - NIST-800-53-AU-2(d)
-        - NIST-800-53-AU-2(4)
-        - NIST-800-53-AU-6(9)
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - NIST-800-171-3.1.7
-        - PCI-DSS-Req-10.2.2
-        - CJIS-5.4.1.1
         - DISA-STIG-RHEL-07-030360
     
     
@@ -2064,6 +1430,8 @@
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - abrtd
       tags:
@@ -2076,12 +1444,13 @@
         - NIST-800-53-AC-17(8)
         - NIST-800-53-CM-7
     
-    
     - name: Disable service ntpdate
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - ntpdate
       tags:
@@ -2094,12 +1463,13 @@
         - NIST-800-53-AC-17(8)
         - NIST-800-53-CM-7
     
-    
     - name: Disable service oddjobd
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - oddjobd
       tags:
@@ -2111,12 +1481,13 @@
         - CCE-80263-7
         - NIST-800-53-CM-7
     
-    
     - name: Disable service qpidd
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - qpidd
       tags:
@@ -2129,12 +1500,13 @@
         - NIST-800-53-AC-17(8)
         - NIST-800-53-CM-7
     
-    
     - name: Disable service rdisc
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - rdisc
       tags:
@@ -2148,12 +1520,13 @@
         - NIST-800-53-AC-4
         - NIST-800-53-CM-7
     
-    
     - name: Disable service atd
       service:
         name="{{item}}"
         enabled="no"
         state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
         - atd
       tags:
@@ -2164,5 +1537,4 @@
         - low_disruption
         - CCE-80345-2
         - NIST-800-53-CM-7
-    
     
