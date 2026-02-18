@@ -608,6 +608,31 @@ update the
 <td>SLES-15-010200</td>
 </tr>
 <tr>
+<td>SLES-15-010220</td>
+<td>2314</td>
+<td>medium</td>
+<td>The SUSE operating system must be configured to prohibit or restrict the use of functions, ports, protocols, and/or services as defined in the Ports, Protocols, and Services Management (PPSM) Category Assignments List (CAL) and vulnerability assessments.</td>
+<td>Disabling DCCP protects
+the system against exploitation of any flaws in its implementation.</td>
+<td>
+If the system is configured to prevent the loading of the dccp kernel module,
+it will contain lines inside any file in /etc/modprobe.d or the deprecated/etc/modprobe.conf.
+These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+Run the following command to search for such lines in all files in /etc/modprobe.d and the deprecated /etc/modprobe.conf:
+$ grep -r dccp /etc/modprobe.conf /etc/modprobe.d
+      Is it the case that no line is returned?
+      </td>
+<td>The Datagram Congestion Control Protocol (DCCP) is a
+relatively new transport layer protocol, designed to support
+streaming media and telephony.
+
+To configure the system to prevent the <code>dccp</code>
+kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+<pre>install dccp /bin/true</pre>
+</td>
+<td>SLES-15-010220</td>
+</tr>
+<tr>
 <td>SLES-15-010230</td>
 <td>804</td>
 <td>medium</td>
@@ -1351,6 +1376,7 @@ new versions have been installed. To configure <code>zypper</code> to remove the
 
 previous software components after updating, set the <code>solver.upgradeRemoveDroppedPackages</code>
 
+
 to <code>1</code> in <code>/etc/zypp/zypp.conf</code>.</td>
 <td>SLES-15-010560</td>
 </tr>
@@ -1669,7 +1695,6 @@ allows the user to determine if any unauthorized activity has occurred
 and gives them an opportunity to notify administrators.</td>
 <td>To ensure that last logon/access notification is configured correctly, run
 the following command:
-
 $ grep pam_lastlog.so /etc/pam.d/login
 The output should show output showfailed and must not contain
 silent.
@@ -1678,7 +1703,6 @@ silent.
 <td>To configure the system to notify users of last logon/access
 using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
-
 <code>/etc/pam.d/login</code> to read as follows:
 <pre>session     required pam_lastlog.so showfailed</pre>
 And make sure that the <code>silent</code> option is not set.</td>
@@ -1969,7 +1993,7 @@ If any interactive user password hash does not begin with $6,
 this is a finding.
       Is it the case that passwords hashed with an unauthorized algorithm are found in /etc/shadow?
       </td>
-<td>Verify the SUSE operating system requires the shadow password suite
+<td>Verify the operating system requires the shadow password suite
 configuration be set to encrypt interactive user passwords using a strong
 cryptographic hash.
 Check that the interactive user account passwords are using a strong
@@ -2157,7 +2181,11 @@ into the account without authentication. Remove any instances of the
 
 password authentication configurations in <code>/etc/pam.d/</code>
 
-to prevent logins with empty passwords.</td>
+to prevent logins with empty passwords.
+Note that this rule is not applicable for systems running within a
+container. Having user with empty password within a container is not
+considered a risk, because it should not be possible to directly login into
+a container anyway.</td>
 <td>SLES-15-020300</td>
 </tr>
 <tr>
@@ -3863,10 +3891,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+
 <pre>-a always,exit -F path=/usr/bin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
+
 <pre>-a always,exit -F path=/usr/bin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-15-030500</td>
@@ -4364,7 +4395,7 @@ The audit daemon must be restarted for the changes to take effect.
 # sudo systemctl restart auditd.service
       Is it the case that it is not the case?
       </td>
-<td>Verify the SUSE operating system generates an audit record when privileged functions are executed.
+<td>Verify the system generates an audit record when privileged functions are executed.
 <pre># grep -iw execve <code>/etc/audit/audit.rules</code></pre>
 
 <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
@@ -4382,7 +4413,7 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
 <td>medium</td>
 <td>The SUSE operating system must have the auditing package installed.</td>
 <td>The auditd service is an access monitoring and accounting daemon, watching system calls to audit any access, in comparison with potential local access control policy such as SELinux policy.</td>
-<td>
+<td>Run the following command to determine if the audit package is installed: $ rpm -q audit
       Is it the case that the package is not installed?
       </td>
 <td>The audit package should be installed.</td>

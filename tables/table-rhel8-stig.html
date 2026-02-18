@@ -173,7 +173,7 @@ Detailed information on encrypting partitions using LUKS or LUKS ciphers can be 
 the Red Hat Enterprise Linux 8 Documentation web site:<br>
 
     
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Encryption.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Encryption.html</a>.</td>
+    <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/encrypting-block-devices-using-luks_security-hardening">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/encrypting-block-devices-using-luks_security-hardening</a>.</td>
 <td>RHEL-08-010030</td>
 </tr>
 <tr>
@@ -1424,7 +1424,8 @@ Access Card.</td>
 <td>Run the following command to determine if the opensc package is installed: $ rpm -q opensc
       Is it the case that the package is not installed?
       </td>
-<td>The <code>opensc</code> package can be installed with the following command:
+<td>
+The <code>opensc</code> package can be installed with the following command:
 <pre>
 $ sudo yum install opensc</pre>
 </td>
@@ -1610,6 +1611,7 @@ clean_requirements_on_remove=1
 new versions have been installed. To configure <code>yum</code> to remove the
 
 previous software components after updating, set the <code>clean_requirements_on_remove</code>
+
 
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td>RHEL-08-010440</td>
@@ -3349,7 +3351,7 @@ automatic session locking. It should not be listed in
 prevent undesired access to system.</td>
 <td>To ensure screen locking on smartcard removal is enabled, run the following command:
 $ grep removal-action /etc/dconf/db/local.d/*
-The output should be lock-screen.
+The output should be 'lock-screen'.
 To ensure that users cannot disable screen locking on smartcard removal, run the following:
 $ grep removal-action /etc/dconf/db/local.d/locks/*
 If properly configured, the output should be /org/gnome/settings-daemon/peripherals/smartcard/removal-action
@@ -3357,12 +3359,12 @@ If properly configured, the output should be /org/gnome/settings-daemon/peripher
       </td>
 <td>In the default graphical environment, screen locking on smartcard removal
 can be enabled by setting <code>removal-action</code>
-to <code>lock-screen</code>.
+to <code>'lock-screen'</code>.
 <br><br>
 To enable, add or edit <code>removal-action</code> to
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/settings-daemon/peripherals/smartcard]
-removal-action=lock-screen</pre>
+removal-action='lock-screen'</pre>
 Once the setting has been added, add a lock to
 <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
 For example:
@@ -3433,17 +3435,19 @@ requires some software, such as SSH, to re-connect. This can slow down and
 draw additional attention to some types of password-guessing attacks. Note that this
 is different from account lockout, which is provided by the pam_faillock module.</td>
 <td>To check how many retry attempts are permitted on a per-session basis, run the following command:
-$ grep pam_pwquality /etc/pam.d/system-auth
+$ grep pam_pwquality /etc/pam.d/system-auth /etc/pam.d/password-auth
 The retry parameter will indicate how many attempts are permitted.
 The DoD required value is less than or equal to 3.
 This would appear as retry=3, or a lower value.
       Is it the case that it is not the required value?
       </td>
 <td>To configure the number of retry prompts that are permitted per-session:
-Edit the <code>pam_pwquality.so</code> statement in <code>/etc/pam.d/system-auth</code> to
-show <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if
-site policy is more restrictive.
-The DoD requirement is a maximum of 3 prompts per session.</td>
+Edit the <code>pam_pwquality.so</code> statement in
+<code>/etc/pam.d/system-auth</code>  and
+<code>/etc/pam.d/password-auth</code>  to show
+<code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</td>
 <td>RHEL-08-020100</td>
 </tr>
 <tr>
@@ -3990,17 +3994,19 @@ requires some software, such as SSH, to re-connect. This can slow down and
 draw additional attention to some types of password-guessing attacks. Note that this
 is different from account lockout, which is provided by the pam_faillock module.</td>
 <td>To check how many retry attempts are permitted on a per-session basis, run the following command:
-$ grep pam_pwquality /etc/pam.d/system-auth
+$ grep pam_pwquality /etc/pam.d/system-auth /etc/pam.d/password-auth
 The retry parameter will indicate how many attempts are permitted.
 The DoD required value is less than or equal to 3.
 This would appear as retry=3, or a lower value.
       Is it the case that it is not the required value?
       </td>
 <td>To configure the number of retry prompts that are permitted per-session:
-Edit the <code>pam_pwquality.so</code> statement in <code>/etc/pam.d/system-auth</code> to
-show <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if
-site policy is more restrictive.
-The DoD requirement is a maximum of 3 prompts per session.</td>
+Edit the <code>pam_pwquality.so</code> statement in
+<code>/etc/pam.d/system-auth</code>  and
+<code>/etc/pam.d/password-auth</code>  to show
+<code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</td>
 <td>RHEL-08-020300</td>
 </tr>
 <tr>
@@ -4079,20 +4085,17 @@ allows the user to determine if any unauthorized activity has occurred
 and gives them an opportunity to notify administrators.</td>
 <td>To ensure that last logon/access notification is configured correctly, run
 the following command:
-
 $ grep pam_lastlog.so /etc/pam.d/postlogin
-The output should show output showfailed.
+The output should show output showfailed and must not contain
+silent.
       Is it the case that that is not the case?
       </td>
 <td>To configure the system to notify users of last logon/access
 using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
-
 <code>/etc/pam.d/postlogin</code> to read as follows:
-<pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
-session     [default=1]   pam_lastlog.so nowtmp showfailed
-session     optional      pam_lastlog.so silent noupdate showfailed</pre>
-</td>
+<pre>session     required pam_lastlog.so showfailed</pre>
+And make sure that the <code>silent</code> option is not set.</td>
 <td>RHEL-08-020340</td>
 </tr>
 <tr>
@@ -4805,7 +4808,7 @@ utility to read audit rules during daemon startup, add the following line to
 <td>medium</td>
 <td>RHEL 8 audit records must contain information to establish what type of events occurred, the source of events, where events occurred, and the outcome of events.</td>
 <td>The auditd service is an access monitoring and accounting daemon, watching system calls to audit any access, in comparison with potential local access control policy such as SELinux policy.</td>
-<td>
+<td>Run the following command to determine if the audit package is installed: $ rpm -q audit
       Is it the case that the package is not installed?
       </td>
 <td>The audit package should be installed.</td>

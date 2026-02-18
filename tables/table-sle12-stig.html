@@ -656,7 +656,7 @@ If any interactive user password hash does not begin with $6,
 this is a finding.
       Is it the case that passwords hashed with an unauthorized algorithm are found in /etc/shadow?
       </td>
-<td>Verify the SUSE operating system requires the shadow password suite
+<td>Verify the operating system requires the shadow password suite
 configuration be set to encrypt interactive user passwords using a strong
 cryptographic hash.
 Check that the interactive user account passwords are using a strong
@@ -738,7 +738,11 @@ into the account without authentication. Remove any instances of the
 
 password authentication configurations in <code>/etc/pam.d/</code>
 
-to prevent logins with empty passwords.</td>
+to prevent logins with empty passwords.
+Note that this rule is not applicable for systems running within a
+container. Having user with empty password within a container is not
+considered a risk, because it should not be possible to directly login into
+a container anyway.</td>
 <td>SLES-12-010231</td>
 </tr>
 <tr>
@@ -1136,7 +1140,6 @@ allows the user to determine if any unauthorized activity has occurred
 and gives them an opportunity to notify administrators.</td>
 <td>To ensure that last logon/access notification is configured correctly, run
 the following command:
-
 $ grep pam_lastlog.so /etc/pam.d/login
 The output should show output showfailed and must not contain
 silent.
@@ -1145,7 +1148,6 @@ silent.
 <td>To configure the system to notify users of last logon/access
 using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
-
 <code>/etc/pam.d/login</code> to read as follows:
 <pre>session     required pam_lastlog.so showfailed</pre>
 And make sure that the <code>silent</code> option is not set.</td>
@@ -1577,6 +1579,7 @@ solver.upgradeRemoveDroppedPackages=true
 new versions have been installed. To configure <code>zypper</code> to remove the
 
 previous software components after updating, set the <code>solver.upgradeRemoveDroppedPackages</code>
+
 
 to <code>1</code> in <code>/etc/zypp/zypp.conf</code>.</td>
 <td>SLES-12-010570</td>
@@ -2416,7 +2419,7 @@ Authentication Modules (PAM) configuration on package changes.</td>
 <td>medium</td>
 <td>The SUSE operating system must have the auditing package installed.</td>
 <td>The auditd service is an access monitoring and accounting daemon, watching system calls to audit any access, in comparison with potential local access control policy such as SELinux policy.</td>
-<td>
+<td>Run the following command to determine if the audit package is installed: $ rpm -q audit
       Is it the case that the package is not installed?
       </td>
 <td>The audit package should be installed.</td>
@@ -2482,9 +2485,10 @@ following command and verify whether it is sufficiently large:
 /dev/sda2 24G 10.4G 13.6G 43% /var/log/audit
       Is it the case that audispd is not sending logs to a remote system and the local partition has inadequate?
       </td>
-<td>The SUSE operating system must allocate audit record storage capacity to
-store at least one weeks worth of audit records when audit records are not
-immediately sent to a central audit record storage facility.
+<td>The SUSE Linux Enterprise 12 operating system must allocate audit record storage
+capacity to store at least one weeks worth of audit records when audit
+records are not immediately sent to a central audit record storage
+facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
@@ -3002,7 +3006,7 @@ The audit daemon must be restarted for the changes to take effect.
 # sudo systemctl restart auditd.service
       Is it the case that it is not the case?
       </td>
-<td>Verify the SUSE operating system generates an audit record when privileged functions are executed.
+<td>Verify the system generates an audit record when privileged functions are executed.
 <pre># grep -iw execve <code>/etc/audit/audit.rules</code></pre>
 
 <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
@@ -4452,10 +4456,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+
 <pre>-a always,exit -F path=/usr/bin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
+
 <pre>-a always,exit -F path=/usr/bin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020700</td>
@@ -5378,7 +5385,7 @@ The audit daemon must be restarted for the changes to take effect.
 # sudo systemctl restart auditd.service
       Is it the case that it is not the case?
       </td>
-<td>Verify the SUSE operating system generates an audit record when privileged functions are executed.
+<td>Verify the system generates an audit record when privileged functions are executed.
 <pre># grep -iw execve <code>/etc/audit/audit.rules</code></pre>
 
 <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>

@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Oracle Linux 7</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Oracle Linux V2R2.</div>
+DISA STIG for Oracle Linux V2R3.</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -434,10 +434,11 @@ requires some software, such as SSH, to re-connect. This can slow down and
 draw additional attention to some types of password-guessing attacks. Note that this
 is different from account lockout, which is provided by the pam_faillock module.</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
-Edit the <code>pam_pwquality.so</code> statement in <code>/etc/pam.d/system-auth</code> to
-show <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if
-site policy is more restrictive.
-The DoD requirement is a maximum of 3 prompts per session.</td>
+Edit the <code>pam_pwquality.so</code> statement in
+<code>/etc/pam.d/system-auth</code>  to show
+<code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</td>
 <td></td>
 <td>SRG-OS-000069-GPOS-00037<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -2345,9 +2346,9 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
-<td>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
 </td>
-<td>CCI-000135<br>CCI-000172<br>CCI-002884<br>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
 </td>
 <td></td>
 </tr>
@@ -3059,6 +3060,7 @@ new versions have been installed. To configure <code>yum</code> to remove the
 
 previous software components after updating, set the <code>clean_requirements_on_remove</code>
 
+
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td></td>
 <td>SRG-OS-000437-GPOS-00194<br>
@@ -3640,12 +3642,9 @@ and gives them an opportunity to notify administrators.</td>
 <td xml:lang="en-US">To configure the system to notify users of last logon/access
 using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
-
 <code>/etc/pam.d/postlogin</code> to read as follows:
-<pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
-session     [default=1]   pam_lastlog.so nowtmp showfailed
-session     optional      pam_lastlog.so silent noupdate showfailed</pre>
-</td>
+<pre>session     required pam_lastlog.so showfailed</pre>
+And make sure that the <code>silent</code> option is not set.</td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -4495,7 +4494,11 @@ into the account without authentication. Remove any instances of the
 
 <code>/etc/pam.d/system-auth</code>
 
-to prevent logins with empty passwords.</td>
+to prevent logins with empty passwords.
+Note that this rule is not applicable for systems running within a
+container. Having user with empty password within a container is not
+considered a risk, because it should not be possible to directly login into
+a container anyway.</td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -4708,26 +4711,6 @@ accidental activation.</td>
 <td>SRG-OS-000074-GPOS-00042<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>SRG-OS-000095-GPOS-00049<br>
 </td>
 <td>CCI-000197<br>CCI-000366<br>CCI-000381<br>
-</td>
-<td></td>
-</tr>
-<tr>
-<td>package_xorg-x11-server-common_removed</td>
-<td>medium</td>
-<td>Remove the X Windows Package Group</td>
-<td xml:lang="en-US">Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
-vulnerabilities and should not be installed unless approved and documented.</td>
-<td xml:lang="en-US">By removing the xorg-x11-server-common package, the system no longer has X Windows
-installed. If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
-mode. To do so, run the following command:
-<pre>$ sudo yum groupremove "X Window System"</pre>
-<pre>$ sudo yum remove xorg-x11-server-common</pre>
-</td>
-<td></td>
-<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
-</td>
-<td>CCI-000366<br>
 </td>
 <td></td>
 </tr>
@@ -6066,6 +6049,48 @@ in <code>/etc/sudoers.d/</code>.</td>
 <td></td>
 </tr>
 <tr>
+<td>sudo_restrict_privilege_elevation_to_authorized</td>
+<td>medium</td>
+<td>The operating system must restrict privilege elevation to authorized personnel</td>
+<td xml:lang="en-US">If the "sudoers" file is not configured correctly, any user defined
+on the system can initiate privileged actions on the target system.</td>
+<td xml:lang="en-US">The sudo command allows a user to execute programs with elevated
+(administrator) privileges. It prompts the user for their password
+and confirms your request to execute a command by checking a file,
+called sudoers.
+Restrict privileged actions by removing the following entries from the sudoers file:
+<code>ALL ALL=(ALL) ALL</code>
+<code>ALL ALL=(ALL:ALL) ALL</code>
+</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>sudoers_validate_passwd</td>
+<td>medium</td>
+<td>Ensure invoking users password for privilege escalation when using sudo</td>
+<td xml:lang="en-US">If the rootpw, targetpw, or runaspw flags are defined and not disabled, by default the operating system will prompt
+the invoking user for the "root" user password.</td>
+<td xml:lang="en-US">The sudoers security policy requires that users authenticate themselves before they can use sudo.
+When sudoers requires authentication, it validates the invoking user's credentials.
+The expected output for:
+<pre>sudo egrep -i '(!rootpw|!targetpw|!runaspw)' /etc/sudoers /etc/sudoers.d/* | grep -v '#'</pre>
+<pre> /etc/sudoers:Defaults !targetpw
+      /etc/sudoers:Defaults !rootpw
+      /etc/sudoers:Defaults !runaspw </pre>
+</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>CCI-002227<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>sysctl_kernel_randomize_va_space</td>
 <td>medium</td>
 <td>Enable Randomized Layout of Virtual Address Space</td>
@@ -6371,17 +6396,24 @@ following command:
 <td></td>
 </tr>
 <tr>
-<td>xwindows_runlevel_target</td>
+<td>xwindows_remove_packages</td>
 <td>medium</td>
-<td>Disable X Windows Startup By Setting Default Target</td>
-<td xml:lang="en-US">Services that are not required for system and application processes
-must not be active to decrease the attack surface of the system. X windows has a
-long history of security vulnerabilities and should not be used unless approved
-and documented.</td>
-<td xml:lang="en-US">Systems that do not require a graphical user interface should only boot by
-default into <code>multi-user.target</code> mode. This prevents accidental booting of the system
-into a <code>graphical.target</code> mode. Setting the system's default target to
-<code>multi-user.target</code> will prevent automatic startup of the X server. To do so, run:
+<td>Disable graphical user interface</td>
+<td xml:lang="en-US">Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
+vulnerabilities and should not be installed unless approved and documented.</td>
+<td xml:lang="en-US">By removing the following packages,  the system no longer has X Windows installed.
+
+<code>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils</code>
+
+If X Windows is not installed then the system cannot boot into graphical user mode.
+This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
+mode. To do so, run the following command:
+
+<pre>sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils</pre>
+
+Additionally, setting the system's default target to
+<code>multi-user.target</code> will prevent automatic startup of the X server.
+To do so, run:
 <pre>$ systemctl set-default multi-user.target</pre>
 You should see the following output:
 <pre>Removed symlink /etc/systemd/system/default.target.

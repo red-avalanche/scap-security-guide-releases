@@ -199,6 +199,27 @@ access to root privileges in an accountable manner.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-83484-6</td>
+<td>Verify All Account Password Hashes are Shadowed with SHA512</td>
+<td xml:lang="en-US">Verify the operating system requires the shadow password suite
+configuration be set to encrypt interactive user passwords using a strong
+cryptographic hash.
+Check that the interactive user account passwords are using a strong
+password hash with the following command:
+<pre># sudo cut -d: -f2 /etc/shadow
+$6$kcOnRq/5$NUEYPuyL.wghQwWssXRcLRFiiru7f5JPV6GaJhNC2aK5F3PZpE/BCCtwrxRc/AInKMNX3CdMw11m9STiql12f/</pre>
+Password hashes <code>!</code> or <code>*</code> indicate inactive accounts not
+available for logon and are not evaluated.
+If any interactive user password hash does not begin with <code>$6</code>,
+this is a finding.</td>
+<td xml:lang="en-US">The system must use a strong hashing algorithm to store the password. The
+system must use a sufficient number of hashing rounds to ensure the required
+level of entropy.</td>
+<td></td>
+<td>IA-5(1)(c)<br>IA-5(1).1(v)<br>IA-7<br>IA-7.1<br>
+</td>
+</tr>
+<tr>
 <td>CCE-80652-1</td>
 <td>Set Password Minimum Length in login.defs</td>
 <td xml:lang="en-US">To specify password length requirements for new accounts, edit the file
@@ -409,13 +430,49 @@ more difficult by ensuring a larger search space.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-83478-8</td>
+<td>Limit Password Reuse: password-auth</td>
+<td xml:lang="en-US">Do not allow users to reuse recent passwords. This can be
+accomplished by using the <code>remember</code> option for the
+<code>pam_pwhistory</code> PAM modules.
+<br><br>
+In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter
+<code>remember</code> is present, and that the value
+for the <code>remember</code> parameter is <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember"></xccdf-1.1:sub> or greater. For example:
+<pre>password <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember_control_flag"></xccdf-1.1:sub> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember"></xccdf-1.1:sub> use_authtok</pre>
+The DoD STIG requirement is 5 passwords.</td>
+<td xml:lang="en-US">Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td></td>
+<td>IA-5(f)<br>IA-5(1)(e)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83480-4</td>
+<td>Limit Password Reuse: system-auth</td>
+<td xml:lang="en-US">Do not allow users to reuse recent passwords. This can be
+accomplished by using the <code>remember</code> option for the
+<code>pam_pwhistory</code> PAM modules.
+<br><br>
+In the file <code>/etc/pam.d/system-auth</code>, make sure the parameter
+<code>remember</code> is present, and that the value
+for the <code>remember</code> parameter is <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember"></xccdf-1.1:sub> or greater. For example:
+<pre>password <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember_control_flag"></xccdf-1.1:sub> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember"></xccdf-1.1:sub> use_authtok</pre>
+The DoD STIG requirement is 5 passwords.</td>
+<td xml:lang="en-US">Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td></td>
+<td>IA-5(f)<br>IA-5(1)(e)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-80664-6</td>
 <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
-Edit the <code>pam_pwquality.so</code> statement in <code>/etc/pam.d/system-auth</code> to
-show <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if
-site policy is more restrictive.
-The DoD requirement is a maximum of 3 prompts per session.</td>
+Edit the <code>pam_pwquality.so</code> statement in
+<code>/etc/pam.d/system-auth</code>  and
+<code>/etc/pam.d/password-auth</code>  to show
+<code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</td>
 <td xml:lang="en-US">Setting the password retry prompts that are permitted on a per-session basis to a low value
 requires some software, such as SSH, to re-connect. This can slow down and
 draw additional attention to some types of password-guessing attacks. Note that this
@@ -441,29 +498,6 @@ complex the password, the greater the number of possible combinations that need 
 the password is compromised.</td>
 <td></td>
 <td>IA-5(c)<br>IA-5(1)(a)<br>CM-6(a)<br>IA-5(4)<br>
-</td>
-</tr>
-<tr>
-<td>CCE-80666-1</td>
-<td>Limit Password Reuse</td>
-<td xml:lang="en-US">Do not allow users to reuse recent passwords. This can be
-accomplished by using the <code>remember</code> option for the <code>pam_unix</code>
-or <code>pam_pwhistory</code> PAM modules.
-<br><br>
-In the file <code>/etc/pam.d/system-auth</code>, append <code>remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></xccdf-1.1:sub></code>
-to the line which refers to the <code>pam_unix.so</code> or <code>pam_pwhistory.so</code>module, as shown below:
-<ul>
-<li>for the <code>pam_unix.so</code> case:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></xccdf-1.1:sub></pre>
-</li>
-<li>for the <code>pam_pwhistory.so</code> case:
-<pre>password requisite pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></xccdf-1.1:sub></pre>
-</li>
-</ul>
-The DoD STIG requirement is 5 passwords.</td>
-<td xml:lang="en-US">Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
-<td></td>
-<td>IA-5(f)<br>IA-5(1)(e)<br>
 </td>
 </tr>
 <tr>
@@ -801,6 +835,60 @@ with security implications.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-83556-1</td>
+<td>Record Events When Privileged Executables Are Run</td>
+<td xml:lang="en-US">Verify the system generates an audit record when privileged functions are executed.
+<pre># grep -iw execve <code>/etc/audit/audit.rules</code></pre>
+
+<pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
+<pre>-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
+<pre>-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
+<pre>-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
+
+If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.
+If both the "b32" and "b64" audit rules for "SGID" files are not defined, this is a finding.</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have
+compromised information system accounts, is a serious and ongoing concern
+and can have significant adverse impacts on organizations. Auditing the use
+of privileged functions is one way to detect such misuse and identify the
+risk from insider threats and the advanced persistent threat.</td>
+<td></td>
+<td>CM-5(1)<br>AU-7(a)<br>AU-7(b)<br>AU-8(b)<br>AU-12(3)<br>AC-6(9)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-84005-8</td>
+<td>Configure a Sufficiently Large Partition for Audit Logs</td>
+<td xml:lang="en-US">The Red Hat Enterprise Linux 8 operating system must allocate audit record storage
+capacity to store at least one weeks worth of audit records when audit
+records are not immediately sent to a central audit record storage
+facility.
+
+The partition size needed to capture a week's worth of audit records is
+based on the activity level of the system and the total storage capacity
+available. In normal circumstances, 10.0 GB of storage space for audit
+records will be sufficient.
+
+Determine which partition the audit records are being written to with the
+following command:
+
+<pre># grep log_file /etc/audit/auditd.conf
+log_file = /var/log/audit/audit.log</pre>
+
+Check the size of the partition that audit records are written to with the
+following command:
+
+<pre># df -h /var/log/audit/
+/dev/sda2 24G 10.4G 13.6G 43% /var/log/audit</pre>
+</td>
+<td xml:lang="en-US">Information stored in one location is vulnerable to accidental or incidental
+deletion or alteration.Off-loading is a common process in information
+systems with limited audit storage capacity.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-84046-2</td>
 <td>Configure auditd Disk Error Action on Disk Error</td>
 <td xml:lang="en-US">The <code>auditd</code> service can be configured to take an action
@@ -1043,6 +1131,7 @@ new versions have been installed. To configure <code>yum</code> to remove the
 
 previous software components after updating, set the <code>clean_requirements_on_remove</code>
 
+
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td xml:lang="en-US">Previous versions of software components that are not removed from the information
 system after updates have been installed may be exploited by some adversaries.</td>
@@ -1133,6 +1222,25 @@ official business or to address authorized quality of life issues.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-84254-2</td>
+<td>Configure GnuTLS library to use DoD-approved TLS Encryption</td>
+<td xml:lang="en-US">Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+GnuTLS is supported by system crypto policy, but the GnuTLS configuration may be
+set up to ignore it.
+
+To check that Crypto Policies settings are configured correctly, ensure that
+<code>/etc/crypto-policies/back-ends/gnutls.config</code> contains the following
+line and is not commented out:
+<code>+VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0</code>
+</td>
+<td xml:lang="en-US">Overriding the system crypto policy makes the behavior of the GnuTLS
+library violate expectations, and makes system configuration more
+fragmented.</td>
+<td></td>
+<td>AC-17(2)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-80936-8</td>
 <td>Configure Kerberos to use System Crypto Policy</td>
 <td xml:lang="en-US">Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
@@ -1189,8 +1297,11 @@ and makes system configuration more fragmented.</td>
 <td xml:lang="en-US">Crypto Policies are means of enforcing certain cryptographic settings for
 selected applications including OpenSSL. OpenSSL is by default configured to
 modify its configuration based on currently configured Crypto Policy.
-However, in certain cases it might be needed to override the Crypto Policy
-specific to OpenSSL and leave rest of the Crypto Policy intact.</td>
+Editing the Crypto Policy back-end is not recommended.
+
+Check the crypto-policies(7) man page and choose a policy that configures TLS
+protocol to version 1.2 or higher, for example DEFAULT, FUTURE or FIPS policy.
+Or create and apply a custom policy that restricts minimum TLS version to 1.2.</td>
 <td xml:lang="en-US">Without cryptographic integrity protections, information can be altered by
 unauthorized users without detection.</td>
 <td></td>
@@ -1347,12 +1458,12 @@ loss of availability of systems due to unintentional reboot.</td>
 <td>Enable the GNOME3 Screen Locking On Smartcard Removal</td>
 <td xml:lang="en-US">In the default graphical environment, screen locking on smartcard removal
 can be enabled by setting <code>removal-action</code>
-to <code>lock-screen</code>.
+to <code>'lock-screen'</code>.
 <br><br>
 To enable, add or edit <code>removal-action</code> to
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/settings-daemon/peripherals/smartcard]
-removal-action=lock-screen</pre>
+removal-action='lock-screen'</pre>
 Once the setting has been added, add a lock to
 <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
 For example:
@@ -1555,12 +1666,9 @@ only for developers trying to debug problems.</td>
 <td xml:lang="en-US">To configure the system to notify users of last logon/access
 using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
-
 <code>/etc/pam.d/postlogin</code> to read as follows:
-<pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
-session     [default=1]   pam_lastlog.so nowtmp showfailed
-session     optional      pam_lastlog.so silent noupdate showfailed</pre>
-</td>
+<pre>session     required pam_lastlog.so showfailed</pre>
+And make sure that the <code>silent</code> option is not set.</td>
 <td xml:lang="en-US">Users need to be aware of activity that occurs regarding
 their account. Providing users with information regarding the number
 of unsuccessful attempts that were made to login to their account
@@ -1644,7 +1752,7 @@ Detailed information on encrypting partitions using LUKS or LUKS ciphers can be 
 the Red Hat Enterprise Linux 8 Documentation web site:<br>
 
     
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Encryption.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Encryption.html</a>.</td>
+    <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/encrypting-block-devices-using-luks_security-hardening">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/encrypting-block-devices-using-luks_security-hardening</a>.</td>
 <td xml:lang="en-US">The risk of a system's physical compromise, particularly mobile systems such as
 laptops, places its data at risk of compromise.  Encrypting this data mitigates
 the risk of its loss if the system is lost.</td>
@@ -1734,6 +1842,36 @@ able to access files that they legitimately should.</td>
 <td></td>
 </tr>
 <tr>
+<td>CCE-86519-6</td>
+<td>Verify that system commands files are group owned by root </td>
+<td xml:lang="en-US">System commands files are stored in the following directories by default:
+<pre>/bin
+/sbin
+/usr/bin
+/usr/sbin
+/usr/local/bin
+/usr/local/sbin
+</pre>
+All files in these directories should be owned by the <code>root</code> group.
+If the directory, or any file in these directories, is found to be owned
+by a group other than root correct its ownership with the following command:
+<pre>$ sudo chgrp root <i>FILE</i></pre>
+</td>
+<td xml:lang="en-US">If the operating system allows any user to make changes to software
+libraries, then those changes might be implemented without undergoing the
+appropriate testing and approvals that are part of a robust change management
+process.
+This requirement applies to operating systems with software libraries
+that are accessible and configurable, as in the case of interpreted languages.
+Software libraries also include privileged programs which execute with
+escalated privileges. Only qualified and authorized individuals must be
+allowed to obtain access to information system components for purposes
+of initiating changes, including upgrades and modifications.</td>
+<td></td>
+<td>CM-5(6)<br>CM-5(6).1<br>
+</td>
+</tr>
+<tr>
 <td>CCE-83661-9</td>
 <td>Verify User Who Owns /var/log Directory</td>
 <td xml:lang="en-US"> To properly set the owner of <code>/var/log</code>, run the command: <pre>$ sudo chown root /var/log </pre>
@@ -1775,7 +1913,7 @@ following command:
 and restrictive permissions are necessary to ensure that their
 execution of these programs cannot be co-opted.</td>
 <td></td>
-<td>CM-6(a)<br>AC-6(1)<br>
+<td>CM-5(6)<br>CM-5(6).1<br>CM-6(a)<br>AC-6(1)<br>
 </td>
 </tr>
 <tr>
@@ -1800,7 +1938,7 @@ ownership with the following command:
 space of processes (including privileged ones) or of the kernel itself at
 runtime. Proper ownership is necessary to protect the integrity of the system.</td>
 <td></td>
-<td>CM-6(a)<br>AC-6(1)<br>
+<td>CM-5(6)<br>CM-5(6).1<br>CM-6(a)<br>AC-6(1)<br>
 </td>
 </tr>
 <tr>
@@ -1854,7 +1992,7 @@ following command:
 and restrictive permissions are necessary to ensure execution of these programs
 cannot be co-opted.</td>
 <td></td>
-<td>CM-6(a)<br>AC-6(1)<br>
+<td>CM-5(6)<br>CM-5(6).1<br>CM-6(a)<br>AC-6(1)<br>
 </td>
 </tr>
 <tr>
@@ -1892,7 +2030,7 @@ its permission with the following command:
 space of processes (including privileged ones) or of the kernel itself at
 runtime. Restrictive permissions are necessary to protect the integrity of the system.</td>
 <td></td>
-<td>CM-6(a)<br>AC-6(1)<br>
+<td>CM-6(a)<br>CM-5(6)<br>CM-5(6).1<br>AC-6(1)<br>
 </td>
 </tr>
 <tr>
@@ -2819,7 +2957,11 @@ into the account without authentication. Remove any instances of the
 
 <code>/etc/pam.d/system-auth</code>
 
-to prevent logins with empty passwords.</td>
+to prevent logins with empty passwords.
+Note that this rule is not applicable for systems running within a
+container. Having user with empty password within a container is not
+considered a risk, because it should not be possible to directly login into
+a container anyway.</td>
 <td xml:lang="en-US">If an account has an empty password, anyone could log in and
 run commands with the privileges of that account. Accounts with
 empty passwords should never be used in operational environments.</td>
@@ -3095,7 +3237,8 @@ nor is it permitted in many regulatory environments such as HIPAA.</td>
 <tr>
 <td>CCE-80846-9</td>
 <td>Install the opensc Package For Multifactor Authentication</td>
-<td xml:lang="en-US">The <code>opensc</code> package can be installed with the following command:
+<td xml:lang="en-US">
+The <code>opensc</code> package can be installed with the following command:
 <pre>
 $ sudo yum install opensc</pre>
 </td>
@@ -3321,7 +3464,7 @@ capabilities based on USB device attributes.</td>
 <td xml:lang="en-US">Removing the <code>vsftpd</code> package decreases the risk of its
 accidental activation.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>IA-5(1)(c)<br>IA-5(1).1(v)<br>CM-7<br>CM-7.1(ii)<br>
 </td>
 </tr>
 <tr>
@@ -3473,6 +3616,27 @@ of cron jobs. It can also be used to spot intrusions into the use of the cron
 facility by unauthorized and malicious users.</td>
 <td></td>
 <td>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83426-7</td>
+<td>Ensure remote access methods are monitored in Rsyslog</td>
+<td xml:lang="en-US">Logging of remote access methods must be implemented to help identify cyber
+attacks and ensure ongoing compliance with remote access policies are being
+audited and upheld. An examples of a remote access method is the use of the
+Remote Desktop Protocol (RDP) from an external, non-organization controlled
+network. The <code>/etc/rsyslog.conf</code> or
+<code>/etc/rsyslog.d/*.conf</code> file should contain a match for the following
+selectors: <code>auth.*</code>, <code>authpriv.*</code>, and <code>daemon.*</code>. If
+not, use the following as an example configuration:
+<pre>auth.*;authpriv.*;daemon.*                              /var/log/secure</pre>
+</td>
+<td xml:lang="en-US">Logging remote access methods can be used to trace the decrease the risks
+associated with remote user access management. It can also be used to spot
+cyber attacks and ensure ongoing compliance with organizational policies
+surrounding the use of remote access methods.</td>
+<td></td>
+<td>AC-17(1)<br>
 </td>
 </tr>
 <tr>
@@ -4175,6 +4339,26 @@ is critical that the user re-authenticate.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-87838-9</td>
+<td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+<td xml:lang="en-US">The sudo <code>timestamp_timeout</code> tag sets the amount of time sudo password prompt waits.
+The default <code>timestamp_timeout</code> value is 5 minutes.
+The timestamp_timeout should be configured by making sure that the
+<code>timestamp_timeout</code> tag exists in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.
+If the value is set to an integer less than 0, the user's time stamp will not expire 
+and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
+<td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
+do not have authorization.
+<br><br>
+When operating systems provide the capability to escalate a functional capability, it
+is critical that the user re-authenticate.</td>
+<td></td>
+<td>IA-11<br>
+</td>
+</tr>
+<tr>
 <td>CCE-83425-9</td>
 <td>The operating system must restrict privilege elevation to authorized personnel</td>
 <td xml:lang="en-US">The sudo command allows a user to execute programs with elevated
@@ -4205,7 +4389,8 @@ The expected output for:
 <td xml:lang="en-US">If the rootpw, targetpw, or runaspw flags are defined and not disabled, by default the operating system will prompt
 the invoking user for the "root" user password.</td>
 <td></td>
-<td></td>
+<td>CM-6(b)<br>CM-6.1(iv)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-84027-2</td>
@@ -4518,7 +4703,7 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 <td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>CM-6(b)<br>CM-6.1(iv)<br>
 </td>
 </tr>
 <tr>
@@ -4576,7 +4761,7 @@ the system is functioning as a router.
 Accepting source-routed packets in the IPv6 protocol has few legitimate
 uses. It should be disabled unless it is absolutely required.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>CM-6(b)<br>CM-6.1(iv)<br>
 </td>
 </tr>
 <tr>
@@ -4611,6 +4796,19 @@ given directory. Serving files from an intentionally-specified directory
 reduces the risk of sharing files which should remain private.</td>
 <td></td>
 <td>CM-6(b)<br>AC-6<br>CM-7(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83774-0</td>
+<td>Generate USBGuard Policy</td>
+<td xml:lang="en-US">By default USBGuard when enabled prevents access to all USB devices and this lead
+to inaccessible system if they use USB mouse/keyboard. To prevent this scenario,
+the initial policy configuration must be generated based on current connected USB
+devices.</td>
+<td xml:lang="en-US">The <code>usbguard</code> must be configured to allow connected USB devices to work
+properly, avoiding the system to become inaccessible.</td>
+<td></td>
+<td>CM-8(3)(a)<br>IA-3<br>
 </td>
 </tr>
 <tr>

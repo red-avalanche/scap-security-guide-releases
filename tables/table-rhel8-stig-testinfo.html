@@ -247,6 +247,31 @@ assigned.</td>
 <td></td>
 </tr>
 <tr>
+<td>accounts_password_all_shadowed_sha512</td>
+<td>medium</td>
+<td>Verify All Account Password Hashes are Shadowed with SHA512</td>
+<td xml:lang="en-US">The system must use a strong hashing algorithm to store the password. The
+system must use a sufficient number of hashing rounds to ensure the required
+level of entropy.</td>
+<td xml:lang="en-US">Verify the operating system requires the shadow password suite
+configuration be set to encrypt interactive user passwords using a strong
+cryptographic hash.
+Check that the interactive user account passwords are using a strong
+password hash with the following command:
+<pre># sudo cut -d: -f2 /etc/shadow
+$6$kcOnRq/5$NUEYPuyL.wghQwWssXRcLRFiiru7f5JPV6GaJhNC2aK5F3PZpE/BCCtwrxRc/AInKMNX3CdMw11m9STiql12f/</pre>
+Password hashes <code>!</code> or <code>*</code> indicate inactive accounts not
+available for logon and are not evaluated.
+If any interactive user password hash does not begin with <code>$6</code>,
+this is a finding.</td>
+<td></td>
+<td>SRG-OS-000073-GPOS-00041<br>SRG-OS-000120-GPOS-00061<br>
+</td>
+<td>CCI-000196<br>CCI-000803<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>accounts_password_minlen_login_defs</td>
 <td>medium</td>
 <td>Set Password Minimum Length in login.defs</td>
@@ -493,6 +518,48 @@ to require use of a special character in passwords.</td>
 <td></td>
 </tr>
 <tr>
+<td>accounts_password_pam_pwhistory_remember_password_auth</td>
+<td>medium</td>
+<td>Limit Password Reuse: password-auth</td>
+<td xml:lang="en-US">Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td xml:lang="en-US">Do not allow users to reuse recent passwords. This can be
+accomplished by using the <code>remember</code> option for the
+<code>pam_pwhistory</code> PAM modules.
+<br><br>
+In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter
+<code>remember</code> is present, and that the value
+for the <code>remember</code> parameter is <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember"></xccdf-1.1:sub> or greater. For example:
+<pre>password <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember_control_flag"></xccdf-1.1:sub> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember"></xccdf-1.1:sub> use_authtok</pre>
+The DoD STIG requirement is 5 passwords.</td>
+<td></td>
+<td>SRG-OS-000077-GPOS-00045<br>
+</td>
+<td>CCI-000200<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>accounts_password_pam_pwhistory_remember_system_auth</td>
+<td>medium</td>
+<td>Limit Password Reuse: system-auth</td>
+<td xml:lang="en-US">Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td xml:lang="en-US">Do not allow users to reuse recent passwords. This can be
+accomplished by using the <code>remember</code> option for the
+<code>pam_pwhistory</code> PAM modules.
+<br><br>
+In the file <code>/etc/pam.d/system-auth</code>, make sure the parameter
+<code>remember</code> is present, and that the value
+for the <code>remember</code> parameter is <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember"></xccdf-1.1:sub> or greater. For example:
+<pre>password <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember_control_flag"></xccdf-1.1:sub> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember"></xccdf-1.1:sub> use_authtok</pre>
+The DoD STIG requirement is 5 passwords.</td>
+<td></td>
+<td>SRG-OS-000077-GPOS-00045<br>
+</td>
+<td>CCI-000200<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>accounts_password_pam_retry</td>
 <td>medium</td>
 <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
@@ -501,10 +568,12 @@ requires some software, such as SSH, to re-connect. This can slow down and
 draw additional attention to some types of password-guessing attacks. Note that this
 is different from account lockout, which is provided by the pam_faillock module.</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
-Edit the <code>pam_pwquality.so</code> statement in <code>/etc/pam.d/system-auth</code> to
-show <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if
-site policy is more restrictive.
-The DoD requirement is a maximum of 3 prompts per session.</td>
+Edit the <code>pam_pwquality.so</code> statement in
+<code>/etc/pam.d/system-auth</code>  and
+<code>/etc/pam.d/password-auth</code>  to show
+<code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</td>
 <td></td>
 <td>SRG-OS-000069-GPOS-00037<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -532,33 +601,6 @@ length credit for each uppercase character. Modify the <code>ucredit</code> sett
 <td>SRG-OS-000069-GPOS-00037<br>
 </td>
 <td>CCI-000192<br>
-</td>
-<td></td>
-</tr>
-<tr>
-<td>accounts_password_pam_unix_remember</td>
-<td>medium</td>
-<td>Limit Password Reuse</td>
-<td xml:lang="en-US">Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
-<td xml:lang="en-US">Do not allow users to reuse recent passwords. This can be
-accomplished by using the <code>remember</code> option for the <code>pam_unix</code>
-or <code>pam_pwhistory</code> PAM modules.
-<br><br>
-In the file <code>/etc/pam.d/system-auth</code>, append <code>remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></xccdf-1.1:sub></code>
-to the line which refers to the <code>pam_unix.so</code> or <code>pam_pwhistory.so</code>module, as shown below:
-<ul>
-<li>for the <code>pam_unix.so</code> case:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></xccdf-1.1:sub></pre>
-</li>
-<li>for the <code>pam_pwhistory.so</code> case:
-<pre>password requisite pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></xccdf-1.1:sub></pre>
-</li>
-</ul>
-The DoD STIG requirement is 5 passwords.</td>
-<td></td>
-<td>SRG-OS-000077-GPOS-00045<br>
-</td>
-<td>CCI-000200<br>
 </td>
 <td></td>
 </tr>
@@ -976,6 +1018,69 @@ The remediation provided with this rule adds <code>xattrs</code> to all rule set
 <td></td>
 </tr>
 <tr>
+<td>audit_rules_suid_privilege_function</td>
+<td>medium</td>
+<td>Record Events When Privileged Executables Are Run</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have
+compromised information system accounts, is a serious and ongoing concern
+and can have significant adverse impacts on organizations. Auditing the use
+of privileged functions is one way to detect such misuse and identify the
+risk from insider threats and the advanced persistent threat.</td>
+<td xml:lang="en-US">Verify the system generates an audit record when privileged functions are executed.
+<pre># grep -iw execve <code>/etc/audit/audit.rules</code></pre>
+
+<pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
+<pre>-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
+<pre>-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
+<pre>-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
+
+If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.
+If both the "b32" and "b64" audit rules for "SGID" files are not defined, this is a finding.</td>
+<td></td>
+<td>SRG-OS-000365-GPOS-00152<br>SRG-OS-000354-GPOS-00142<br>SRG-OS-000358-GPOS-00145<br>SRG-OS-000352-GPOS-00140<br>SRG-OS-000353-GPOS-00141<br>SRG-OS-000350-GPOS-00138<br>SRG-OS-000351-GPOS-00139<br>SRG-OS-000348-GPOS-00136<br>SRG-OS-000349-GPOS-00137<br>SRG-OS-000337-GPOS-00129<br>SRG-OS-000327-GPOS-00127<br>
+</td>
+<td>CCI-001814<br>CCI-001882<br>CCI-001889<br>CCI-001880<br>CCI-001881<br>CCI-001878<br>CCI-001879<br>CCI-001875<br>CCI-001877<br>CCI-001914<br>CCI-002234<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>auditd_audispd_configure_sufficiently_large_partition</td>
+<td>medium</td>
+<td>Configure a Sufficiently Large Partition for Audit Logs</td>
+<td xml:lang="en-US">Information stored in one location is vulnerable to accidental or incidental
+deletion or alteration.Off-loading is a common process in information
+systems with limited audit storage capacity.</td>
+<td xml:lang="en-US">The Red Hat Enterprise Linux 8 operating system must allocate audit record storage
+capacity to store at least one weeks worth of audit records when audit
+records are not immediately sent to a central audit record storage
+facility.
+
+The partition size needed to capture a week's worth of audit records is
+based on the activity level of the system and the total storage capacity
+available. In normal circumstances, 10.0 GB of storage space for audit
+records will be sufficient.
+
+Determine which partition the audit records are being written to with the
+following command:
+
+<pre># grep log_file /etc/audit/auditd.conf
+log_file = /var/log/audit/audit.log</pre>
+
+Check the size of the partition that audit records are written to with the
+following command:
+
+<pre># df -h /var/log/audit/
+/dev/sda2 24G 10.4G 13.6G 43% /var/log/audit</pre>
+</td>
+<td></td>
+<td>SRG-OS-000341-GPOS-00132<br>
+</td>
+<td>CCI-001849<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>auditd_data_disk_error_action</td>
 <td>medium</td>
 <td>Configure auditd Disk Error Action on Disk Error</td>
@@ -1274,6 +1379,7 @@ new versions have been installed. To configure <code>yum</code> to remove the
 
 previous software components after updating, set the <code>clean_requirements_on_remove</code>
 
+
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td></td>
 <td>SRG-OS-000437-GPOS-00194<br>
@@ -1378,6 +1484,29 @@ To configure <code>firewalld</code> to allow access, run the following command(s
 <td></td>
 </tr>
 <tr>
+<td>configure_gnutls_tls_crypto_policy</td>
+<td>medium</td>
+<td>Configure GnuTLS library to use DoD-approved TLS Encryption</td>
+<td xml:lang="en-US">Overriding the system crypto policy makes the behavior of the GnuTLS
+library violate expectations, and makes system configuration more
+fragmented.</td>
+<td xml:lang="en-US">Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+GnuTLS is supported by system crypto policy, but the GnuTLS configuration may be
+set up to ignore it.
+
+To check that Crypto Policies settings are configured correctly, ensure that
+<code>/etc/crypto-policies/back-ends/gnutls.config</code> contains the following
+line and is not commented out:
+<code>+VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0</code>
+</td>
+<td></td>
+<td>SRG-OS-000250-GPOS-00093<br>
+</td>
+<td>CCI-001453<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>configure_kerberos_crypto_policy</td>
 <td>medium</td>
 <td>Configure Kerberos to use System Crypto Policy</td>
@@ -1445,8 +1574,11 @@ unauthorized users without detection.</td>
 <td xml:lang="en-US">Crypto Policies are means of enforcing certain cryptographic settings for
 selected applications including OpenSSL. OpenSSL is by default configured to
 modify its configuration based on currently configured Crypto Policy.
-However, in certain cases it might be needed to override the Crypto Policy
-specific to OpenSSL and leave rest of the Crypto Policy intact.</td>
+Editing the Crypto Policy back-end is not recommended.
+
+Check the crypto-policies(7) man page and choose a policy that configures TLS
+protocol to version 1.2 or higher, for example DEFAULT, FUTURE or FIPS policy.
+Or create and apply a custom policy that restricts minimum TLS version to 1.2.</td>
 <td></td>
 <td>SRG-OS-000250-GPOS-00093<br>
 </td>
@@ -1641,12 +1773,12 @@ After the settings have been set, run <code>dconf update</code>.</td>
 prevent undesired access to system.</td>
 <td xml:lang="en-US">In the default graphical environment, screen locking on smartcard removal
 can be enabled by setting <code>removal-action</code>
-to <code>lock-screen</code>.
+to <code>'lock-screen'</code>.
 <br><br>
 To enable, add or edit <code>removal-action</code> to
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/settings-daemon/peripherals/smartcard]
-removal-action=lock-screen</pre>
+removal-action='lock-screen'</pre>
 Once the setting has been added, add a lock to
 <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
 For example:
@@ -1895,12 +2027,9 @@ and gives them an opportunity to notify administrators.</td>
 <td xml:lang="en-US">To configure the system to notify users of last logon/access
 using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
-
 <code>/etc/pam.d/postlogin</code> to read as follows:
-<pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
-session     [default=1]   pam_lastlog.so nowtmp showfailed
-session     optional      pam_lastlog.so silent noupdate showfailed</pre>
-</td>
+<pre>session     required pam_lastlog.so showfailed</pre>
+And make sure that the <code>silent</code> option is not set.</td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -1994,7 +2123,7 @@ Detailed information on encrypting partitions using LUKS or LUKS ciphers can be 
 the Red Hat Enterprise Linux 8 Documentation web site:<br>
 
     
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Encryption.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Encryption.html</a>.</td>
+    <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/encrypting-block-devices-using-luks_security-hardening">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/encrypting-block-devices-using-luks_security-hardening</a>.</td>
 <td></td>
 <td>SRG-OS-000185-GPOS-00079<br>SRG-OS-000404-GPOS-00183<br>SRG-OS-000405-GPOS-00184<br>
 </td>
@@ -2103,6 +2232,40 @@ interactive users home directory, use the following command:
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
 <td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>file_groupownership_system_commands_dirs</td>
+<td>medium</td>
+<td>Verify that system commands files are group owned by root </td>
+<td xml:lang="en-US">If the operating system allows any user to make changes to software
+libraries, then those changes might be implemented without undergoing the
+appropriate testing and approvals that are part of a robust change management
+process.
+This requirement applies to operating systems with software libraries
+that are accessible and configurable, as in the case of interpreted languages.
+Software libraries also include privileged programs which execute with
+escalated privileges. Only qualified and authorized individuals must be
+allowed to obtain access to information system components for purposes
+of initiating changes, including upgrades and modifications.</td>
+<td xml:lang="en-US">System commands files are stored in the following directories by default:
+<pre>/bin
+/sbin
+/usr/bin
+/usr/sbin
+/usr/local/bin
+/usr/local/sbin
+</pre>
+All files in these directories should be owned by the <code>root</code> group.
+If the directory, or any file in these directories, is found to be owned
+by a group other than root correct its ownership with the following command:
+<pre>$ sudo chgrp root <i>FILE</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
 </td>
 <td></td>
 </tr>
@@ -3461,7 +3624,11 @@ into the account without authentication. Remove any instances of the
 
 <code>/etc/pam.d/system-auth</code>
 
-to prevent logins with empty passwords.</td>
+to prevent logins with empty passwords.
+Note that this rule is not applicable for systems running within a
+container. Having user with empty password within a container is not
+considered a risk, because it should not be possible to directly login into
+a container anyway.</td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -3838,7 +4005,8 @@ information systems gaining access include, for example, hardware tokens
 providing time-based or challenge-response authenticators and smart cards such
 as the U.S. Government Personal Identity Verification card and the DoD Common
 Access Card.</td>
-<td xml:lang="en-US">The <code>opensc</code> package can be installed with the following command:
+<td xml:lang="en-US">
+The <code>opensc</code> package can be installed with the following command:
 <pre>
 $ sudo yum install opensc</pre>
 </td>
@@ -4304,6 +4472,31 @@ can be implemented by adding the following to the <i>RULES</i> section of
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
 <td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>rsyslog_remote_access_monitoring</td>
+<td>medium</td>
+<td>Ensure remote access methods are monitored in Rsyslog</td>
+<td xml:lang="en-US">Logging remote access methods can be used to trace the decrease the risks
+associated with remote user access management. It can also be used to spot
+cyber attacks and ensure ongoing compliance with organizational policies
+surrounding the use of remote access methods.</td>
+<td xml:lang="en-US">Logging of remote access methods must be implemented to help identify cyber
+attacks and ensure ongoing compliance with remote access policies are being
+audited and upheld. An examples of a remote access method is the use of the
+Remote Desktop Protocol (RDP) from an external, non-organization controlled
+network. The <code>/etc/rsyslog.conf</code> or
+<code>/etc/rsyslog.d/*.conf</code> file should contain a match for the following
+selectors: <code>auth.*</code>, <code>authpriv.*</code>, and <code>daemon.*</code>. If
+not, use the following as an example configuration:
+<pre>auth.*;authpriv.*;daemon.*                              /var/log/secure</pre>
+</td>
+<td></td>
+<td>SRG-OS-000032-GPOS-00013<br>
+</td>
+<td>CCI-000067<br>
 </td>
 <td></td>
 </tr>
@@ -5166,6 +5359,30 @@ in <code>/etc/sudoers.d/</code>.</td>
 <td></td>
 </tr>
 <tr>
+<td>sudo_require_reauthentication</td>
+<td>medium</td>
+<td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+<td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
+do not have authorization.
+<br><br>
+When operating systems provide the capability to escalate a functional capability, it
+is critical that the user re-authenticate.</td>
+<td xml:lang="en-US">The sudo <code>timestamp_timeout</code> tag sets the amount of time sudo password prompt waits.
+The default <code>timestamp_timeout</code> value is 5 minutes.
+The timestamp_timeout should be configured by making sure that the
+<code>timestamp_timeout</code> tag exists in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.
+If the value is set to an integer less than 0, the user's time stamp will not expire 
+and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
+<td></td>
+<td>SRG-OS-000373-GPOS-00158<br>SRG-OS-000373-GPOS-00157<br>SRG-OS-000373-GPOS-00156<br>
+</td>
+<td>CCI-002038<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>sudo_restrict_privilege_elevation_to_authorized</td>
 <td>medium</td>
 <td>The operating system must restrict privilege elevation to authorized personnel</td>
@@ -5203,7 +5420,7 @@ The expected output for:
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
-<td>CCI-000366<br>
+<td>CCI-000366<br>CCI-002227<br>
 </td>
 <td></td>
 </tr>
@@ -5329,9 +5546,9 @@ replacing them with 0.</td>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = 1</pre>
 </td>
 <td></td>
-<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+<td>SRG-OS-000433-GPOS-00193<br>SRG-OS-000433-GPOS-00192<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
-<td>CCI-000366<br>
+<td>CCI-002824<br>CCI-000366<br>
 </td>
 <td></td>
 </tr>
@@ -5727,6 +5944,23 @@ the following example:
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
 <td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>usbguard_generate_policy</td>
+<td>medium</td>
+<td>Generate USBGuard Policy</td>
+<td xml:lang="en-US">The <code>usbguard</code> must be configured to allow connected USB devices to work
+properly, avoiding the system to become inaccessible.</td>
+<td xml:lang="en-US">By default USBGuard when enabled prevents access to all USB devices and this lead
+to inaccessible system if they use USB mouse/keyboard. To prevent this scenario,
+the initial policy configuration must be generated based on current connected USB
+devices.</td>
+<td></td>
+<td>SRG-OS-000378-GPOS-00163<br>
+</td>
+<td>CCI-000416<br>CCI-001958<br>
 </td>
 <td></td>
 </tr>

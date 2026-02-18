@@ -278,7 +278,7 @@ assigned.</td>
 <td xml:lang="en-US">The system must use a strong hashing algorithm to store the password. The
 system must use a sufficient number of hashing rounds to ensure the required
 level of entropy.</td>
-<td xml:lang="en-US">Verify the SUSE operating system requires the shadow password suite
+<td xml:lang="en-US">Verify the operating system requires the shadow password suite
 configuration be set to encrypt interactive user passwords using a strong
 cryptographic hash.
 Check that the interactive user account passwords are using a strong
@@ -642,6 +642,44 @@ The remediation provided with this rule adds <code>xattrs</code> to all rule set
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
 <td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>apparmor_configured</td>
+<td>medium</td>
+<td>Ensure AppArmor is Active and Configured</td>
+<td xml:lang="en-US">Using a whitelist provides a configuration management method for allowing
+the execution of only authorized software. Using only authorized software
+decreases risk by limiting the number of potential vulnerabilities.<br><br>
+
+The organization must identify authorized software programs and permit
+execution of authorized software by adding each authorized program to the
+"pam_apparmor" exception policy. The process used to identify software
+programs that are authorized to execute on organizational information
+systems is commonly referred to as whitelisting.<br><br>
+
+Verification of whitelisted software occurs prior to execution or at system
+startup.<br><br>
+
+Users' home directories/folders may contain information of a sensitive
+nature. Nonprivileged users should coordinate any sharing of information
+with a System Administrator (SA) through shared resources.<br><br>
+
+Apparmor can confine users to their home directory, not allowing them to
+make any changes outside of their own home directories. Confining users to
+their home directory will minimize the risk of sharing information.</td>
+<td xml:lang="en-US">Verify that the Apparmor tool is configured to
+control whitelisted applications and user home directory access
+control.<br><br>
+
+The <code>apparmor</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable apparmor.service</pre>
+</td>
+<td></td>
+<td>SRG-OS-000368-GPOS-00154<br>SRG-OS-000370-GPOS-00155<br>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>SRG-OS-000326-GPOS-00126<br>SRG-OS-000324-GPOS-00125<br>
+</td>
+<td>CCI-001764<br>CCI-001774<br>CCI-002165<br>CCI-002233<br>CCI-002235<br>
 </td>
 <td></td>
 </tr>
@@ -1504,6 +1542,34 @@ form to <code>/etc/audit/audit.rules</code>:
 <td></td>
 </tr>
 <tr>
+<td>audit_rules_privileged_commands_insmod</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - insmod</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-w /sbin/insmod -p x -k modules</pre>
+</td>
+<td></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>audit_rules_privileged_commands_kmod</td>
 <td>medium</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
@@ -1524,6 +1590,38 @@ If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
 <pre>-w /usr/bin/kmod -p x -k modules</pre>
+</td>
+<td></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>audit_rules_privileged_commands_modprobe</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - modprobe</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-w /sbin/modprobe -p x -k modules</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-w /sbin/modprobe -p x -k modules</pre>
 </td>
 <td></td>
 <td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
@@ -1916,6 +2014,70 @@ form to <code>/etc/audit/audit.rules</code>:
 <td></td>
 </tr>
 <tr>
+<td>audit_rules_privileged_commands_unix2_chkpwd</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - unix2_chkpwd</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/sbin/unix2_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/sbin/unix2_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>audit_rules_privileged_commands_unix_chkpwd</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - unix_chkpwd</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>audit_rules_privileged_commands_usermod</td>
 <td>medium</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - usermod</td>
@@ -1934,16 +2096,45 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+
 <pre>-a always,exit -F path=/usr/bin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
+
 <pre>-a always,exit -F path=/usr/bin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
 <td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
 </td>
 <td>CCI-000130<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>audit_rules_session_events_btmp</td>
+<td>medium</td>
+<td>Record Attempts to Alter Process and Session Initiation Information btmp</td>
+<td xml:lang="en-US">Manual editing of these files may indicate nefarious activity, such
+as an attacker attempting to remove evidence of an intrusion.</td>
+<td xml:lang="en-US">The audit system already collects process information for all
+users and root. If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
+edits of files involved in storing such process information:
+<pre>-w /var/log/btmp -p wa -k session</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file in order to watch for attempted manual
+edits of files involved in storing such process information:
+<pre>-w /var/log/btmp -p wa -k session</pre>
+</td>
+<td></td>
+<td>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>
+</td>
+<td>CCI-000172<br>
 </td>
 <td></td>
 </tr>
@@ -1974,6 +2165,32 @@ edits of files involved in storing such process information:
 <td></td>
 </tr>
 <tr>
+<td>audit_rules_session_events_wtmp</td>
+<td>medium</td>
+<td>Record Attempts to Alter Process and Session Initiation Information wtmp</td>
+<td xml:lang="en-US">Manual editing of these files may indicate nefarious activity, such
+as an attacker attempting to remove evidence of an intrusion.</td>
+<td xml:lang="en-US">The audit system already collects process information for all
+users and root. If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
+edits of files involved in storing such process information:
+<pre> -w /var/log/wtmp -p wa -k session</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file in order to watch for attempted manual
+edits of files involved in storing such process information:
+<pre> -w /var/log/wtmp -p wa -k session</pre>
+</td>
+<td></td>
+<td>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>
+</td>
+<td>CCI-000172<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>audit_rules_suid_privilege_function</td>
 <td>medium</td>
 <td>Record Events When Privileged Executables Are Run</td>
@@ -1983,7 +2200,7 @@ compromised information system accounts, is a serious and ongoing concern
 and can have significant adverse impacts on organizations. Auditing the use
 of privileged functions is one way to detect such misuse and identify the
 risk from insider threats and the advanced persistent threat.</td>
-<td xml:lang="en-US">Verify the SUSE operating system generates an audit record when privileged functions are executed.
+<td xml:lang="en-US">Verify the system generates an audit record when privileged functions are executed.
 <pre># grep -iw execve <code>/etc/audit/audit.rules</code></pre>
 
 <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
@@ -2538,9 +2755,10 @@ account changes:
 <td xml:lang="en-US">Information stored in one location is vulnerable to accidental or incidental
 deletion or alteration.Off-loading is a common process in information
 systems with limited audit storage capacity.</td>
-<td xml:lang="en-US">The SUSE operating system must allocate audit record storage capacity to
-store at least one weeks worth of audit records when audit records are not
-immediately sent to a central audit record storage facility.
+<td xml:lang="en-US">The SUSE Linux Enterprise 15 operating system must allocate audit record storage
+capacity to store at least one weeks worth of audit records when audit
+records are not immediately sent to a central audit record storage
+facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
@@ -2831,6 +3049,7 @@ new versions have been installed. To configure <code>zypper</code> to remove the
 
 previous software components after updating, set the <code>solver.upgradeRemoveDroppedPackages</code>
 
+
 to <code>1</code> in <code>/etc/zypp/zypp.conf</code>.</td>
 <td></td>
 <td>SRG-OS-000437-GPOS-00194<br>
@@ -3080,6 +3299,26 @@ After the settings have been set, run <code>dconf update</code>.</td>
 <td></td>
 </tr>
 <tr>
+<td>dconf_gnome_screensaver_lock_enabled</td>
+<td>medium</td>
+<td>Enable GNOME3 Screensaver Lock After Idle Period</td>
+<td xml:lang="en-US">A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
+of the information system but does not want to logout because of the temporary nature of the absense.</td>
+<td xml:lang="en-US">
+To activate locking of the screensaver in the GNOME3 desktop when it is activated,
+run the following command to configure the SUSE operating system to allow the user to lock the GUI:
+<pre>gsettings set org.gnome.desktop.lockdown disable-lock-screen false</pre>
+Validate that <code>disable-lock-screen</code> has been set to <code>false</code> with the command:
+<pre>gsettings get org.gnome.desktop.lockdown disable-lock-screen</pre>
+</td>
+<td></td>
+<td>SRG-OS-000028-GPOS-00009<br>SRG-OS-000030-GPOS-00011<br>SRG-OS-000031-GPOS-00012<br>
+</td>
+<td>CCI-000056<br>CCI-000058<br>CCI-000060<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>dconf_gnome_screensaver_mode_blank</td>
 <td>medium</td>
 <td>Implement Blank Screensaver</td>
@@ -3115,6 +3354,66 @@ After the settings have been set, run <code>dconf update</code>.</td>
 <td>SRG-OS-000031-GPOS-00012<br>
 </td>
 <td>CCI-000060<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>dir_group_ownership_library_dirs</td>
+<td>medium</td>
+<td>Verify that Shared Library Directories Have Root Group Ownership</td>
+<td xml:lang="en-US">Files from shared library directories are loaded into the address
+space of processes (including privileged ones) or of the kernel itself at
+runtime. Proper ownership of library directories is necessary to protect
+the integrity of the system.</td>
+<td xml:lang="en-US">System-wide shared library files, which are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are also
+stored in <code>/lib/modules</code>. All files in these directories should be
+group-owned by the <code>root</code> user. If the  directories, is found to be owned
+by a user other than root correct its
+ownership with the following command:
+<pre>$ sudo chgrp root <i>DIR</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>dir_ownership_library_dirs</td>
+<td>medium</td>
+<td>Verify that Shared Library Directories Have Root Ownership</td>
+<td xml:lang="en-US">Files from shared library directories are loaded into the address
+space of processes (including privileged ones) or of the kernel itself at
+runtime. Proper ownership of library directories is necessary to protect
+the integrity of the system.</td>
+<td xml:lang="en-US">System-wide shared library files, which are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are also
+stored in <code>/lib/modules</code>. All files in these directories should be
+owned by the <code>root</code> user. If the  directories, is found to be owned
+by a user other than root correct its
+ownership with the following command:
+<pre>$ sudo chown root <i>DIR</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
 </td>
 <td></td>
 </tr>
@@ -3245,6 +3544,41 @@ correct its ownership with the following command:
 <td></td>
 </tr>
 <tr>
+<td>dir_system_commands_root_owned</td>
+<td>medium</td>
+<td>Verify that system commands directories have root ownership</td>
+<td xml:lang="en-US">If the operating system were to allow any user to make changes to 
+software libraries, then those changes might be implemented without 
+undergoing the appropriate testing and approvals that are part of a 
+robust change management process.
+
+This requirement applies to operating systems with software libraries
+that are accessible and configurable, as in the case of interpreted languages. 
+Software libraries also include privileged programs which execute with escalated 
+privileges. Only qualified and authorized individuals must be allowed to obtain 
+access to information system components for purposes of initiating changes, 
+including upgrades and modifications.</td>
+<td xml:lang="en-US">System commands are stored in the following directories by default:
+<pre>/bin 
+/sbin 
+/usr/bin 
+/usr/sbin 
+/usr/local/bin 
+/usr/local/sbin
+</pre>
+All these directories should be owned by the <code>root</code> user. 
+If any system command directory is not owned by a user other than root 
+correct its ownership with the following command:
+<pre>$ sudo chown root <i>DIR</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>disable_ctrlaltdel_burstaction</td>
 <td>high</td>
 <td>Disable Ctrl-Alt-Del Burst Action</td>
@@ -3306,7 +3640,6 @@ and gives them an opportunity to notify administrators.</td>
 <td xml:lang="en-US">To configure the system to notify users of last logon/access
 using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
-
 <code>/etc/pam.d/login</code> to read as follows:
 <pre>session     required pam_lastlog.so showfailed</pre>
 And make sure that the <code>silent</code> option is not set.</td>
@@ -3455,6 +3788,40 @@ interactive users home directory, use the following command:
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
 <td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>file_groupownership_system_commands_dirs</td>
+<td>medium</td>
+<td>Verify that system commands files are group owned by root </td>
+<td xml:lang="en-US">If the operating system allows any user to make changes to software
+libraries, then those changes might be implemented without undergoing the
+appropriate testing and approvals that are part of a robust change management
+process.
+This requirement applies to operating systems with software libraries
+that are accessible and configurable, as in the case of interpreted languages.
+Software libraries also include privileged programs which execute with
+escalated privileges. Only qualified and authorized individuals must be
+allowed to obtain access to information system components for purposes
+of initiating changes, including upgrades and modifications.</td>
+<td xml:lang="en-US">System commands files are stored in the following directories by default:
+<pre>/bin
+/sbin
+/usr/bin
+/usr/sbin
+/usr/local/bin
+/usr/local/sbin
+</pre>
+All files in these directories should be owned by the <code>root</code> group.
+If the directory, or any file in these directories, is found to be owned
+by a group other than root correct its ownership with the following command:
+<pre>$ sudo chgrp root <i>FILE</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
 </td>
 <td></td>
 </tr>
@@ -3672,6 +4039,33 @@ may be compromised.</td>
 <td></td>
 </tr>
 <tr>
+<td>file_permissions_system_commands_dirs</td>
+<td>medium</td>
+<td>Verify that system commands are protected from unauthorized access</td>
+<td xml:lang="en-US">System binaries are executed by privileged users, as well as system services,
+and restrictive permissions are necessary to ensure execution of these programs
+cannot be co-opted.</td>
+<td xml:lang="en-US">System commands are stored in the following directories by default:
+<pre>/bin
+/sbin
+/usr/bin
+/usr/sbin
+/usr/local/bin
+/usr/local/sbin</pre>
+All files in these directories should not be group-writable or world-writable.
+If any file <i>FILE</i> in these directories is found
+to be group-writable or world-writable, correct its permission with the
+following command:
+<pre>$ sudo chmod 755 <i>FILE</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>file_permissions_ungroupowned</td>
 <td>medium</td>
 <td>Ensure All Files Are Owned by a Group</td>
@@ -3696,6 +4090,28 @@ filesystems the following command can be run manually for each partition:
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>
 </td>
 <td>CCI-000366<br>CCI-002165<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>gnome_gdm_disable_unattended_automatic_login</td>
+<td>high</td>
+<td>Disable GDM Unattended or Automatic Login</td>
+<td xml:lang="en-US">Failure to restrict system access to authenticated users negatively impacts operating
+system security.</td>
+<td xml:lang="en-US">The GNOME Display Manager (GDM) can allow users to automatically login without
+user interaction or credentials or unattended login. User should always be required to authenticate themselves
+to the system that they are authorized to use. To disable user ability to automatically
+login to the system, set the <code>DISPLAYMANAGER_AUTOLOGIN=""</code>
+or <code>DISPLAYMANAGER_PASSWORD_LESS_LOGIN="no"</code> in the
+<code>/etc/sysconfig/displaymanager</code>. For example:
+<pre>DISPLAYMANAGER_AUTOLOGIN=""
+DISPLAYMANAGER_PASSWORD_LESS_LOGIN="no"</pre>
+</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
 </td>
 <td></td>
 </tr>
@@ -3909,6 +4325,25 @@ vendor, SUSE is responsible for providing security patches.</td>
 <td></td>
 </tr>
 <tr>
+<td>is_fips_mode_enabled</td>
+<td>high</td>
+<td>Verify '/proc/sys/crypto/fips_enabled' exists</td>
+<td xml:lang="en-US">Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
+protect data. The operating system must implement cryptographic modules adhering to the higher
+standards approved by the federal government since this provides assurance they have been tested
+and validated.</td>
+<td xml:lang="en-US">On a system where FIPS 140-2 mode is enabled, <code>/proc/sys/crypto/fips_enabled</code> must exist.
+To verify FIPS mode, run the following command:
+<pre>cat /proc/sys/crypto/fips_enabled</pre>
+</td>
+<td></td>
+<td>SRG-OS-000478-GPOS-00223<br>SRG-OS-000396-GPOS-00176<br>
+</td>
+<td>CCI-002450<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>kernel_module_usb-storage_disabled</td>
 <td>medium</td>
 <td>Disable Modprobe Loading of USB Storage Driver</td>
@@ -4044,7 +4479,11 @@ into the account without authentication. Remove any instances of the
 
 password authentication configurations in <code>/etc/pam.d/</code>
 
-to prevent logins with empty passwords.</td>
+to prevent logins with empty passwords.
+Note that this rule is not applicable for systems running within a
+container. Having user with empty password within a container is not
+considered a risk, because it should not be possible to directly login into
+a container anyway.</td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -4209,6 +4648,23 @@ $ sudo zypper install firewalld</pre>
 <td></td>
 </tr>
 <tr>
+<td>package_pam_apparmor_installed</td>
+<td>medium</td>
+<td>Install the pam_apparmor Package</td>
+<td xml:lang="en-US">Protection of system integrity using AppArmor depends on this package being
+installed.</td>
+<td xml:lang="en-US">The <code>pam_apparmor</code> package can be installed with the following command:
+<pre>
+$ sudo zypper install pam_apparmor</pre>
+</td>
+<td></td>
+<td>SRG-OS-000368-GPOS-00154<br>SRG-OS-000370-GPOS-00155<br>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>SRG-OS-000326-GPOS-00126<br>SRG-OS-000324-GPOS-00125<br>
+</td>
+<td>CCI-001764<br>CCI-001774<br>CCI-002165<br>CCI-002233<br>CCI-002235<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>package_telnet-server_removed</td>
 <td>high</td>
 <td>Uninstall telnet-server Package</td>
@@ -4369,6 +4825,33 @@ generators.</td>
 <td></td>
 </tr>
 <tr>
+<td>permissions_local_var_log</td>
+<td>medium</td>
+<td>Verify permissions of log files</td>
+<td xml:lang="en-US">The SUSE Linux Enterprise 15 must generate error messages that provide information
+necessary for corrective actions without revealing information that could
+be exploited by adversaries.</td>
+<td xml:lang="en-US">Any operating system providing too much information in error messages
+risks compromising the data and security of the structure, and content
+of error messages needs to be carefully considered by the organization.
+
+Organizations carefully consider the structure/content of error messages.
+The extent to which information systems are able to identify and handle
+error conditions is guided by organizational policy and operational
+requirements. Information that could be exploited by adversaries includes,
+for example, erroneous logon attempts with passwords entered by mistake
+as the username, mission/business information that can be derived from
+(if not stated explicitly by) information recorded, and personal
+information, such as account numbers, social security numbers, and credit
+card numbers.</td>
+<td></td>
+<td>SRG-OS-000205-GPOS-00083<br>
+</td>
+<td>CCI-001312<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>permissions_local_var_log_audit</td>
 <td>medium</td>
 <td>Verify that Local Logs of the audit Daemon are not World-Readable</td>
@@ -4417,6 +4900,39 @@ $ sudo newaliases</pre>
 <td>SRG-OS-000046-GPOS-00022<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
 <td>CCI-000139<br>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>root_permissions_syslibrary_files</td>
+<td>medium</td>
+<td>Verify the system-wide library files in directories
+"/lib", "/lib64", "/usr/lib/" and "/usr/lib64" are owned by root.</td>
+<td xml:lang="en-US">If the operating system were to allow any user to make changes to software libraries,
+then those changes might be implemented without undergoing the appropriate testing and
+approvals that are part of a robust change management process.
+
+This requirement applies to operating systems with software libraries that are
+accessible and configurable, as in the case of interpreted languages. Software libraries
+also include privileged programs which execute with escalated privileges. Only qualified
+and authorized individuals must be allowed to obtain access to information system components
+for purposes of initiating changes, including upgrades and modifications.</td>
+<td xml:lang="en-US">System-wide library files are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+All system-wide shared library files should be protected from unauthorised
+access. If any of these files is not owned by root, correct its owner with
+the following command:
+<pre>$ sudo chgrp root <i>DIR</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
 </td>
 <td></td>
 </tr>
@@ -5245,6 +5761,30 @@ in <code>/etc/sudoers.d/</code>."</td>
 <td></td>
 </tr>
 <tr>
+<td>sudo_require_reauthentication</td>
+<td>medium</td>
+<td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+<td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
+do not have authorization.
+<br><br>
+When operating systems provide the capability to escalate a functional capability, it
+is critical that the user re-authenticate.</td>
+<td xml:lang="en-US">The sudo <code>timestamp_timeout</code> tag sets the amount of time sudo password prompt waits.
+The default <code>timestamp_timeout</code> value is 5 minutes.
+The timestamp_timeout should be configured by making sure that the
+<code>timestamp_timeout</code> tag exists in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.
+If the value is set to an integer less than 0, the user's time stamp will not expire 
+and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
+<td></td>
+<td>SRG-OS-000373-GPOS-00158<br>SRG-OS-000373-GPOS-00157<br>SRG-OS-000373-GPOS-00156<br>
+</td>
+<td>CCI-002038<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>sudo_restrict_privilege_elevation_to_authorized</td>
 <td>medium</td>
 <td>The operating system must restrict privilege elevation to authorized personnel</td>
@@ -5282,7 +5822,7 @@ The expected output for:
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
-<td>CCI-000366<br>
+<td>CCI-000366<br>CCI-002227<br>
 </td>
 <td></td>
 </tr>
@@ -5299,9 +5839,9 @@ replacing them with 0.</td>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = 1</pre>
 </td>
 <td></td>
-<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+<td>SRG-OS-000433-GPOS-00193<br>SRG-OS-000433-GPOS-00192<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
-<td>CCI-000366<br>
+<td>CCI-002824<br>CCI-000366<br>
 </td>
 <td></td>
 </tr>

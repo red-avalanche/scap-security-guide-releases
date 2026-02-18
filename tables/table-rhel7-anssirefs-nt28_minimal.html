@@ -475,12 +475,47 @@ strictly controlled on the system.</td>
 <td>Uninstall DHCP Server Package</td>
 <td xml:lang="en-US">If the system does not need to act as a DHCP server,
 the dhcp package can be uninstalled.
+
 The <code>dhcp</code> package can be removed with the following command:
 <pre>
 $ sudo yum erase dhcp</pre>
 </td>
 <td xml:lang="en-US">Removing the DHCP server ensures that it cannot be easily or
 accidentally reactivated and disrupt network operation.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)<br>
+</td>
+<td>Uninstall rsh-server Package</td>
+<td xml:lang="en-US">The <code>rsh-server</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase rsh-server</pre>
+</td>
+<td xml:lang="en-US">The <code>rsh-server</code> service provides unencrypted remote access service which does not
+provide for the confidentiality and integrity of user passwords or the remote session and has very weak
+authentication. If a privileged user were to login using this service, the privileged user password
+could be compromised. The <code>rsh-server</code> package provides several obsolete and insecure
+network services. Removing it decreases the risk of those services' accidental (or intentional)
+activation.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)<br>
+</td>
+<td>Uninstall rsh Package</td>
+<td xml:lang="en-US">
+The <code>rsh</code> package contains the client commands
+
+for the rsh services</td>
+<td xml:lang="en-US">These legacy clients contain numerous security exposures and have
+been replaced with the more secure SSH package. Even if the server is removed,
+it is best to ensure the clients are also removed to prevent users from
+inadvertently attempting to use these commands and therefore exposing
+
+their credentials. Note that removing the <code>rsh</code> package removes
+
+the clients for <code>rsh</code>,<code>rcp</code>, and <code>rlogin</code>.</td>
 <td></td>
 </tr>
 <tr>
@@ -509,14 +544,137 @@ should be used instead.</td>
 <td></td>
 </tr>
 <tr>
-<td>BP28(R1)<br>NT007(R03)<br>
+<td>BP28(R1)<br>
 </td>
-<td>Uninstall the telnet server</td>
-<td xml:lang="en-US">The telnet daemon should be uninstalled.</td>
-<td xml:lang="en-US">
-<code>telnet</code> allows clear text communications, and does not protect
-any data transmission between client and server. Any confidential data
-can be listened and no integrity checking is made.'</td>
+<td>Uninstall talk-server Package</td>
+<td xml:lang="en-US">The <code>talk-server</code> package can be removed with the following command: <pre> $ sudo yum erase talk-server</pre>
+</td>
+<td xml:lang="en-US">The talk software presents a security risk as it uses unencrypted protocols
+for communications. Removing the <code>talk-server</code> package decreases the
+risk of the accidental (or intentional) activation of talk services.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)<br>
+</td>
+<td>Uninstall talk Package</td>
+<td xml:lang="en-US">The <code>talk</code> package contains the client program for the
+Internet talk protocol, which allows the user to chat with other users on
+different systems. Talk is a communication program which copies lines from one
+terminal to the terminal of another user.
+The <code>talk</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase talk</pre>
+</td>
+<td xml:lang="en-US">The talk software presents a security risk as it uses unencrypted protocols
+for communications. Removing the <code>talk</code> package decreases the
+risk of the accidental (or intentional) activation of talk client program.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)<br>
+</td>
+<td>Uninstall telnet-server Package</td>
+<td xml:lang="en-US">The <code>telnet-server</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase telnet-server</pre>
+</td>
+<td xml:lang="en-US">It is detrimental for operating systems to provide, or install by default,
+functionality exceeding requirements or mission objectives. These
+unnecessary capabilities are often overlooked and therefore may remain
+unsecure. They increase the risk to the platform by providing additional
+attack vectors.
+<br>
+The telnet service provides an unencrypted remote access service which does
+not provide for the confidentiality and integrity of user passwords or the
+remote session. If a privileged user were to login using this service, the
+privileged user password could be compromised.
+<br>
+Removing the <code>telnet-server</code> package decreases the risk of the
+telnet service's accidental (or intentional) activation.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)<br>
+</td>
+<td>Remove telnet Clients</td>
+<td xml:lang="en-US">The telnet client allows users to start connections to other systems via
+the telnet protocol.</td>
+<td xml:lang="en-US">The <code>telnet</code> protocol is insecure and unencrypted. The use
+of an unencrypted transmission medium could allow an unauthorized user
+to steal credentials. The <code>ssh</code> package provides an
+encrypted session and stronger security and is included in Red Hat Enterprise Linux 7.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)<br>
+</td>
+<td>Uninstall tftp-server Package</td>
+<td xml:lang="en-US">The <code>tftp-server</code> package can be removed with the following command: <pre> $ sudo yum erase tftp-server</pre>
+</td>
+<td xml:lang="en-US">Removing the <code>tftp-server</code> package decreases the risk of the accidental
+(or intentional) activation of tftp services.
+<br><br>
+If TFTP is required for operational support (such as transmission of router
+configurations), its use must be documented with the Information Systems
+Securty Manager (ISSM), restricted to only authorized personnel, and have
+access control rules established.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)<br>
+</td>
+<td>Remove tftp Daemon</td>
+<td xml:lang="en-US">Trivial File Transfer Protocol (TFTP) is a simple file transfer protocol,
+typically used to automatically transfer configuration or boot files between systems.
+TFTP does not support authentication and can be easily hacked. The package
+<code>tftp</code> is a client program that allows for connections to a <code>tftp</code> server.</td>
+<td xml:lang="en-US">It is recommended that TFTP be removed, unless there is a specific need
+for TFTP (such as a boot server). In that case, use extreme caution when configuring
+the services.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)<br>
+</td>
+<td>Uninstall xinetd Package</td>
+<td xml:lang="en-US">The <code>xinetd</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase xinetd</pre>
+</td>
+<td xml:lang="en-US">Removing the <code>xinetd</code> package decreases the risk of the
+xinetd service's accidental (or intentional) activation.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)<br>
+</td>
+<td>Remove NIS Client</td>
+<td xml:lang="en-US">The Network Information Service (NIS), formerly known as Yellow Pages,
+is a client-server directory service protocol used to distribute system configuration
+files. The NIS client (<code>ypbind</code>) was used to bind a system to an NIS server
+and receive the distributed configuration files.</td>
+<td xml:lang="en-US">The NIS service is inherently an insecure system that has been vulnerable
+to DOS attacks, buffer overflows and has poor authentication for querying
+NIS maps. NIS generally has been replaced by such protocols as Lightweight
+Directory Access Protocol (LDAP). It is recommended that the service be
+removed.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)<br>
+</td>
+<td>Uninstall ypserv Package</td>
+<td xml:lang="en-US">The <code>ypserv</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase ypserv</pre>
+</td>
+<td xml:lang="en-US">The NIS service provides an unencrypted authentication service which does
+not provide for the confidentiality and integrity of user passwords or the
+remote session.
+
+Removing the <code>ypserv</code> package decreases the risk of the accidental
+(or intentional) activation of NIS or NIS+ services.</td>
 <td></td>
 </tr>
 <tr>
