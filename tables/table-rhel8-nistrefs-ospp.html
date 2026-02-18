@@ -445,7 +445,7 @@ In addition, logging in with a user-specific account provides individual
 accountability of actions performed on the system and also helps to minimize
 direct attack attempts on root's password.</td>
 <td></td>
-<td>AC-3<br>AC-6(2)<br>AC-17(b)<br>IA-2<br>IA-2(5)<br>
+<td>AC-3<br>AC-6(2)<br>AC-17(a)<br>AC-17(b)<br>IA-2<br>IA-2(5)<br>
 </td>
 </tr>
 <tr>
@@ -460,7 +460,7 @@ add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td xml:lang="en-US">If other users have access to modify user-specific SSH configuration files, they
 may be able to log into the system as another user.</td>
 <td></td>
-<td>AC-6<br>AC-17(b)<br>
+<td>AC-6<br>AC-17(a)<br>AC-17(b)<br>AC-17(b)<br>
 </td>
 </tr>
 <tr>
@@ -478,7 +478,7 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <td xml:lang="en-US">SSH trust relationships mean a compromise on one host
 can allow an attacker to move trivially to other hosts.</td>
 <td></td>
-<td>AC-3<br>AC-17<br>CM-6(b)<br>
+<td>AC-3<br>AC-17(a)<br>CM-6(b)<br>
 </td>
 </tr>
 <tr>
@@ -495,7 +495,7 @@ should prevent users from being able to assign themselves empty passwords.</td>
 that remote login via SSH will require a password, even in the event of 
 misconfiguration elsewhere.</td>
 <td></td>
-<td>AC-3<br>AC-6<br>AC-17(b)<br>CM-6(b)<br>
+<td>AC-3<br>AC-6<br>AC-17(a)<br>AC-17(b)<br>CM-6(b)<br>
 </td>
 </tr>
 <tr>
@@ -526,7 +526,7 @@ correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 applications. Allowing GSSAPI authentication through SSH exposes the system's
 GSSAPI to remote hosts, increasing the attack surface of the system.</td>
 <td></td>
-<td>AC-17(b)<br>CM-6(c)<br>
+<td>AC-17(a)<br>AC-17(b)<br>CM-6(c)<br>
 </td>
 </tr>
 <tr>
@@ -539,7 +539,7 @@ edit <code>/etc/ssh/sshd_config</code> as follows:
 <td xml:lang="en-US">This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
 <td></td>
-<td>AC-2(5)<br>SA-8<br>AC-12<br>AC-17(b)<br>SC-10<br>
+<td>AC-2(5)<br>SA-8<br>AC-12<br>AC-17(a)<br>AC-17(b)<br>SC-10<br>
 </td>
 </tr>
 <tr>
@@ -555,7 +555,7 @@ facilitates possible legal action against attackers. Alternatively, systems
 whose ownership should not be obvious should ensure usage of a banner that does
 not provide easy attribution.</td>
 <td></td>
-<td>AC-8(a)<br>AC-8(b)<br>AC-8(c)(1)<br>AC-8(c)(2)<br>AC-8(c)(3)<br>AC-17(b)<br>
+<td>AC-8(a)<br>AC-8(b)<br>AC-8(c)(1)<br>AC-8(c)(2)<br>AC-8(c)(3)<br>AC-17(a)<br>AC-17(b)<br>
 </td>
 </tr>
 <tr>
@@ -1184,15 +1184,16 @@ password is compromised.</td>
 <td xml:lang="en-US">To ensure all processes can be audited, even those which start
 prior to the audit daemon, add the argument <code>audit=1</code> to the default
 GRUB 2 command line for the Linux operating system in
-<code>/etc/default/grub</code>, in the manner below:
-<pre>GRUB_CMDLINE_LINUX="crashkernel=auto rd.lvm.lv=VolGroup/LogVol06 rd.lvm.lv=VolGroup/lv_swap rhgb quiet rd.shell=0 audit=1"</pre>
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
 </td>
 <td xml:lang="en-US">Each process on the system carries an "auditable" flag which indicates whether
 its activities can be audited. Although <code>auditd</code> takes care of enabling
 this for all processes which launch after it does, adding the kernel argument
 ensures it is set for every process during boot.</td>
 <td></td>
-<td>AC-17(1)<br>AU-14(1)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-10<br>AU-12<br>IR-5<br>
+<td>AC-17(1)<br>AU-14(1)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-10<br>AU-12<br>IR-5<br>AU-12(1)<br>
 </td>
 </tr>
 <tr>
@@ -1428,7 +1429,7 @@ Additionally, a properly configured audit subsystem ensures that actions of
 individual system users can be uniquely traced to those users so they
 can be held accountable for their actions.</td>
 <td></td>
-<td>AC-2(g)<br>AU-3<br>AC-17(1)<br>AU-1(b)<br>AU-10<br>AU-12(a)<br>AU-12(c)<br>AU-14(1)<br>IR-5<br>
+<td>AC-2(g)<br>AU-3<br>AC-17(1)<br>AU-1(b)<br>AU-10<br>AU-12(a)<br>AU-12(c)<br>AU-14(1)<br>IR-5<br>AU-12(1)<br>
 </td>
 </tr>
 <tr>
@@ -1657,6 +1658,34 @@ to <code>dnf upgrade</code> suitable for automatic, regular execution.</td>
 <td></td>
 </tr>
 <tr>
+<td>CCE-82316-1</td>
+<td>Install subscription-manager Package</td>
+<td xml:lang="en-US">The <code>subscription-manager</code> package can be installed with the following command:
+<pre>
+$ sudo yum install subscription-manager</pre>
+</td>
+<td xml:lang="en-US">Red Hat Subscription Manager is a local service which tracks installed products
+and subscriptions on a local system to help manage subscription assignments.
+It communicates with the backend subscription service (the Customer Portal
+or an on-premise server such as Subscription Asset Manager) and works with
+content management tools such as yum.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-82315-3</td>
+<td>Install dnf-plugin-subscription-manager Package</td>
+<td xml:lang="en-US">The <code>dnf-plugin-subscription-manager</code> package can be installed with the following command:
+<pre>
+$ sudo yum install dnf-plugin-subscription-manager</pre>
+</td>
+<td xml:lang="en-US">This package provides plugins to interact with repositories and subscriptions
+from the Red Hat entitlement platform; contains subscription-manager and
+product-id plugins.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-82998-6</td>
 <td>Install firewalld Package</td>
 <td xml:lang="en-US">The <code>firewalld</code> package can be installed with the following command:
@@ -1734,21 +1763,6 @@ context.</td>
 <td></td>
 </tr>
 <tr>
-<td>CCE-82243-7</td>
-<td>Install python3-subscription-manager-rhsm Package</td>
-<td xml:lang="en-US">The <code>python3-subscription-manager-rhsm</code> package can be installed with the following command:
-<pre>
-$ sudo yum install python3-subscription-manager-rhsm</pre>
-</td>
-<td xml:lang="en-US">
-<code>python3-subscription-manager-rhsm</code> is a small library for communicating
-with the REST interface of a Red Hat Unified Entitlement Platform. This
-interface is used for the management of system entitlements, certificates, and access to
-content.</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
 <td>CCE-82968-9</td>
 <td>Install rng-tools Package</td>
 <td xml:lang="en-US">The <code>rng-tools</code> package can be installed with the following command:
@@ -1774,7 +1788,8 @@ limited root privileges to users and log root activity. The basic philosophy
 is to give as few privileges as possible but still allow system users to
 get their work done.</td>
 <td></td>
-<td></td>
+<td>AC-6(5)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82959-8</td>
@@ -1827,24 +1842,9 @@ page for futher information.</td>
 <td>CCE-81043-2</td>
 <td>Ensure the audit Subsystem is Installed</td>
 <td xml:lang="en-US">The audit package should be installed.</td>
-<td xml:lang="en-US">The auditd service is an access monitoring and accounting daemon, watching system calls to audit any access, in comparision with potential local access control policy such as SELinux policy.</td>
+<td xml:lang="en-US">The auditd service is an access monitoring and accounting daemon, watching system calls to audit any access, in comparison with potential local access control policy such as SELinux policy.</td>
 <td></td>
-<td></td>
-</tr>
-<tr>
-<td>CCE-80845-1</td>
-<td>Install libreswan Package</td>
-<td xml:lang="en-US">The Libreswan package provides an implementation of IPsec
-and IKE, which permits the creation of secure tunnels over
-untrusted networks. The <code>libreswan</code> package can be installed with the following command:
-<pre>
-$ sudo yum install libreswan</pre>
-</td>
-<td xml:lang="en-US">Providing the ability for remote users or systems
-to initiate a secure VPN connection protects information when it is
-transmitted over a wide area network.</td>
-<td></td>
-<td>AC-17<br>MA-4<br>SC-9<br>
+<td>AU-7(a)<br>AU-7(b)<br>AU-7(1)<br>AU-10<br>
 </td>
 </tr>
 <tr>
@@ -1868,6 +1868,38 @@ $ sudo yum install rsyslog-gnutls</pre>
 </td>
 <td xml:lang="en-US">The rsyslog-gnutls package provides Transport Layer Security (TLS) support
 for the rsyslog daemon, which enables secure remote logging.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-82395-5</td>
+<td>Ensure gnutls-utils is installed</td>
+<td xml:lang="en-US">The <code>gnutls-utils</code> package can be installed with the following command:
+<pre>
+$ sudo yum install gnutls-utils</pre>
+</td>
+<td xml:lang="en-US">GnuTLS is a secure communications library implementing the SSL, TLS and DTLS
+protocols and technologies around them. It provides a simple C language
+application programming interface (API) to access the secure communications
+protocols as well as APIs to parse and write X.509, PKCS #12, OpenPGP and
+other required structures.
+This package contains command line TLS client and server and certificate
+manipulation tools.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-82396-3</td>
+<td>Ensure nss-tools is installed</td>
+<td xml:lang="en-US">The <code>nss-tools</code> package can be installed with the following command:
+<pre>
+$ sudo yum install nss-tools</pre>
+</td>
+<td xml:lang="en-US">Network Security Services (NSS) is a set of libraries designed to
+support cross-platform development of security-enabled client and
+server applications. Install the <code>nss-tools</code> package
+to install command-line tools to manipulate the NSS certificate
+and key database.</td>
 <td></td>
 <td></td>
 </tr>
@@ -2067,6 +2099,20 @@ information from within a process's address space or registers.</td>
 <td></td>
 </tr>
 <tr>
+<td>CCE-82397-1</td>
+<td>Uninstall pigz Package</td>
+<td xml:lang="en-US">The <code>pigz</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase pigz</pre>
+</td>
+<td xml:lang="en-US">Binaries shipped in <code>pigz</code> package in Red Hat Enterprise Linux 8
+have not been compiled using recommended compiler flags. The binaries
+are compiled without sufficient stack protection and its address space
+layout randomization (ASLR) is weak.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-81038-2</td>
 <td>Disable Core Dumps for All Users</td>
 <td xml:lang="en-US">To disable core dumps for all users, add the following line to
@@ -2256,7 +2302,13 @@ implements application whitelisting to decide file access rights.</td>
 <td>Enable fapolicyd to watch all system mountpoints</td>
 <td xml:lang="en-US">Configure the <code>fapolicyd</code> (File Access Policy Daemon)
 to watch on all system filesystem mountpoints
-in <code>/etc/fapolicyd/fapolicyd.mounts</code>.</td>
+in <code>/etc/fapolicyd/fapolicyd.mounts</code>.
+An initial configuration may be generated by running
+the following command:
+<pre>mount | egrep '^tmpfs| ext4| ext3| xfs' | awk '{ printf "%s\n", $3 }' | egrep
+-v '^\/run$|^\/sys' &gt; /etc/fapolicyd/fapolicyd.mounts</pre>
+Any mountpoints not listed in /etc/fapolicyd/fapolicyd.mounts will not be
+watched.</td>
 <td xml:lang="en-US">To control file access for all possible rules, all system
 mountpoints need to be listed.</td>
 <td></td>
@@ -2359,7 +2411,7 @@ protect data. The operating system must implement cryptographic modules adhering
 standards approved by the federal government since this provides assurance they have been tested
 and validated.</td>
 <td></td>
-<td>SC-13<br>AC-17(2)<br>IA-7<br>
+<td>SC-13<br>AC-17(a)<br>AC-17(2)<br>IA-7<br>
 </td>
 </tr>
 <tr>
@@ -2373,7 +2425,8 @@ The rule checks if settings for selected crypto policy are configured as expecte
 the applications that run on that operating system. Use of weak or untested encryption algorithms
 undermines the purposes of utilizing encryption to protect data.</td>
 <td></td>
-<td></td>
+<td>AC-17(a)<br>AC-17(2)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82176-9</td>
@@ -2384,7 +2437,8 @@ This can be done by dropping a file named <code>opensshserver-xxx.config</code>,
 Changes are propagated into <code>/etc/crypto-policies/back-ends/opensshserver.config</code>. This rule checks if this file contains predefined <code>CRYPTO_POLICY</code> environment variable configured with predefined value.</td>
 <td xml:lang="en-US">The Common Criteria requirements specify that certain parameters for OpenSSH Server are configured e.g. supported ciphers, accepted host key algorithms, public key types, key exchange algorithms, HMACs and GSSAPI key exchange is disabled. Currently particular requirements specified by CC are stricter compared to any existing Crypto Policy.</td>
 <td></td>
-<td></td>
+<td>AC-17(a)<br>AC-17(2)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82225-4</td>
@@ -2395,7 +2449,8 @@ This rule checks if the file exists and if it contains required parameters and v
 During the parsing process, as soon as Openssh client parses some configuration option and its value, it remembers it and ignores any subsequent overrides. The customization mechanism provided by crypto policies appends eventual customizations at the end of the system wide crypto policy. Therefore, if the crypto policy customization overrides some parameter which is already configured in the system wide crypto policy, the SSH client will not honor that customized parameter.</td>
 <td xml:lang="en-US">The Common Criteria requirements specify how certain parameters for OpenSSH Client are configured. Particular parameters are RekeyLimit, GSSAPIAuthentication, Ciphers, PubkeyAcceptedKeyTypes, MACs and KexAlgorithms. Currently particular requirements specified by CC are stricter compared to any existing Crypto Policy.</td>
 <td></td>
-<td></td>
+<td>AC-17(a)<br>AC-17(2)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-80934-3</td>
@@ -2477,7 +2532,7 @@ protect data. The operating system must implement cryptographic modules adhering
 standards approved by the federal government since this provides assurance they have been tested
 and validated.</td>
 <td></td>
-<td>SC-13<br>AC-17(2)<br>IA-7<br>
+<td>SC-13<br>AC-17(a)<br>AC-17(2)<br>IA-7<br>
 </td>
 </tr>
 <tr>
@@ -2708,7 +2763,7 @@ from correctly detecting that the user is idle.</td>
 opportunity for unauthorized personnel to take control of a management session
 enabled on the console or console port that has been let unattended.</td>
 <td></td>
-<td>AC-2(5)<br>SA-8(i)<br>AC-12<br>AC-17(b)<br>SC-10<br>
+<td>AC-2(5)<br>SA-8(i)<br>AC-12<br>AC-17(a)<br>AC-17(b)<br>AC-17(b)<br>SC-10<br>
 </td>
 </tr>
 <tr>
@@ -2874,7 +2929,7 @@ modify the content of both <code>/etc/pam.d/system-auth</code> and <code>/etc/pa
 <pre>account required pam_faillock.so</pre>
 </li>
 </ul>
-</td>
+If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an administrator is required to unlock a user.</td>
 <td xml:lang="en-US">Locking out user accounts after a number of incorrect attempts
 prevents direct password guessing attacks. Ensuring that an administrator is
 involved in unlocking locked accounts draws appropriate attention to such
@@ -2977,6 +3032,50 @@ The tool is controlled by <code>dnf-automatic.timer</code> SystemD timer.</td>
 <td></td>
 <td>SI-2(5)<br>
 </td>
+</tr>
+<tr>
+<td>CCE-82457-3</td>
+<td>Configure TLS for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure <code>rsyslog</code> to use Transport Layer
+Security (TLS) support for logging to remote server
+for the Forwarding Output Module in <code>/etc/rsyslog.conf</code>
+using action. You can use the following command:
+<pre>echo 'action(type="omfwd" protocol="tcp" Target="&lt;remote system&gt;" port="6514"
+    StreamDriver="gtls" StreamDriverMode="1" StreamDriverAuthMode="x509/name")' &gt;&gt; /etc/rsyslog.conf
+</pre>
+Replace the <code>&lt;remote system&gt;</code> in the above command with an IP address or a host name of the remote logging server.</td>
+<td xml:lang="en-US">For protection of data being logged, the connection to the
+remote logging server needs to be authenticated and encrypted.</td>
+<td></td>
+<td>AU-9(3)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-82458-1</td>
+<td>Configure CA certificate for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure CA certificate for <code>rsyslog</code> logging
+to remote server using Transport Layer Security (TLS)
+using correct path for the <code>DefaultNetstreamDriverCAFile</code>
+global option in <code>/etc/rsyslog.conf</code>, for example with the following command:
+<pre>echo 'global(DefaultNetstreamDriverCAFile="/etc/pki/tls/cert.pem")' &gt;&gt; /etc/rsyslog.conf</pre>
+Replace the <code>/etc/pki/tls/cert.pem</code> in the above command with the path to the file with CA certificate generated for the purpose of remote logging.</td>
+<td xml:lang="en-US">The CA certificate needs to be set or <code>rsyslog.service</code>
+fails to start with
+<pre>error: ca certificate is not set, cannot continue</pre>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-82175-1</td>
+<td>Disable Kerberos by removing host keytab</td>
+<td xml:lang="en-US">Kerberos is not an approved key distribution method for
+Common Criteria. To prevent using Kerberos by system daemons,
+remove the Kerberos keytab files, especially
+<code>/etc/krb5.keytab</code>.</td>
+<td xml:lang="en-US">The key derivation function (KDF) in Kerberos is not FIPS compatible.</td>
+<td></td>
+<td></td>
 </tr>
 </table>
 </body>

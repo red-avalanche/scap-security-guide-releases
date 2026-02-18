@@ -835,7 +835,7 @@ which could weaken the system security posture.</td>
 <td>Verify Permissions on shadow File</td>
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/shadow</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/shadow</pre>
+<pre>$ sudo chmod 0000 /etc/shadow</pre>
 </td>
 <td xml:lang="en-US">The <code>/etc/shadow</code> file contains the list of local
 system accounts and stores password hashes. Protection of this file is
@@ -973,19 +973,19 @@ logging.
 Along with these other directives, the system can be configured
 to forward its logs to a particular log server by
 adding or correcting one of the following lines,
-substituting <code><i>loghost.example.com</i></code> appropriately.
+substituting <code><i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></code> appropriately.
 The choice of protocol depends on the environment of the system;
 although TCP and RELP provide more reliable message delivery,
 they may not be supported in all environments.
 <br>
 To use UDP for log message delivery:
-<pre>*.* @<i>loghost.example.com</i></pre>
+<pre>*.* @<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use TCP for log message delivery:
-<pre>*.* @@<i>loghost.example.com</i></pre>
+<pre>*.* @@<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use RELP for log message delivery:
-<pre>*.* :omrelp:<i>loghost.example.com</i></pre>
+<pre>*.* :omrelp:<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 There must be a resolvable DNS CNAME or Alias record set to "<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub>" for logs to be sent correctly to the centralized logging utility.</td>
 <td xml:lang="en-US">A log server (loghost) receives syslog messages from one or more
@@ -1178,9 +1178,14 @@ written to by unauthorized users.</td>
 <td>Ensure All SUID Executables Are Authorized</td>
 <td xml:lang="en-US">The SUID (set user id) bit should be set only on files that were
 installed via authorized means. A straightforward means of identifying
-unauthorized SGID files is determine if any were not installed as part of an
+unauthorized SUID files is determine if any were not installed as part of an
 RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SUID files.</td>
+of any unpackaged SUID files.
+This configuration check considers authorized SUID files which were installed via RPM.
+It is assumed that when an individual has sudo access to install an RPM
+and all packages are signed with an organizationally-recognized GPG key,
+the software should be considered an approved package on the system.
+Any SUID file not deployed through an RPM will be flagged for further review.</td>
 <td xml:lang="en-US">Executable files with the SUID permission run with the privileges of
 the owner of the file. SUID files of uncertain provenance could allow for
 unprivileged users to elevate privileges. The presence of these files should be
@@ -1195,7 +1200,12 @@ strictly controlled on the system.</td>
 installed via authorized means. A straightforward means of identifying
 unauthorized SGID files is determine if any were not installed as part of an
 RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SGID files.</td>
+of any unpackaged SGID files.
+This configuration check considers authorized SGID files which were installed via RPM.
+It is assumed that when an individual has sudo access to install an RPM
+and all packages are signed with an organizationally-recognized GPG key,
+the software should be considered an approved package on the system.
+Any SGID file not deployed through an RPM will be flagged for further review.</td>
 <td xml:lang="en-US">Executable files with the SGID permission run with the privileges of
 the owner of the file. SGID files of uncertain provenance could allow for
 unprivileged users to elevate privileges. The presence of these files should be

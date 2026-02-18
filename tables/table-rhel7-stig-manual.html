@@ -57,13 +57,15 @@ Satisfies: SRG-OS-000257-GPOS-00098, SRG-OS-000278-GPOS-00108</td>
 
 Check the default file permissions, ownership, and group membership of system files and commands with the following command:
 
-# for i in `rpm -Va | grep '^.M' | cut -d " " -f4,5`;do for j in `rpm -qf $i`;do rpm -ql $j --dump | cut -d " " -f1,5,6,7 | grep $i;done;done
+# for i in `rpm -Va | egrep -i '^\.[M|U|G|.]{8}' | cut -d " " -f4,5`;do for j in `rpm -qf $i`;do rpm -ql $j --dump | cut -d " " -f1,5,6,7 | grep $i;done;done
+
 /var/log/gdm 040755 root root
 /etc/audisp/audisp-remote.conf 0100640 root root
 /usr/bin/passwd 0104755 root root
 
 For each file returned, verify the current permissions, ownership, and group membership:
 # ls -la &lt;filename&gt;
+
 -rw-------. 1 root root 133 Jan 11 13:25 /etc/audisp/audisp-remote.conf
 
 
@@ -76,13 +78,14 @@ If the file is not a member of the default group and is not documented with the 
 
 # rpm -qf &lt;filename&gt;
 
-Reset the permissions of files within a package with the following command:
-
-#rpm --setperms &lt;packagename&gt;
-
 Reset the user and group ownership of files within a package with the following command:
 
-#rpm --setugids &lt;packagename&gt;</td>
+#rpm --setugids &lt;packagename&gt;
+
+
+Reset the permissions of files within a package with the following command:
+
+#rpm --setperms &lt;packagename&gt;</td>
 </tr>
 <tr>
 <td>V-71855</td>
@@ -98,7 +101,7 @@ Check the cryptographic hash of system files and commands with the following com
 
 Note: System configuration files (indicated by a "c" in the second column) are expected to change over time. Unusual modifications should be investigated through the system audit log.
 
-# rpm -Va | grep '^..5'
+# rpm -Va --noconfig | grep '^..5'
 
 If there is any output from the command for system files or binaries, this is a finding.</td>
 <td>Run the following command to determine which package owns the file:
@@ -907,33 +910,47 @@ INACTIVE=0</td>
 </tr>
 <tr>
 <td>V-71943</td>
-<td>CCI-002238</td>
+<td>CCI-000044</td>
 <td>medium</td>
-<td>Accounts on the Red Hat Enterprise Linux operating system that are subject to three unsuccessful logon attempts within 15 minutes must be locked for the maximum configurable period.</td>
+<td>The Red Hat Enterprise Linux operating system must be configured to lock accounts for a minimum of 15 minutes after three unsuccessful logon attempts within a 15-minute timeframe.</td>
 <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-forcing, is reduced. Limits are imposed by locking the account.
 
 Satisfies: SRG-OS-000329-GPOS-00128, SRG-OS-000021-GPOS-00005</td>
-<td>Verify the operating system automatically locks an account for the maximum period for which the system can be configured.
-
-Check that the system locks an account for the maximum period after three unsuccessful logon attempts within a period of 15 minutes with the following command:
+<td>Check that the system locks an account for a minimum of 15 minutes after three unsuccessful logon attempts within a period of 15 minutes with the following command:
 
 # grep pam_faillock.so /etc/pam.d/password-auth
+
 auth required pam_faillock.so preauth silent audit deny=3 even_deny_root fail_interval=900 unlock_time=900
 auth [default=die] pam_faillock.so authfail audit deny=3 even_deny_root fail_interval=900 unlock_time=900
 account required pam_faillock.so 
 
+If the "deny" parameter is set to "0" or a value less than "3" on both "auth" lines with the "pam_faillock.so" module, or is missing from these lines, this is a finding.
+
+If the "even_deny_root" parameter is not set on both "auth" lines with the "pam_faillock.so" module, or is missing from these lines, this is a finding.
+
+If the "fail_interval" parameter is set to "0" or is set to a value less than "900" on both "auth" lines with the "pam_faillock.so" module, or is missing from these lines, this is a finding.
+
 If the "unlock_time" parameter is not set to "0", "never", or is set to a value less than "900" on both "auth" lines with the "pam_faillock.so" module, or is missing from these lines, this is a finding.
+
 Note: The maximum configurable value for "unlock_time" is "604800". 
 
 If any line referencing the "pam_faillock.so" module is commented out, this is a finding.
+
 # grep pam_faillock.so /etc/pam.d/system-auth
+
 auth required pam_faillock.so preauth silent audit deny=3 even_deny_root fail_interval=900 unlock_time=900
 auth [default=die] pam_faillock.so authfail audit deny=3 even_deny_root fail_interval=900 unlock_time=900
 account required pam_faillock.so 
 
-If the "unlock_time" parameter is not set to "0", "never", or is set to a value less than "900" on both "auth" lines with the "pam_faillock.so" module or is missing from these lines, this is a finding.
-Note: The maximum configurable value for "unlock_time" is "604800".  
+If the "deny" parameter is set to "0" or a value less than "3" on both "auth" lines with the "pam_faillock.so" module, or is missing from these lines, this is a finding.
 
+If the "even_deny_root" parameter is not set on both "auth" lines with the "pam_faillock.so" module, or is missing from these lines, this is a finding.
+
+If the "fail_interval" parameter is set to "0" or is set to a value less than "900" on both "auth" lines with the "pam_faillock.so" module, or is missing from these lines, this is a finding.
+
+If the "unlock_time" parameter is not set to "0", "never", or is set to a value less than "900" on both "auth" lines with the "pam_faillock.so" module or is missing from these lines, this is a finding.
+
+Note: The maximum configurable value for "unlock_time" is "604800". 
 If any line referencing the "pam_faillock.so" module is commented out, this is a finding.</td>
 <td>Configure the operating system to lock an account for the maximum period when three unsuccessful logon attempts in 15 minutes are made.
 
@@ -1518,15 +1535,33 @@ localpkg_gpgcheck=1</td>
 Satisfies: SRG-OS-000114-GPOS-00059, SRG-OS-000378-GPOS-00163, SRG-OS-000480-GPOS-00227</td>
 <td>If there is an HBSS with a Device Control Module and a Data Loss Prevention mechanism, this requirement is not applicable.
 
+Verify the operating system disables the ability to load the USB Storage kernel module.
+
+# grep -r usb-storage /etc/modprobe.d/* | grep -i "/bin/true" | grep -v "^#"
+
+install usb-storage /bin/true
+
+If the command does not return any output, or the line is commented out, and use of USB Storage is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
+
 Verify the operating system disables the ability to use USB mass storage devices.
 
 Check to see if USB mass storage is disabled with the following command:
 
-# grep usb-storage /etc/modprobe.d/blacklist.conf
+# grep usb-storage /etc/modprobe.d/* | grep -i "blacklist" | grep -v "^#"
 blacklist usb-storage
 
 If the command does not return any output or the output is not "blacklist usb-storage", and use of USB storage devices is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
-<td>Configure the operating system to disable the ability to use USB mass storage devices.
+<td>Configure the operating system to disable the ability to use the USB Storage kernel module.
+
+Create a file under "/etc/modprobe.d" with the following command:
+
+# touch /etc/modprobe.d/usb-storage.conf
+
+Add the following line to the created file:
+
+install usb-storage /bin/true
+
+Configure the operating system to disable the ability to use USB mass storage devices.
 
 # vi /etc/modprobe.d/blacklist.conf
 
@@ -1654,7 +1689,7 @@ A reboot is required for the changes to take effect.</td>
 <td>V-71993</td>
 <td>CCI-000366</td>
 <td>high</td>
-<td>The Red Hat Enterprise Linux operating system must be configured so that the x86 Ctrl-Alt-Delete key sequence is disabled.</td>
+<td>The Red Hat Enterprise Linux operating system must be configured so that the x86 Ctrl-Alt-Delete key sequence is disabled on the command line.</td>
 <td>A locally logged-on user who presses Ctrl-Alt-Delete, when at the console, can reboot the system. If accidentally pressed, as could happen in the case of a mixed OS environment, this can create the risk of short-term loss of availability of systems due to unintentional reboot. In the GNOME graphical environment, risk of unintentional reboot from the Ctrl-Alt-Delete sequence is reduced because the user will be prompted before any action is taken.</td>
 <td>Verify the operating system is not configured to reboot the system when Ctrl-Alt-Delete is pressed.
 
@@ -1669,18 +1704,9 @@ Active: inactive (dead)
 If the ctrl-alt-del.target is not masked, this is a finding.
 
 If the ctrl-alt-del.target is active, this is a finding.</td>
-<td>Configure the system to disable the Ctrl-Alt_Delete sequence for the command line with the following command:
+<td>Configure the system to disable the Ctrl-Alt-Delete sequence for the command line with the following command:
 
-# systemctl mask ctrl-alt-del.target
-
-If GNOME is active on the system, create a database to contain the system-wide setting (if it does not already exist) with the following command: 
-
-# touch /etc/dconf/db/local.d/00-disable-CAD 
-
-Add the setting to disable the Ctrl-Alt_Delete sequence for GNOME:
-
-[org/gnome/settings-daemon/plugins/media-keys]
-logout=''</td>
+# systemctl mask ctrl-alt-del.target</td>
 </tr>
 <tr>
 <td>V-71995</td>
@@ -2089,23 +2115,34 @@ Note: The example will be for the user smithj, who has a home directory of "/hom
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must be configured so that all local initialization files for interactive users are owned by the home directory user or root.</td>
 <td>Local initialization files are used to configure the user's shell environment upon logon. Malicious modification of these files could compromise accounts upon logon.</td>
-<td>Verify all local initialization files for interactive users are owned by the home directory user or root.
+<td>Verify the local initialization files of all local interactive users are group-owned by that user's primary Group Identifier (GID).
 
-Check the owner on all local initialization files with the following command:
+Check the home directory assignment for all non-privileged users on the system with the following command:
 
-Note: The example will be for the "smithj" user, who has a home directory of "/home/smithj".
+Note: The example will be for the smithj user, who has a home directory of "/home/smithj" and a primary group of "users".
 
-# ls -al /home/smithj/.* | more
--rwxr-xr-x  1 smithj users        896 Mar 10  2011 .bash_profile
--rwxr-xr-x  1 smithj users        497 Jan  6  2007 .login
--rwxr-xr-x  1 smithj users        886 Jan  6  2007 .profile
+# cut -d: -f 1,4,6 /etc/passwd | egrep ":[1-4][0-9]{3}"
+smithj:1000:/home/smithj
 
-If any file that sets a local interactive user's environment variables to override the system is not owned by the home directory owner or root, this is a finding.</td>
+# grep 1000 /etc/group
+users:x:1000:smithj,jonesj,jacksons 
+
+Note: This may miss interactive users that have been assigned a privileged User Identifier (UID). Evidence of interactive use may be obtained from a number of log files containing system logon information.
+
+Check the group owner of all local interactive user's initialization files with the following command:
+
+# ls -al /home/smithj/.[^.]* | more
+
+-rwxr-xr-x 1 smithj users 896 Mar 10 2011 .profile
+-rwxr-xr-x 1 smithj users 497 Jan 6 2007 .login
+-rwxr-xr-x 1 smithj users 886 Jan 6 2007 .something
+
+If all local interactive user's initialization files are not group-owned by that user's primary GID, this is a finding.</td>
 <td>Set the owner of the local initialization files for interactive users to either the directory owner or root with the following command:
 
 Note: The example will be for the smithj user, who has a home directory of "/home/smithj".
 
-# chown smithj /home/smithj/.*</td>
+# chown smithj /home/smithj/.[^.]*</td>
 </tr>
 <tr>
 <td>V-72031</td>
@@ -2129,17 +2166,18 @@ Note: This may miss interactive users that have been assigned a privileged User 
 
 Check the group owner of all local interactive user's initialization files with the following command:
 
-# ls -al /home/smithj/.*
--rwxr-xr-x  1 smithj users        896 Mar 10  2011 .profile
--rwxr-xr-x  1 smithj users        497 Jan  6  2007 .login
--rwxr-xr-x  1 smithj users        886 Jan  6  2007 .something
+# ls -al /home/smithj/.[^.]* | more
+
+-rwxr-xr-x 1 smithj users 896 Mar 10 2011 .profile
+-rwxr-xr-x 1 smithj users 497 Jan 6 2007 .login
+-rwxr-xr-x 1 smithj users 886 Jan 6 2007 .something
 
 If all local interactive user's initialization files are not group-owned by that user's primary GID, this is a finding.</td>
 <td>Change the group owner of a local interactive user's files to the group found in "/etc/passwd" for the user. To change the group owner of a local interactive user's home directory, use the following command:
 
 Note: The example will be for the user smithj, who has a home directory of "/home/smithj", and has a primary group of users.
 
-# chgrp users /home/smithj/&lt;file&gt;</td>
+# chgrp users /home/smithj/.[^.]*</td>
 </tr>
 <tr>
 <td>V-72033</td>
@@ -2153,7 +2191,8 @@ Check the mode on all local initialization files with the following command:
 
 Note: The example will be for the "smithj" user, who has a home directory of "/home/smithj".
 
-# ls -al /home/smithj/.* | more
+# ls -al /home/smithj/.[^.]* | more
+
 -rwxr----- 1 smithj users 896 Mar 10 2011 .profile
 -rwxr----- 1 smithj users 497 Jan 6 2007 .login
 -rwxr----- 1 smithj users 886 Jan 6 2007 .something
@@ -2163,7 +2202,7 @@ If any local initialization files have a mode more permissive than "0740", this 
 
 Note: The example will be for the "smithj" user, who has a home directory of "/home/smithj".
 
-# chmod 0740 /home/smithj/.&lt;INIT_FILE&gt;</td>
+# chmod 0740 /home/smithj/.[^.]*</td>
 </tr>
 <tr>
 <td>V-72035</td>
@@ -2939,8 +2978,7 @@ Determine what the threshold is for the system to take action when 75 percent of
 # grep -iw space_left /etc/audit/auditd.conf
 space_left = 225 
 
-If the value of the "space_left" keyword is not set to 75 percent of the total partition size, this is a finding.
-</td>
+If the value of the "space_left" keyword is not set to 25 percent of the total partition size, this is a finding.</td>
 <td>Configure the operating system to initiate an action to notify the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity.
 
 Check the system configuration to determine the partition the audit records are being written to: 
@@ -2951,7 +2989,7 @@ Determine the size of the partition that audit records are written to (with the 
 
 # df -h /var/log/audit/
 
-Set the value of the "space_left" keyword in "/etc/audit/auditd.conf" to 75 percent of the partition size.</td>
+Set the value of the "space_left" keyword in "/etc/audit/auditd.conf" to 25 percent of the partition size.</td>
 </tr>
 <tr>
 <td>V-72091</td>
@@ -3008,17 +3046,13 @@ action_mail_acct = root</td>
 -a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid
 -a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. 
-Only the lines appropriate for the system architecture must be present.
 
-If the audit rule for "SUID" files is not defined, this is a finding.
+If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.
 
-If the audit rule for "SGID" files is not defined, this is a finding.</td>
+If both the "b32" and "b64" audit rules for "SGID" files are not defined, this is a finding.</td>
 <td>Configure the operating system to audit the execution of privileged functions.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid
 -a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid
@@ -3041,18 +3075,14 @@ Satisfies: SRG-OS-000064-GPOS-00033, SRG-OS-000392-GPOS-00172, SRG-OS-000458-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw chown /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S chown -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S chown -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "chown" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "chown" syscall, this is a finding.</td>
 <td>Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
 
 -a always,exit -F arch=b32 -S chown -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
@@ -3074,18 +3104,14 @@ Satisfies: SRG-OS-000064-GPOS-00033, SRG-OS-000392-GPOS-00172, SRG-OS-000458-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw fchown /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S fchown -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S fchown -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "fchown" syscall, this is a finding.</td>
-<td>Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+If both the "b32" and "b64" audit rules are not defined for the "fchown" syscall, this is a finding.</td>
+<td>Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S fchown -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
@@ -3107,18 +3133,14 @@ Satisfies: SRG-OS-000064-GPOS-00033, SRG-OS-000392-GPOS-00172, SRG-OS-000458-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw lchown /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S lchown -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S lchown -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "lchown" syscall, this is a finding.</td>
-<td>Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+If both the "b32" and "b64" audit rules are not defined for the "lchown" syscall, this is a finding.</td>
+<td>Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S lchown -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
@@ -3140,18 +3162,14 @@ Satisfies: SRG-OS-000064-GPOS-00033, SRG-OS-000392-GPOS-00172, SRG-OS-000458-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw fchownat /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S fchownat -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S fchownat -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "fchownat" syscall, this is a finding.</td>
-<td>Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+If both the "b32" and "b64" audit rules are not defined for the "fchownat" syscall, this is a finding.</td>
+<td>Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S fchownat -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
@@ -3173,20 +3191,16 @@ Satisfies: SRG-OS-000458-GPOS-00203, SRG-OS-000392-GPOS-00172, SRG-OS-000064-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following command:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw chmod /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S chmod -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S chmod -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "chmod" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "chmod" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "chmod" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S chmod -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
@@ -3208,26 +3222,23 @@ Satisfies: SRG-OS-000458-GPOS-00203, SRG-OS-000392-GPOS-00172, SRG-OS-000064-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following command:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw fchmod /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S fchmod -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S fchmod -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "fchmod" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "fchmod" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "fchmod" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S fchmod -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S fchmod -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-The audit daemon must be restarted for the changes to take effect.</td>
+The audit daemon must be restarted for the changes to take effect.
+</td>
 </tr>
 <tr>
 <td>V-72109</td>
@@ -3243,20 +3254,16 @@ Satisfies: SRG-OS-000458-GPOS-00203, SRG-OS-000392-GPOS-00172, SRG-OS-000064-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following command:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw fchmodat /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S fchmodat -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S fchmodat -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "fchmodat" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "fchmodat" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "fchmodat" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S fchmodat -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
@@ -3278,20 +3285,16 @@ Satisfies: SRG-OS-000458-GPOS-00203, SRG-OS-000392-GPOS-00172, SRG-OS-000064-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw setxattr /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "setxattr" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "setxattr" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "setxattr" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
@@ -3313,20 +3316,16 @@ Satisfies: SRG-OS-000458-GPOS-00203, SRG-OS-000392-GPOS-00172, SRG-OS-000064-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw fsetxattr /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "fsetxattr" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "fsetxattr" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "fsetxattr" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
@@ -3348,20 +3347,16 @@ Satisfies: SRG-OS-000458-GPOS-00203, SRG-OS-000392-GPOS-00172, SRG-OS-000064-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw lsetxattr /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "lsetxattr" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "lsetxattr" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "lsetxattr" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
@@ -3383,20 +3378,16 @@ Satisfies: SRG-OS-000458-GPOS-00203, SRG-OS-000392-GPOS-00172, SRG-OS-000064-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw removexattr /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "removexattr" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "removexattr" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "removexattr" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
@@ -3418,20 +3409,16 @@ Satisfies: SRG-OS-000458-GPOS-00203, SRG-OS-000392-GPOS-00172, SRG-OS-000064-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw fremovexattr /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "fremovexattr" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "fremovexattr" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "fremovexattr" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
@@ -3453,20 +3440,16 @@ Satisfies: SRG-OS-000458-GPOS-00203, SRG-OS-000392-GPOS-00172, SRG-OS-000064-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw lremovexattr /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
 -a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
-If there are no audit rules defined for the "lremovexattr" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "lremovexattr" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "lremovexattr" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 
@@ -3488,8 +3471,6 @@ Satisfies: SRG-OS-000064-GPOS-00033, SRG-OS-000458-GPOS-00203, SRG-OS-000461-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw creat /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S creat F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access
@@ -3500,16 +3481,14 @@ Note: The output lines of the command are duplicated to cover both 32-bit and 64
 
 -a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=4294967295 -k access
 
-If there are no audit rules defined for the "creat" syscall, this is a finding.
+If both the "b32" and "b64" audit rules are not defined for the "creat" syscall, this is a finding.
 
-If the output does not produce a rule containing "-F exit=-EPERM", this is a finding.
+If the output does not produce rules containing "-F exit=-EPERM", this is a finding.
 
-If the output does not produce a rule containing "-F exit=-EACCES", this is a finding.</td>
+If the output does not produce rules containing "-F exit=-EACCES", this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "creat" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules:
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules:
 
 -a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access
 
@@ -3535,8 +3514,6 @@ Satisfies: SRG-OS-000064-GPOS-00033, SRG-OS-000458-GPOS-00203, SRG-OS-000461-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw open /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access
@@ -3547,16 +3524,14 @@ Note: The output lines of the command are duplicated to cover both 32-bit and 64
 
 -a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=4294967295 -k access
 
-If there are no audit rules defined for the "open" syscall, this is a finding.
+If both the "b32" and "b64" audit rules are not defined for the "open" syscall, this is a finding.
 
-If the output does not produce a rule containing "-F exit=-EPERM", this is a finding.
+If the output does not produce rules containing "-F exit=-EPERM", this is a finding.
 
-If the output does not produce a rule containing "-F exit=-EACCES", this is a finding.</td>
+If the output does not produce rules containing "-F exit=-EACCES", this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "open" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access
 
@@ -3582,8 +3557,6 @@ Satisfies: SRG-OS-000064-GPOS-00033, SRG-OS-000458-GPOS-00203, SRG-OS-000461-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw openat /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access
@@ -3594,16 +3567,14 @@ Note: The output lines of the command are duplicated to cover both 32-bit and 64
 
 -a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=4294967295 -k access
 
-If there are no audit rules defined for the "openat" syscall, this is a finding.
+If both the "b32" and "b64" audit rules are not defined for the "openat" syscall, this is a finding.
 
-If the output does not produce a rule containing "-F exit=-EPERM", this is a finding.
+If the output does not produce rules containing "-F exit=-EPERM", this is a finding.
 
-If the output does not produce a rule containing "-F exit=-EACCES", this is a finding.</td>
+If the output does not produce rules containing "-F exit=-EACCES", this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "openat" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access
 
@@ -3629,8 +3600,6 @@ Satisfies: SRG-OS-000064-GPOS-00033, SRG-OS-000458-GPOS-00203, SRG-OS-000461-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw open_by_handle_at /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access
@@ -3641,16 +3610,14 @@ Note: The output lines of the command are duplicated to cover both 32-bit and 64
 
 -a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=4294967295 -k access
 
-If there are no audit rules defined for the "open_by_handle_at" syscall, this is a finding.
+If both the "b32" and "b64" audit rules are not defined for the "open_by_handle_at" syscall, this is a finding.
 
-If the output does not produce a rule containing "-F exit=-EPERM", this is a finding.
+If the output does not produce rules containing "-F exit=-EPERM", this is a finding.
 
-If the output does not produce a rule containing "-F exit=-EACCES", this is a finding.</td>
+If the output does not produce rules containing "-F exit=-EACCES", this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "open_by_handle_at" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access
 
@@ -3676,8 +3643,6 @@ Satisfies: SRG-OS-000064-GPOS-00033, SRG-OS-000458-GPOS-00203, SRG-OS-000461-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw truncate /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access
@@ -3688,16 +3653,14 @@ Note: The output lines of the command are duplicated to cover both 32-bit and 64
 
 -a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=4294967295 -k access
 
-If there are no audit rules defined for the "truncate" syscall, this is a finding.
+If both the "b32" and "b64" audit rules are not defined for the "truncate" syscall, this is a finding.
 
-If the output does not produce a rule containing "-F exit=-EPERM", this is a finding.
+If the output does not produce rules containing "-F exit=-EPERM", this is a finding.
 
-If the output does not produce a rule containing "-F exit=-EACCES", this is a finding.</td>
+If the output does not produce rules containing "-F exit=-EACCES", this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "truncate" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access
 
@@ -3723,8 +3686,6 @@ Satisfies: SRG-OS-000064-GPOS-00033, SRG-OS-000458-GPOS-00203, SRG-OS-000461-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw ftruncate /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access
@@ -3735,16 +3696,14 @@ Note: The output lines of the command are duplicated to cover both 32-bit and 64
 
 -a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=4294967295 -k access
 
-If there are no audit rules defined for the "ftruncate" syscall, this is a finding.
+If both the "b32" and "b64" audit rules are not defined for the "ftruncate" syscall, this is a finding.
 
-If the output does not produce a rule containing "-F exit=-EPERM", this is a finding.
+If the output does not produce rules containing "-F exit=-EPERM", this is a finding.
 
-If the output does not produce a rule containing "-F exit=-EACCES", this is a finding.</td>
+If the output does not produce rules containing "-F exit=-EACCES", this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "ftruncate" syscall occur.
 
-Add or update the following rule in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
+Add or update the following rules in "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=4294967295 -k access
 
@@ -4214,12 +4173,12 @@ Check that the following system call is being audited by performing the followin
 -a always,exit -F arch=b64 -S mount -F auid&gt;=1000 -F auid!=4294967295 -k privileged-mount
 -a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=4294967295 -k privileged-mount
 
-If all uses of the "mount" command and syscall are not being audited, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "mount" syscall, this is a finding.
+
+If all uses of the "mount" command are not being audited, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "mount" command and syscall occur.
 
 Add or update the following rules in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
 
 -a always,exit -F arch=b32 -S mount -F auid&gt;=1000 -F auid!=4294967295 -k privileged-mount
 -a always,exit -F arch=b64 -S mount -F auid&gt;=1000 -F auid!=4294967295 -k privileged-mount
@@ -4399,20 +4358,16 @@ Satisfies: SRG-OS-000471-GPOS-00216, SRG-OS-000477-GPOS-00222</td>
 
 Check the auditing rules in "/etc/audit/audit.rules" with the following command:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the line appropriate for the system architecture must be present.
-
 # grep -iw init_module /etc/audit/audit.rules 
 
 -a always,exit -F arch=b32 -S init_module -k module-change
 
 -a always,exit -F arch=b64 -S init_module -k module-change
 
-If there are no audit rules defined for "init_module", this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "init_module" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "init_module" syscall occur. 
 
 Add or update the following rules in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured. 
 
 -a always,exit -F arch=b32 -S init_module -k module-change
 
@@ -4434,20 +4389,16 @@ Satisfies: SRG-OS-000471-GPOS-00216, SRG-OS-000477-GPOS-00222</td>
 
 Check the auditing rules in "/etc/audit/audit.rules" with the following command:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the line appropriate for the system architecture must be present.
-
 # grep -iw delete_module /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S delete_module -k module-change
 
 -a always,exit -F arch=b64 -S delete_module -k module-change
 
-If there are no audit rules defined for "delete_module", this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "delete_module" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "delete_module" syscall occur. 
 
 Add or update the following rules in "/etc/audit/rules.d/audit.rules": 
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
 
 -a always,exit -F arch=b32 -S delete_module -k module-change
 
@@ -4521,20 +4472,16 @@ Satisfies: SRG-OS-000466-GPOS-00210, SRG-OS-000467-GPOS-00210, SRG-OS-000468-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw rename /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S rename -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
 -a always,exit -F arch=b64 -S rename -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
-If there are no audit rules defined for the "rename" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "rename" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "rename" syscall occur.
 
 Add the following rules in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
 
 -a always,exit -F arch=b32 -S rename -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
@@ -4554,20 +4501,16 @@ Satisfies: SRG-OS-000466-GPOS-00210, SRG-OS-000467-GPOS-00210, SRG-OS-000468-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw renameat /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S renameat -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
 -a always,exit -F arch=b64 -S renameat -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
-If there are no audit rules defined for the "renameat" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "renameat" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "renameat" syscall occur.
 
 Add the following rules in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
 
 -a always,exit -F arch=b32 -S renameat -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
@@ -4587,20 +4530,16 @@ Satisfies: SRG-OS-000466-GPOS-00210, SRG-OS-000467-GPOS-00210, SRG-OS-000468-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw rmdir /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S rmdir -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
 -a always,exit -F arch=b64 -S rmdir -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
-If there are no audit rules defined for the "rmdir" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "rmdir" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "rmdir" syscall occur.
 
 Add the following rules in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
 
 -a always,exit -F arch=b32 -S rmdir -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
@@ -4620,20 +4559,16 @@ Satisfies: SRG-OS-000466-GPOS-00210, SRG-OS-000467-GPOS-00210, SRG-OS-000468-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw unlink /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S unlink -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
 -a always,exit -F arch=b64 -S unlink -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
-If there are no audit rules defined for the "unlink" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "unlink" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "unlink" syscall occur.
 
 Add the following rules in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
 
 -a always,exit -F arch=b32 -S unlink -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
@@ -4653,20 +4588,16 @@ Satisfies: SRG-OS-000466-GPOS-00210, SRG-OS-000467-GPOS-00210, SRG-OS-000468-GPO
 
 Check the file system rules in "/etc/audit/audit.rules" with the following commands:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be present.
-
 # grep -iw unlinkat /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S unlinkat -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
 -a always,exit -F arch=b64 -S unlinkat -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
-If there are no audit rules defined for the "unlinkat" syscall, this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "unlinkat" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "unlinkat" syscall occur.
 
 Add the following rules in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
 
 -a always,exit -F arch=b32 -S unlinkat -F auid&gt;=1000 -F auid!=4294967295 -k delete
 
@@ -4744,7 +4675,8 @@ If there is no anti-virus solution installed on the system, this is a finding.</
 This requirement addresses concurrent sessions for information system accounts and does not address concurrent sessions by single users via multiple system accounts. The maximum number of concurrent sessions should be defined based on mission needs and the operational environment for each system.</td>
 <td>Verify the operating system limits the number of concurrent sessions to "10" for all accounts and/or account types by issuing the following command:
 
-# grep "maxlogins" /etc/security/limits.conf
+# grep "maxlogins" /etc/security/limits.conf /etc/security/limits.d/*.conf
+
 * hard maxlogins 10
 
 This can be set as a global domain (with the * wildcard) but may be set differently for multiple domains.
@@ -4752,7 +4684,7 @@ This can be set as a global domain (with the * wildcard) but may be set differen
 If the "maxlogins" item is missing, commented out, or the value is not set to "10" or less for all domains that have the "maxlogins" item assigned, this is a finding.</td>
 <td>Configure the operating system to limit the number of concurrent sessions to "10" for all accounts and/or account types.
 
-Add the following line to the top of the /etc/security/limits.conf:
+Add the following line to the top of the /etc/security/limits.conf or in a ".conf" file defined in /etc/security/limits.d/ :
 
 * hard maxlogins 10</td>
 </tr>
@@ -5503,38 +5435,6 @@ If NTP was not running, it must be started:
 
 # systemctl start ntpd 
 </td>
-</tr>
-<tr>
-<td>V-72271</td>
-<td>CCI-002385</td>
-<td>medium</td>
-<td>The Red Hat Enterprise Linux operating system must protect against or limit the effects of Denial of Service (DoS) attacks by validating the operating system is implementing rate-limiting measures on impacted network interfaces.</td>
-<td>DoS is a condition when a resource is not available for legitimate users. When this occurs, the organization either cannot accomplish its mission or must operate at degraded capacity.
-
-This requirement addresses the configuration of the operating system to mitigate the impact of DoS attacks that have occurred or are ongoing on system availability. For each system, known and potential DoS attacks must be identified and solutions for each type implemented. A variety of technologies exist to limit or, in some cases, eliminate the effects of DoS attacks (e.g., limiting processes or establishing memory partitions). Employing increased capacity and bandwidth, combined with service redundancy, may reduce the susceptibility to some DoS attacks.</td>
-<td>Verify the operating system protects against or limits the effects of DoS attacks by ensuring the operating system is implementing rate-limiting measures on impacted network interfaces.
-
-# grep 'net.ipv4.tcp_invalid_ratelimit' /etc/sysctl.conf /etc/sysctl.d/*
-
-/etc/sysctl.conf:net.ipv4.tcp_invalid_ratelimit = 500
-
-If "net.ipv4.tcp_invalid_ratelimit" is not configured in the /etc/sysctl.conf file or in the /etc/sysctl.d/ directory, is commented out this is a finding.
-
-Check that the operating system implements the value of the "tcp_invalid_ratelimit" variable with the following command:
-
-# /sbin/sysctl -a | grep 'net.ipv4.tcp_invalid_ratelimit'
-net.ipv4.tcp_invalid_ratelimit = 500
-
-If "net.ipv4.tcp_invalid_ratelimit" has a value of "0", this is a finding.
-
-If "net.ipv4.tcp_invalid_ratelimit" has a value greater than "1000" and is not documented with the Information System Security Officer (ISSO), this is a finding.</td>
-<td>Set the system to implement rate-limiting measures by adding the following line to "/etc/sysctl.conf" or a configuration file in the /etc/sysctl.d/ directory (or modify the line to have the required value):
-
-net.ipv4.tcp_invalid_ratelimit = 500   
-
-Issue the following command to make the changes take effect:
-
-# sysctl --system</td>
 </tr>
 <tr>
 <td>V-72273</td>
@@ -6616,7 +6516,17 @@ Update the system databases:
 
 install dccp /bin/true
 
-If the command does not return any output, or the line is commented out, and use of DCCP is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
+If the command does not return any output, or the line is commented out, and use of DCCP is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
+
+Verify the operating system disables the ability to use the DCCP kernel module.
+
+Check to see if the DCCP kernel module is disabled with the following command:
+
+# grep -i dccp /etc/modprobe.d/* | grep -i "blacklist" | grep -v "^#"
+
+blacklist dccp
+
+If the command does not return any output or the output is not "blacklist dccp", and use of the dccp kernel module is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
 <td>Configure the operating system to disable the ability to use the DCCP kernel module.
 
 Create a file under "/etc/modprobe.d" with the following command:
@@ -6784,20 +6694,16 @@ Satisfies: SRG-OS-000471-GPOS-00216, SRG-OS-000477-GPOS-00222</td>
 
 Check the auditing rules in "/etc/audit/audit.rules" with the following command:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the line appropriate for the system architecture must be present.
-
 # grep -iw create_module /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S create_module -k module-change
 
 -a always,exit -F arch=b64 -S create_module -k module-change
 
-If there are no audit rules defined for "create_module", this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "create_module" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "create_module" syscall occur.
 
 Add or update the following rules in "/etc/audit/rules.d/audit.rules":
-
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured. 
 
 -a always,exit -F arch=b32 -S create_module -k module-change
 
@@ -6819,20 +6725,17 @@ Satisfies: SRG-OS-000471-GPOS-00216, SRG-OS-000477-GPOS-00222</td>
 
 Check the auditing rules in "/etc/audit/audit.rules" with the following command:
 
-Note: The output lines of the command are duplicated to cover both 32-bit and 64-bit architectures. Only the line appropriate for the system architecture must be present.
-
 # grep -iw finit_module /etc/audit/audit.rules
 
 -a always,exit -F arch=b32 -S finit_module -k module-change
 
 -a always,exit -F arch=b64 -S finit_module -k module-change
 
-If there are no audit rules defined for "finit_module", this is a finding.</td>
+If both the "b32" and "b64" audit rules are not defined for the "finit_module" syscall, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "finit_module" syscall occur. 
 
 Add or update the following rules in "/etc/audit/rules.d/audit.rules": 
 
-Note: The rules are duplicated to cover both 32-bit and 64-bit architectures. Only the lines appropriate for the system architecture must be configured.
 -a always,exit -F arch=b32 -S finit_module -k module-change
 
 -a always,exit -F arch=b64 -S finit_module -k module-change
@@ -7203,6 +7106,30 @@ If no host-based intrusion detection system is installed and running on the syst
 <td>Install and enable the latest McAfee HIPS package, available from USCYBERCOM.
 
 Note: If the system does not support the McAfee HIPS package, install and enable a supported intrusion detection system application and document its use with the Authorizing Official.</td>
+</tr>
+<tr>
+<td>V-94843</td>
+<td>CCI-000366</td>
+<td>high</td>
+<td>The Red Hat Enterprise Linux operating system must be configured so that the x86 Ctrl-Alt-Delete key sequence is disabled in the GUI.</td>
+<td>A locally logged-on user who presses Ctrl-Alt-Delete, when at the console, can reboot the system. If accidentally pressed, as could happen in the case of a mixed OS environment, this can create the risk of short-term loss of availability of systems due to unintentional reboot. In the GNOME graphical environment, risk of unintentional reboot from the Ctrl-Alt-Delete sequence is reduced because the user will be prompted before any action is taken.</td>
+<td>Verify the operating system is not configured to reboot the system when Ctrl-Alt-Delete is pressed.
+
+Check that the ctrl-alt-del.target is masked and not active in the GUI with the following command:
+
+# grep logout /etc/dconf/local.d/*
+
+logout=''
+
+If "logout" is not set to use two single quotations, or is missing, this is a finding.</td>
+<td>Configure the system to disable the Ctrl-Alt-Delete sequence for the GUI with the following command:
+
+# touch /etc/dconf/db/local.d/00-disable-CAD 
+
+Add the setting to disable the Ctrl-Alt-Delete sequence for GNOME:
+
+[org/gnome/settings-daemon/plugins/media-keys]
+logout=''</td>
 </tr>
 </table>
 </body>
