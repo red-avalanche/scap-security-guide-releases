@@ -665,24 +665,6 @@ able to execute them.
 </tr>
 <tr>
   <td>BP28(R12)</td>
-  <td>CCE-81153-9</td>
-  <td>Add nosuid Option to /home</td>
-  <td xml:lang="en-US">
-The <tt>nosuid</tt> mount option can be used to prevent
-execution of setuid programs in <tt>/home</tt>. The SUID and SGID permissions
-should not be required in these user data directories.
-Add the <code>nosuid</code> option to the fourth column of
-<tt>/etc/fstab</tt> for the line which controls mounting of
-<code>/home</code>.
-  </td>
-  <td xml:lang="en-US">
-The presence of SUID and SGID executables should be tightly controlled. Users
-should not be able to execute SUID or SGID binaries from user home directory partitions.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>BP28(R12)</td>
   <td>CCE-80145-6</td>
   <td>Add nodev Option to Non-Root Local Partitions</td>
   <td xml:lang="en-US">
@@ -821,7 +803,7 @@ designated for log files.
   <td>Add noexec Option to /var</td>
   <td xml:lang="en-US">
 The <tt>noexec</tt> mount option can be used to prevent binaries from being
-executed out of <tt>/var</tt>. 
+executed out of <tt>/var</tt>.
 Add the <code>noexec</code> option to the fourth column of
 <tt>/etc/fstab</tt> for the line which controls mounting of
 <code>/var</code>.
@@ -1466,9 +1448,14 @@ re-used by a user.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment <tt>deny=&lt;count&gt;</tt> where count should be less than or equal to 
+<tt>3</tt> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -1479,7 +1466,7 @@ By limiting the number of failed logon attempts, the risk of unauthorized system
 user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
 the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_deny=3</td>
 </tr>
 <tr>
   <td>BP28(R18)</td>
@@ -1509,13 +1496,24 @@ the account.
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment
+<tt>fail_interval=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><tt>900</tt></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_fail_interval=900</td>
 </tr>
 <tr>
   <td>BP28(R18)</td>
@@ -1524,6 +1522,14 @@ Limits are imposed by locking the account.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><tt>900</tt></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -1538,7 +1544,7 @@ By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_unlock_time=900</td>
 </tr>
 <tr>
   <td>BP28(R19)</td>
@@ -2323,6 +2329,24 @@ without any additional assistance from the user (i.e. without resorting to phish
   <td></td>
 </tr>
 <tr>
+  <td>BP28(R28)</td>
+  <td>CCE-81153-9</td>
+  <td>Add nosuid Option to /home</td>
+  <td xml:lang="en-US">
+The <tt>nosuid</tt> mount option can be used to prevent
+execution of setuid programs in <tt>/home</tt>. The SUID and SGID permissions
+should not be required in these user data directories.
+Add the <code>nosuid</code> option to the fourth column of
+<tt>/etc/fstab</tt> for the line which controls mounting of
+<code>/home</code>.
+  </td>
+  <td xml:lang="en-US">
+The presence of SUID and SGID executables should be tightly controlled. Users
+should not be able to execute SUID or SGID binaries from user home directory partitions.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>BP28(R29)</td>
   <td>CCE-27557-8</td>
   <td>Set Interactive Session Timeout</td>
@@ -2371,67 +2395,6 @@ enabled on the console or console port that has been let unattended.
   <td>sshd_idle_timeout_value=10_minutes</td>
 </tr>
 <tr>
-  <td>BP28(R29)</td>
-  <td>CCE-27082-7</td>
-  <td>Set SSH Client Alive Count Max</td>
-  <td xml:lang="en-US">
-The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
-during a SSH session and waits for a response from the SSH client.
-The option <tt>ClientAliveInterval</tt> configures timeout after
-each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered unresponsive
-and terminated.
-For SSH earlier than v8.2, a <tt>ClientAliveCountMax</tt> value of <tt>0</tt>
-causes a timeout precisely when the <tt>ClientAliveInterval</tt> is set.
-Starting with v8.2, a value of <tt>0</tt> disables the timeout functionality
-completely. If the option is set to a number greater than <tt>0</tt>, then
-the session will be disconnected after
-<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds without receiving
-a keep alive message.
-  </td>
-  <td xml:lang="en-US">
-This ensures a user login will be terminated as soon as the <tt>ClientAliveInterval</tt>
-is reached.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>BP28(R32)</td>
-  <td>CCE-83402-8</td>
-  <td>Set number of Password Hashing Rounds - password-auth</td>
-  <td xml:lang="en-US">
-Configure the number or rounds for the password hashing algorithm. This can be
-accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
-<br /><br />
-In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
-to the <tt>pam_unix.so</tt> entry, as shown below:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
-The system's default number of rounds is 5000.
-  </td>
-  <td xml:lang="en-US">
-Using a higher number of rounds makes password cracking attacks more difficult.
-  </td>
-  <td>var_password_pam_unix_rounds=65536</td>
-</tr>
-<tr>
-  <td>BP28(R32)</td>
-  <td>CCE-83384-8</td>
-  <td>Set number of Password Hashing Rounds - system-auth</td>
-  <td xml:lang="en-US">
-Configure the number or rounds for the password hashing algorithm. This can be
-accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
-<br /><br />
-In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
-to the <tt>pam_unix.so</tt> entry, as shown below:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
-The system's default number of rounds is 5000.
-  </td>
-  <td xml:lang="en-US">
-Using a higher number of rounds makes password cracking attacks more difficult.
-  </td>
-  <td>var_password_pam_unix_rounds=65536</td>
-</tr>
-<tr>
   <td>BP28(R32)</td>
   <td>CCE-82043-1</td>
   <td>Set PAM''s Password Hashing Algorithm</td>
@@ -2463,6 +2426,31 @@ configured to store only encrypted representations of passwords.
 Additionally, the <tt>crypt_style</tt> configuration option ensures the use
 of a strong hashing algorithm that makes password cracking attacks more
 difficult.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>BP28(R32)</td>
+  <td>CCE-27082-7</td>
+  <td>Set SSH Client Alive Count Max</td>
+  <td xml:lang="en-US">
+The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
+during a SSH session and waits for a response from the SSH client.
+The option <tt>ClientAliveInterval</tt> configures timeout after
+each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
+receive a response from the client, then the connection is considered unresponsive
+and terminated.
+For SSH earlier than v8.2, a <tt>ClientAliveCountMax</tt> value of <tt>0</tt>
+causes a timeout precisely when the <tt>ClientAliveInterval</tt> is set.
+Starting with v8.2, a value of <tt>0</tt> disables the timeout functionality
+completely. If the option is set to a number greater than <tt>0</tt>, then
+the session will be disconnected after
+<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds without receiving
+a keep alive message.
+  </td>
+  <td xml:lang="en-US">
+This ensures a user login will be terminated as soon as the <tt>ClientAliveInterval</tt>
+is reached.
   </td>
   <td></td>
 </tr>
@@ -2695,18 +2683,16 @@ To set the <code>polyinstantiation_enabled</code> SELinux boolean, run the follo
 <tr>
   <td>BP28(R40)</td>
   <td>CCE-83374-9</td>
-  <td>Ensure All World-Writable Directories Are Owned by root user</td>
+  <td>Ensure All World-Writable Directories Are Owned by root User</td>
   <td xml:lang="en-US">
-All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.
+All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.
   </td>
   <td xml:lang="en-US">
-Allowing a user account to own a world-writable directory is
-undesirable because it allows the owner of that directory to remove
-or replace any files that may be placed in the directory by other
-users.
+Allowing a user account to own a world-writable directory is undesirable because it allows the
+owner of that directory to remove or replace any files that may be placed in the directory by
+other users.
   </td>
   <td></td>
 </tr>
@@ -3047,6 +3033,42 @@ user ALL = dmesg ""
 </pre>
   </td>
   <td></td>
+</tr>
+<tr>
+  <td>BP28(R68)</td>
+  <td>CCE-83402-8</td>
+  <td>Set number of Password Hashing Rounds - password-auth</td>
+  <td xml:lang="en-US">
+Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
+<br /><br />
+In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
+to the <tt>pam_unix.so</tt> entry, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
+The system's default number of rounds is 5000.
+  </td>
+  <td xml:lang="en-US">
+Using a higher number of rounds makes password cracking attacks more difficult.
+  </td>
+  <td>var_password_pam_unix_rounds=65536</td>
+</tr>
+<tr>
+  <td>BP28(R68)</td>
+  <td>CCE-83384-8</td>
+  <td>Set number of Password Hashing Rounds - system-auth</td>
+  <td xml:lang="en-US">
+Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
+<br /><br />
+In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
+to the <tt>pam_unix.so</tt> entry, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
+The system's default number of rounds is 5000.
+  </td>
+  <td xml:lang="en-US">
+Using a higher number of rounds makes password cracking attacks more difficult.
+  </td>
+  <td>var_password_pam_unix_rounds=65536</td>
 </tr>
 </table>
 

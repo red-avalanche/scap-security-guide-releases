@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG with GUI for Red Hat Enterprise Linux 8</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG with GUI for Red Hat Enterprise Linux 8 V1R9.
+DISA STIG with GUI for Red Hat Enterprise Linux 8 V1R11.
 
 In addition to being applicable to Red Hat Enterprise Linux 8, DISA recognizes this
 configuration baseline as applicable to the operating system tier of
@@ -94,44 +94,6 @@ INACTIVE=
 <td>CCI-000017<br>CCI-000795<br>
 </td>
 <td>AC-2 (3)<br>IA-4 e<br>
-</td>
-</tr>
-<tr>
-<td>xccdf_org.ssgproject.content_rule_account_emergency_expire_date</td>
-<td>medium</td>
-<td>Assign Expiration Date to Emergency Accounts</td>
-<td>If emergency user accounts remain active when no longer needed or for
-an excessive period, these accounts may be used to gain unauthorized access.
-To mitigate this risk, automated termination of all emergency accounts
-must be set upon account creation.
-<br>
-</td>
-<td>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<code><i>ACCOUNT_NAME</i></code> and <code><i>YYYY-MM-DD</i></code>
-appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
-<code><i>YYYY-MM-DD</i></code> indicates the documented expiration date for the
-account. For U.S. Government systems, the operating system must be
-configured to automatically terminate these types of accounts after a
-period of 72 hours.</td>
-<td><pre>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
-
-For every emergency account, run the following command to obtain its account aging and expiration information:
-
-$ sudo chage -l emergency_account_name
-
-Verify each of these accounts has an expiration date set within 72 hours or as documented.
-      Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?
-      </pre></td>
-<td>SRG-OS-000002-GPOS-00002<br>SRG-OS-000123-GPOS-00064<br>
-</td>
-<td>CCI-000016<br>CCI-001682<br>
-</td>
-<td>AC-2 (2)<br>AC-2 (2)<br>
 </td>
 </tr>
 <tr>
@@ -471,6 +433,39 @@ available for logon and are not evaluated.
 <td>CCI-000196<br>CCI-000803<br>
 </td>
 <td>IA-5 (1) (c)<br>IA-7<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_accounts_password_minlen_login_defs</td>
+<td>medium</td>
+<td>Set Password Minimum Length in login.defs</td>
+<td>Requiring a minimum password length makes password
+cracking attacks more difficult by ensuring a larger
+search space. However, any security benefit from an onerous requirement
+must be carefully weighed against usability problems, support costs, or counterproductive
+behavior that may result.</td>
+<td>To specify password length requirements for new accounts, edit the file
+<code>/etc/login.defs</code> and add or correct the following line:
+<pre>PASS_MIN_LEN <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_minlen_login_defs" use="legacy"></xccdf-1.2:sub></pre>
+<br><br>
+The DoD requirement is <code>15</code>.
+The FISMA requirement is <code>12</code>.
+The profile requirement is
+<code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_minlen_login_defs" use="legacy"></xccdf-1.2:sub></code>.
+If a program consults <code>/etc/login.defs</code> and also another PAM module
+(such as <code>pam_pwquality</code>) during a password change operation, then
+the most restrictive must be satisfied. See PAM section for more
+information about enforcing password quality requirements.</td>
+<td><pre>To check the minimum password length, run the command:
+$ grep PASS_MIN_LEN /etc/login.defs
+The DoD requirement is 15.
+      Is it the case that it is not set to the required value?
+      </pre></td>
+<td>SRG-OS-000078-GPOS-00046<br>
+</td>
+<td>CCI-000205<br>
+</td>
+<td>IA-5 (1) (a)<br>
 </td>
 </tr>
 <tr>
@@ -1068,9 +1063,14 @@ user password guessing, also known as brute-forcing, is reduced. Limits are impo
 the account.</td>
 <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <code>pam_faillock.so</code>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>deny = &lt;count&gt;</code>
+Where count should be less than or equal to 
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy"></xccdf-1.2:sub> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
@@ -1136,7 +1136,9 @@ tally directory must be set with the "dir" option.</pre>
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
-depending on the OS version.</td>
+depending on the OS version.
+
+The chosen profile expects the directory to be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub></code>.</td>
 <td><pre>To ensure the tally directory is configured correctly, run the following command:
 $ sudo grep 'dir =' /etc/security/faillock.conf
 The output should show that dir is set to something other than "/var/run/faillock"
@@ -1158,7 +1160,15 @@ access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.</td>
 <td>Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>fail_interval = &lt;interval-in-seconds&gt;</code> where <code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_fail_interval" use="legacy"></xccdf-1.2:sub></code> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 <td><pre>To ensure the failed password attempt policy is configured correctly, run the following command:
 
 $ grep fail_interval /etc/security/faillock.conf
@@ -1211,6 +1221,12 @@ access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.</td>
 <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <code>pam_faillock.so</code>.
+
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>unlock_time=&lt;interval-in-seconds&gt;</code> where
+<code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time" use="legacy"></xccdf-1.2:sub></code> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -1447,7 +1463,7 @@ Therefore, this rule will report a finding for home directories like <code>/user
 
 $ sudo awk -F: '($3&gt;=1000)&amp;&amp;($7 !~ /nologin/){print $1, $3, $6}' /etc/passwd
 
-Inspect the output and verify that all interactive users (normally users with a UID greater that 1000) have a home directory defined.
+Inspect the output and verify that all interactive users (normally users with a UID greater than 1000) have a home directory defined.
       Is it the case that users home directory is not defined?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -1466,7 +1482,7 @@ the user may be given access to the / directory as the current working directory
 upon logon. This could create a Denial of Service because the user would not be
 able to access their logon configuration files, and it may give them visibility
 to system files they normally would not be able to access.</td>
-<td>Create home directories to all interactive users that currently do not
+<td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <code>/etc/passwd</code>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
@@ -2829,6 +2845,39 @@ If the system is configured to audit this activity, it will return a line.
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_login_events_faillock</td>
+<td>medium</td>
+<td>Record Attempts to Alter Logon and Logout Events - faillock</td>
+<td>Manual editing of these files may indicate nefarious activity, such
+as an attacker attempting to remove evidence of an intrusion.</td>
+<td>The audit system already collects login information for all users
+and root. If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+</td>
+<td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
+
+$ sudo auditctl -l | grep /var/log/faillock
+
+-w /var/log/faillock -p wa -k logins
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000126<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-2 d<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_audit_rules_login_events_lastlog</td>
 <td>medium</td>
 <td>Record Attempts to Alter Logon and Logout Events - lastlog</td>
@@ -4138,7 +4187,7 @@ account changes:
 </td>
 <td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -4174,7 +4223,7 @@ account changes:
 </td>
 <td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -4212,7 +4261,7 @@ account changes:
 </td>
 <td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -4248,7 +4297,7 @@ account changes:
 </td>
 <td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -4284,7 +4333,7 @@ account changes:
 </td>
 <td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity
       Is it the case that command does not return a line, or the line is commented out?
@@ -5317,8 +5366,7 @@ debug problems. Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
 debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</td>
-<td>The <code>Storage</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code>
+<td>The <code>Storage</code> option in <code>[Coredump]</code> sectionof <code>/etc/systemd/coredump.conf</code>
 can be set to <code>none</code> to disable storing core dumps permanently.</td>
 <td><pre>Verify Red Hat Enterprise Linux 8 disables storing core dumps for all users by issuing the following command:
 
@@ -5786,19 +5834,17 @@ $ sudo find -L DIR -perm /022 -type d
 <tr>
 <td>xccdf_org.ssgproject.content_rule_dir_perms_world_writable_root_owned</td>
 <td>medium</td>
-<td>Ensure All World-Writable Directories Are Owned by root user</td>
-<td>Allowing a user account to own a world-writable directory is
-undesirable because it allows the owner of that directory to remove
-or replace any files that may be placed in the directory by other
-users.</td>
-<td>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
+<td>Ensure All World-Writable Directories Are Owned by root User</td>
+<td>Allowing a user account to own a world-writable directory is undesirable because it allows the
+owner of that directory to remove or replace any files that may be placed in the directory by
+other users.</td>
+<td>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</td>
 <td><pre>The following command will discover and print world-writable directories that
-are not owned by root.  Run it once for each local partition PART:
+are not owned by root. Run it once for each local partition PART:
 $ sudo find PART -xdev -type d -perm -0002 -uid +0 -print
-      Is it the case that there is output?
+      Is it the case that there are world-writable directories not owned by root?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
 </td>
@@ -5836,6 +5882,14 @@ following command:
 </td>
 <td><pre>To find world-writable directories that lack the sticky bit, run the following command:
 $ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2&gt;/dev/null
+fixtext: |-
+Configure all world-writable directories to have the sticky bit set to prevent unauthorized and unintended information transferred via shared system resources.
+
+Set the sticky bit on all world-writable directories using the command, replace "[World-Writable Directory]" with any directory path missing the sticky bit:
+
+$ chmod a+t [World-Writable Directory]
+srg_requirement:
+A sticky bit must be set on all Red Hat Enterprise Linux 8 public directories to prevent unauthorized and unintended information transferred via shared system resources.
       Is it the case that any world-writable directories are missing the sticky bit?
       </pre></td>
 <td>SRG-OS-000138-GPOS-00069<br>
@@ -6071,6 +6125,28 @@ $ grep core /etc/security/limits.conf
 </td>
 <td>CM-6 b<br>
 </td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_disallow_bypass_password_sudo</td>
+<td>medium</td>
+<td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+<td>Without re-authentication, users may access resources or perform tasks for which they do not
+have authorization. When operating systems provide the capability to escalate a functional
+capability, it is critical the user re-authenticate.</td>
+<td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+<td><pre>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+$ sudo grep pam_succeed_if /etc/pam.d/sudo
+      Is it the case that system is configured to bypass password requirements for privilege escalation?
+      </pre></td>
+<td>SRG-OS-000373-GPOS-00156<br>SRG-OS-000373-GPOS-00157<br>SRG-OS-000373-GPOS-00158<br>
+</td>
+<td>CCI-002038<br>
+</td>
+<td></td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_display_login_attempts</td>
@@ -7188,7 +7264,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br><br>
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br><br>
 Once the superuser account has been added,
 update the
@@ -7662,12 +7738,12 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <code>/etc/crypto-policies/back-ends/opensshserver.config</code> contains the following
 text and is not commented out:
-<code>-oMACS=hmac-sha2-512,hmac-sha2-256</code>
+<code>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</code>
 </td>
 <td><pre>To verify if the OpenSSH server uses defined MACs in the Crypto Policy, run:
 $ grep -Po '(-oMACs=\S+)' /etc/crypto-policies/back-ends/opensshserver.config
 and verify that the line matches:
--oMACS=hmac-sha2-512,hmac-sha2-256
+-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
       Is it the case that Crypto Policy for OpenSSH Server is not configured correctly?
       </pre></td>
 <td>SRG-OS-000125-GPOS-00065<br>SRG-OS-000250-GPOS-00093<br>
@@ -8048,6 +8124,28 @@ $ grep -r usb-storage /etc/modprobe.conf /etc/modprobe.d
 </td>
 <td>CM-6 b<br>IA-3<br>
 </td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_logind_session_timeout</td>
+<td>medium</td>
+<td>Configure Logind to terminate idle sessions after certain time of inactivity</td>
+<td>Terminating an idle session within a short time period reduces the window of
+opportunity for unauthorized personnel to take control of a management
+session enabled on the console or console port that has been let unattended.</td>
+<td>To configure <code>logind</code> service to terminate inactive user sessions
+after <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_logind_session_timeout" use="legacy"></xccdf-1.2:sub> seconds, edit the file
+<code>/etc/systemd/logind.conf</code>. Ensure that there is a section
+<pre>[Login]</pre> which contains the configuration
+<pre>StopIdleSessionSec=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_logind_session_timeout" use="legacy"></xccdf-1.2:sub></pre>.</td>
+<td><pre>Display the contents of the file /etc/systemd/logind.conf:
+cat /etc/systemd/logind.conf
+Ensure that there is a section [login] which contains the
+configuration StopIdleSessionSec=.
+      Is it the case that the option is not configured?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_mount_option_boot_efi_nosuid</td>
@@ -8826,6 +8924,37 @@ prevent logins with empty passwords.
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_no_empty_passwords_etc_shadow</td>
+<td>high</td>
+<td>Ensure There Are No Accounts With Blank or Null Passwords</td>
+<td>If an account has an empty password, anyone could log in and
+run commands with the privileges of that account. Accounts with
+empty passwords should never be used in operational environments.</td>
+<td>Check the "/etc/shadow" file for blank passwords with the
+following command:
+<pre>$ sudo awk -F: '!$2 {print $1}' /etc/shadow</pre>
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+<pre>$ sudo passwd [username]</pre>
+Lock an account:
+<pre>$ sudo passwd -l [username]</pre>
+</td>
+<td><pre>To verify that null passwords cannot be used, run the following command:
+$ sudo awk -F: '!$2 {print $1}' /etc/shadow
+If this produces any output, it may be possible to log into accounts
+with empty passwords.
+      Is it the case that Blank or NULL passwords can be used?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_no_files_unowned_by_user</td>
 <td>medium</td>
 <td>Ensure All Files Are Owned by a User</td>
@@ -8867,19 +8996,15 @@ $ sudo chown user file
 <td>xccdf_org.ssgproject.content_rule_no_host_based_files</td>
 <td>high</td>
 <td>Remove Host-Based Authentication Files</td>
-<td>The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.</td>
-<td>The <code>shosts.equiv</code> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+<td>The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.</td>
+<td>The <code>shosts.equiv</code> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
 </td>
-<td><pre>Verify that there are no shosts.equiv files
-on the system, run the following command:
+<td><pre>Verify that there are no shosts.equiv files on the system, run the following command:
 $ find / -name shosts.equiv
       Is it the case that shosts.equiv files exist?
       </pre></td>
@@ -9244,6 +9369,26 @@ $ rpm -q libreport-plugin-logger
 </td>
 <td>CM-7<br>
 </td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_package_mailx_installed</td>
+<td>medium</td>
+<td>The mailx Package Is Installed</td>
+<td>Emails can be used to notify designated personnel about important
+system events such as failures or warnings.</td>
+<td>A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo yum install mailx</pre>
+</td>
+<td><pre>Run the following command to determine if the mailx package is installed: $ rpm -q mailx
+      Is it the case that the package is not installed?
+      </pre></td>
+<td>SRG-OS-000363-GPOS-00150<br>
+</td>
+<td>CCI-001744<br>
+</td>
+<td></td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_package_mcafeetp_installed</td>
@@ -10517,6 +10662,32 @@ UnitFileState=masked
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_service_rngd_enabled</td>
+<td>low</td>
+<td>Enable the Hardware RNG Entropy Gatherer Service</td>
+<td>The <code>rngd</code> service
+feeds random data from hardware device to kernel random device.</td>
+<td>The Hardware RNG Entropy Gatherer service should be enabled.
+
+The <code>rngd</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable rngd.service</pre>
+</td>
+<td><pre>
+
+Run the following command to determine the current status of the
+rngd service:
+$ sudo systemctl is-active rngd
+If the service is running, it should return the following: active
+      Is it the case that the "rngd" service is disabled, masked, or not started.?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_service_rsyslog_enabled</td>
 <td>medium</td>
 <td>Enable rsyslog Service</td>
@@ -11445,6 +11616,56 @@ If configured properly, output should be
 <td>CCI-001954<br>CCI-000765<br>CCI-000766<br>CCI-000767<br>CCI-000768<br>
 </td>
 <td>IA-2 (1)<br>IA-2 (2)<br>IA-2 (3)<br>IA-2 (4)<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sssd_has_trust_anchor</td>
+<td>medium</td>
+<td>SSSD Has a Correct Trust Anchor</td>
+<td>Without path validation, an informed trust decision by the relying party cannot be made when
+presented with any certificate not already explicitly trusted.
+
+A trust anchor is an authoritative entity represented via a public key and associated data. It
+is used in the context of public key infrastructures, X.509 digital certificates, and DNSSEC.
+
+When there is a chain of trust, usually the top entity to be trusted becomes the trust anchor;
+it can be, for example, a Certification Authority (CA). A certification path starts with the
+subject certificate and proceeds through a number of intermediate certificates up to a trusted
+root certificate, typically issued by a trusted CA.
+
+This requirement verifies that a certification path to an accepted trust anchor is used for
+certificate validation and that the path includes status information. Path validation is
+necessary for a relying party to make an informed trust decision when presented with any
+certificate not already explicitly trusted. Status information for certification paths includes
+certificate revocation lists or online certificate status protocol responses.
+Validation of the certificate status information is out of scope for this requirement.</td>
+<td>SSSD must have acceptable trust anchor present.</td>
+<td><pre>Verify Red Hat Enterprise Linux 8 for PKI-based authentication has valid certificates by constructing a
+certification path (which includes status information) to an accepted trust anchor.
+
+Check that the system has a valid DoD root CA installed with the following command:
+
+$ sudo openssl x509 -text -in /etc/sssd/pki/sssd_auth_ca_db.pem
+
+Certificate:
+Data:
+Version: 3 (0x2)
+Serial Number: 1 (0x1)
+Signature Algorithm: sha256WithRSAEncryption
+Issuer: C = US, O = U.S. Government, OU = DoD, OU = PKI, CN = DoD Root CA 3
+Validity
+Not Before: Mar 20 18:46:41 2012 GMT
+Not After : Dec 30 18:46:41 2029 GMT
+Subject: C = US, O = U.S. Government, OU = DoD, OU = PKI, CN = DoD Root CA 3
+Subject Public Key Info:
+Public Key Algorithm: rsaEncryption
+      Is it the case that root CA file is not a DoD-issued certificate with a valid date and installed in the /etc/sssd/pki/sssd_auth_ca_db.pem location?
+      </pre></td>
+<td>SRG-OS-000066-GPOS-00034<br>
+</td>
+<td>CCI-000185<br>
+</td>
+<td>IA-5 (2)<br>
 </td>
 </tr>
 <tr>

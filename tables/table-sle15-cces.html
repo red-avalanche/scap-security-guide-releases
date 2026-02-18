@@ -1341,7 +1341,15 @@ is at least <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2
 <td>Set Interval For Counting Failed Password Attempts</td>
 <td>Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>fail_interval = &lt;interval-in-seconds&gt;</code> where <code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_fail_interval" use="legacy"></xccdf-1.2:sub></code> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 </tr>
 <tr>
 <td>CCE-85554-4</td>
@@ -2036,6 +2044,14 @@ assigned.</td>
 <td>The <code>root</code> user should have a primary group of 0.</td>
 </tr>
 <tr>
+<td>CCE-92528-9</td>
+<td>Ensure the Group Used by pam_wheel Module Exists on System and is Empty</td>
+<td>Ensure that the group <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub>
+referenced by the pam_wheel  <code>group</code> parameter exists and has no
+members. This ensures that no user can run commands with altered
+privileges through the <code>su</code> command.</td>
+</tr>
+<tr>
 <td>CCE-91427-5</td>
 <td>Direct root Logins Not Allowed</td>
 <td>To further limit access to the <code>root</code> account, administrators
@@ -2107,6 +2123,16 @@ vc/4</pre>
 run commands with altered privileges through the <code>su</code> command, make
 sure that the following line exists in the file <code>/etc/pam.d/su</code>:
 <pre>auth required pam_wheel.so use_uid</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-92522-2</td>
+<td>Enforce Usage of pam_wheel with Group Parameter for su Authentication</td>
+<td>To ensure that only users who are members of the group set in the
+<code>group</code> pam_wheel parameter can run commands with altered
+privileges through the <code>su</code> command, make sure that the
+following line exists in the file <code>/etc/pam.d/su</code>:
+<pre>auth required pam_wheel.so use_uid group=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -2222,7 +2248,7 @@ Therefore, this rule will report a finding for home directories like <code>/user
 <tr>
 <td>CCE-85628-6</td>
 <td>All Interactive Users Home Directories Must Exist</td>
-<td>Create home directories to all interactive users that currently do not
+<td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <code>/etc/passwd</code>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
@@ -2398,8 +2424,8 @@ considered during the check and properly remediated, if necessary.</td>
 </tr>
 <tr>
 <td>CCE-92478-7</td>
-<td>Ensure the audit-libs package as a part of audit Subsystem is Installed</td>
-<td>The audit-libs package should be installed.</td>
+<td>Ensure the libaudit package as a part of audit Subsystem is Installed</td>
+<td>The libaudit package should be installed.</td>
 </tr>
 <tr>
 <td>CCE-85612-0</td>
@@ -6008,7 +6034,7 @@ modify the following line in
 <tr>
 <td>CCE-85799-5</td>
 <td>Install libreswan Package</td>
-<td>The Libreswan package provides an implementation of IPsec
+<td>The libreswan package provides an implementation of IPsec
 and IKE, which permits the creation of secure tunnels over
 untrusted networks. The <code>libreswan</code> package can be installed with the following command:
 <pre>
@@ -6632,11 +6658,10 @@ connections.</td>
 </tr>
 <tr>
 <td>CCE-91239-4</td>
-<td>Ensure All World-Writable Directories Are Owned by root user</td>
-<td>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
+<td>Ensure All World-Writable Directories Are Owned by root User</td>
+<td>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</td>
 </tr>
 <tr>
 <td>CCE-83282-4</td>
@@ -7590,7 +7615,7 @@ Add the <code>nosuid</code> option to the fourth column of
 <td>CCE-91276-6</td>
 <td>Add noexec Option to /var</td>
 <td>The <code>noexec</code> mount option can be used to prevent binaries from being
-executed out of <code>/var</code>. 
+executed out of <code>/var</code>.
 Add the <code>noexec</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/var</code>.</td>
@@ -7780,7 +7805,7 @@ be generated.</td>
 <td>CCE-85746-6</td>
 <td>Disable storing core dump</td>
 <td>The <code>Storage</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code>
+of <code>/etc/systemd/coredump.conf</code> or <code>/etc/systemd/coredump.conf.d/*.conf</code>
 can be set to <code>none</code> to disable storing core dumps permanently.</td>
 </tr>
 <tr>
@@ -8084,7 +8109,7 @@ The <code>kdump</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91379-8</td>
 <td>Install the cron service</td>
 <td>The Cron service should be installed.</td>
 </tr>
@@ -8097,17 +8122,6 @@ maintenance tasks, such as notifying root of system activity.
 
 The <code>cron</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable cron.service</pre>
-</td>
-</tr>
-<tr>
-<td>CCE-91379-8</td>
-<td>Enable cron Service</td>
-<td>The <code>crond</code> service is used to execute commands at
-preconfigured times. It is required by almost all systems to perform necessary
-maintenance tasks, such as notifying root of system activity.
-
-The <code>crond</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable crond.service</pre>
 </td>
 </tr>
 <tr>
@@ -8541,7 +8555,7 @@ clients which use LDAP for authentication. If the system is not
 intended for use as an LDAP Server it should be removed.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92519-8</td>
 <td>The mailx Package Is Installed</td>
 <td>A mail server is required for sending emails.
 The <code>mailx</code> package can be installed with the following command:
@@ -9015,10 +9029,8 @@ The <code>rlogin</code> socket can be disabled with the following command:
 <tr>
 <td>CCE-85622-9</td>
 <td>Remove Host-Based Authentication Files</td>
-<td>The <code>shosts.equiv</code> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+<td>The <code>shosts.equiv</code> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
 </td>
 </tr>
@@ -9234,14 +9246,10 @@ The <code>sshd</code> service can be enabled with the following command:
 </tr>
 <tr>
 <td></td>
-<td>Disable SSH Server If Possible (Unusual)</td>
-<td>The SSH server service, sshd, is commonly needed.
+<td>Disable SSH Server If Possible</td>
+<td>
+The SSH server service, sshd, is commonly needed.
 However, if it can be disabled, do so.
-
-
-The <code>sshd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now sshd.service</pre>
-
 This is unusual, as SSH is a common method for encrypted and authenticated
 remote access.</td>
 </tr>
@@ -9252,6 +9260,18 @@ remote access.</td>
 To properly set the group owner of <code>/etc/ssh/sshd_config</code>, run the command:
 <pre>$ sudo chgrp root /etc/ssh/sshd_config</pre>
 </td>
+</tr>
+<tr>
+<td></td>
+<td>Verify Group Ownership on SSH Server Private *_key Key Files</td>
+<td>SSH server private keys, files that match the <code>/etc/ssh/*_key</code> glob, must be
+group-owned by <code>root</code> group.</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify Group Ownership on SSH Server Public *.pub Key Files</td>
+<td>SSH server public keys, files that match the <code>/etc/ssh/*.pub</code> glob, must be
+group-owned by <code>root</code> group.</td>
 </tr>
 <tr>
 <td>CCE-91393-9</td>
@@ -9830,6 +9850,16 @@ demonstrates use of FIPS-approved ciphers:
 <pre>Ciphers aes256-ctr,aes192-ctr,aes128-ctr</pre>
 This rule ensures that there are configured ciphers mentioned
 above (or their subset), keeping the given order of algorithms.</td>
+</tr>
+<tr>
+<td>CCE-92505-7</td>
+<td>Use Only FIPS 140-2 Validated Key Exchange Algorithms</td>
+<td>Limit the key exchange algorithms to those  which are FIPS-approved.
+Add or modify the following line in <code>/etc/ssh/sshd_config</code>
+<pre>KexAlgorithms ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256</pre>
+This rule ensures that only the key exchange algorithms mentioned
+above (or their subset) are configured for use, keeping the given
+order of algorithms.</td>
 </tr>
 <tr>
 <td>CCE-91338-4</td>

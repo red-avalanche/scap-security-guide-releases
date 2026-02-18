@@ -498,12 +498,12 @@ attacks, is reduced. Limits are imposed by locking the account.
 
 To configure the operating system to lock an account after three
 unsuccessful consecutive access attempts using <code>pam_tally2.so</code>,
-modify the content of both <code>/etc/pam.d/common-auth</code> and
+modify the content of both <code>/etc/pam.d/login</code> and
 <code>/etc/pam.d/common-account</code> as follows:
 <br><br>
 <ul>
 <li> add or modify the <code>pam_tally2.so</code> module line in
-<code>/etc/pam.d/common-auth</code> to ensure both <code>onerr=fail</code> and
+<code>/etc/pam.d/login</code> to ensure both <code>onerr=fail</code> and
 <code>deny=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_tally2" use="legacy"></xccdf-1.2:sub></code> are present. For example:
 <pre>auth required pam_tally2.so onerr=fail silent audit deny=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_tally2" use="legacy"></xccdf-1.2:sub></pre>
 </li>
@@ -517,7 +517,7 @@ consecutive invalid access attempts.</td>
 <td><pre>Check that the systems locks a user account after - at most - 
 consecutive failed login attempts with the following command:
 
-# grep pam_tally2.so /etc/pam.d/common-auth
+# grep -E '^\s*auth\s+\S+\s+pam_(tally2|unix)\.so' /etc/pam.d/login
 auth required pam_tally2.so onerr=fail deny=
 
 If no line is returned, the line is commented out, or the line is missing
@@ -676,7 +676,7 @@ Therefore, this rule will report a finding for home directories like <code>/user
 
 $ sudo awk -F: '($3&gt;=1000)&amp;&amp;($7 !~ /nologin/){print $1, $3, $6}' /etc/passwd
 
-Inspect the output and verify that all interactive users (normally users with a UID greater that 1000) have a home directory defined.
+Inspect the output and verify that all interactive users (normally users with a UID greater than 1000) have a home directory defined.
       Is it the case that users home directory is not defined?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -695,7 +695,7 @@ the user may be given access to the / directory as the current working directory
 upon logon. This could create a Denial of Service because the user would not be
 able to access their logon configuration files, and it may give them visibility
 to system files they normally would not be able to access.</td>
-<td>Create home directories to all interactive users that currently do not
+<td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <code>/etc/passwd</code>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
@@ -835,6 +835,41 @@ The output should return something similar to the following:
 
 NOTE: The usage of special cron times, such as @daily or @weekly, is acceptable.
       Is it the case that AIDE is not configured to scan periodically?
+      </pre></td>
+<td>SRG-OS-000363-GPOS-00150<br>SRG-OS-000446-GPOS-00200<br>SRG-OS-000447-GPOS-00201<br>
+</td>
+<td>CCI-001744<br>CCI-002699<br>CCI-002702<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_aide_scan_notification</td>
+<td>medium</td>
+<td>Configure Notification of Post-AIDE Scan Details</td>
+<td>Unauthorized changes to the baseline configuration could make the system vulnerable
+to various attacks or allow unauthorized access to the operating system. Changes to
+operating system configurations can have unintended side effects, some of which may
+be relevant to security.
+<br><br>
+Detecting such changes and providing an automated response can help avoid unintended,
+negative consequences that could ultimately affect the security state of the operating
+system. The operating system's Information Management Officer (IMO)/Information System
+Security Officer (ISSO) and System Administrators (SAs) must be notified via email and/or
+monitoring system trap when there is an unauthorized modification of a configuration item.</td>
+<td>AIDE should notify appropriate personnel of the details of a scan after the scan has been run.
+If AIDE has already been configured for periodic execution in <code>/etc/crontab</code>, append the
+following line to the existing AIDE line:
+<pre> | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost</pre>
+Otherwise, add the following line to <code>/etc/crontab</code>:
+<pre>05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost</pre>
+AIDE can be executed periodically through other means; this is merely one example.</td>
+<td><pre>To determine that periodic AIDE execution has been scheduled, run the following command:
+$ grep aide /etc/crontab
+The output should return something similar to the following:
+05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost
+The email address that the notifications are sent to can be changed by overriding
+.
+      Is it the case that AIDE has not been configured or has not been configured to notify personnel of scan details?
       </pre></td>
 <td>SRG-OS-000363-GPOS-00150<br>SRG-OS-000446-GPOS-00200<br>SRG-OS-000447-GPOS-00201<br>
 </td>
@@ -3442,7 +3477,7 @@ account changes:
 </td>
 <td><pre>Verify SUSE Linux Enterprise 15 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -3478,7 +3513,7 @@ account changes:
 </td>
 <td><pre>Verify SUSE Linux Enterprise 15 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -3516,7 +3551,7 @@ account changes:
 </td>
 <td><pre>Verify SUSE Linux Enterprise 15 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -3552,7 +3587,7 @@ account changes:
 </td>
 <td><pre>Verify SUSE Linux Enterprise 15 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -3588,7 +3623,7 @@ account changes:
 </td>
 <td><pre>Verify SUSE Linux Enterprise 15 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity
       Is it the case that command does not return a line, or the line is commented out?
@@ -4595,6 +4630,14 @@ following command:
 </td>
 <td><pre>To find world-writable directories that lack the sticky bit, run the following command:
 $ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2&gt;/dev/null
+fixtext: |-
+Configure all world-writable directories to have the sticky bit set to prevent unauthorized and unintended information transferred via shared system resources.
+
+Set the sticky bit on all world-writable directories using the command, replace "[World-Writable Directory]" with any directory path missing the sticky bit:
+
+$ chmod a+t [World-Writable Directory]
+srg_requirement:
+A sticky bit must be set on all SUSE Linux Enterprise 15 public directories to prevent unauthorized and unintended information transferred via shared system resources.
       Is it the case that any world-writable directories are missing the sticky bit?
       </pre></td>
 <td>SRG-OS-000138-GPOS-00069<br>
@@ -6037,19 +6080,15 @@ $ sudo chown user file
 <td>xccdf_org.ssgproject.content_rule_no_host_based_files</td>
 <td>high</td>
 <td>Remove Host-Based Authentication Files</td>
-<td>The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.</td>
-<td>The <code>shosts.equiv</code> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+<td>The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.</td>
+<td>The <code>shosts.equiv</code> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
 </td>
-<td><pre>Verify that there are no shosts.equiv files
-on the system, run the following command:
+<td><pre>Verify that there are no shosts.equiv files on the system, run the following command:
 $ find / -name shosts.equiv
       Is it the case that shosts.equiv files exist?
       </pre></td>
@@ -6187,6 +6226,26 @@ $ sudo zypper install firewalld</pre>
 <td>SRG-OS-000297-GPOS-00115<br>
 </td>
 <td>CCI-002314<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_package_mailx_installed</td>
+<td>medium</td>
+<td>The mailx Package Is Installed</td>
+<td>Emails can be used to notify designated personnel about important
+system events such as failures or warnings.</td>
+<td>A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo zypper install mailx</pre>
+</td>
+<td><pre>Run the following command to determine if the mailx package is installed: $ rpm -q mailx
+      Is it the case that the package is not installed?
+      </pre></td>
+<td>SRG-OS-000363-GPOS-00150<br>
+</td>
+<td>CCI-001744<br>
 </td>
 <td></td>
 </tr>
@@ -7485,6 +7544,34 @@ aes256-ctr,aes192-ctr,aes128-ctr
 <td>CCI-000068<br>CCI-000366<br>CCI-000803<br>CCI-000877<br>CCI-002890<br>CCI-003123<br>
 </td>
 <td>AC-17 (2)<br>CM-6 b<br>IA-7<br>MA-4 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_use_approved_kex_ordered_stig</td>
+<td>medium</td>
+<td>Use Only FIPS 140-2 Validated Key Exchange Algorithms</td>
+<td>DoD information systems are required to use FIPS-approved key exchange algorithms.
+The system will attempt to use the first algorithm presented by the client that matches
+the server list. Listing the values "strongest to weakest" is a method to ensure the use
+of the strongest algorithm available to secure the SSH connection.</td>
+<td>Limit the key exchange algorithms to those  which are FIPS-approved.
+Add or modify the following line in <code>/etc/ssh/sshd_config</code>
+<pre>KexAlgorithms ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256</pre>
+This rule ensures that only the key exchange algorithms mentioned
+above (or their subset) are configured for use, keeping the given
+order of algorithms.</td>
+<td><pre>Only FIPS-approved key exchange algorithms must be used. To verify that only FIPS-approved
+key exchange algorithms are in use, run the following command:
+$ sudo grep -i kexalgorithms /etc/ssh/sshd_config
+The output should contain only following algorithms (or a subset) in the exact order:
+KexAlgorithms ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256
+      Is it the case that KexAlgorithms option is commented out, contains non-approved algorithms, or the FIPS-approved algorithms are not in the exact order?
+      </pre></td>
+<td>SRG-OS-000250-GPOS-00093<br>
+</td>
+<td>CCI-001453<br>
+</td>
+<td>AC-17 (2)<br>
 </td>
 </tr>
 <tr>

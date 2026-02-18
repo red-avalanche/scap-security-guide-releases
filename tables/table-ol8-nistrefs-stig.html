@@ -3414,9 +3414,14 @@ is different from account lockout, which is provided by the pam_faillock module.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>deny = &lt;count&gt;</tt>
+Where count should be less than or equal to 
+<tt>3</tt> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -3427,7 +3432,7 @@ By limiting the number of failed logon attempts, the risk of unauthorized system
 user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
 the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_deny=3</td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(b)<br/>IA-5(c)</td>
@@ -3457,13 +3462,21 @@ the account.
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>fail_interval = &lt;interval-in-seconds&gt;</tt> where <tt>interval-in-seconds</tt> is <tt><tt>900</tt></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_fail_interval=900</td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(b)</td>
@@ -3472,6 +3485,12 @@ Limits are imposed by locking the account.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><tt>never</tt></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -3486,7 +3505,7 @@ By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_unlock_time=never</td>
 </tr>
 <tr>
   <td>CM-6(a)</td>
@@ -3667,8 +3686,7 @@ should be reviewed through local needs and policy.
   <td>N/A</td>
   <td>Disable storing core dump</td>
   <td xml:lang="en-US">
-The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
+The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.
   </td>
   <td xml:lang="en-US">
@@ -4177,7 +4195,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br /><br />
 Once the superuser account has been added,
 update the
@@ -5384,13 +5402,15 @@ pam_faillock.so module requires multiple entries in pam files. These entries mus
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
+
+The chosen profile expects the directory to be <tt><tt>ol8</tt></tt>.
   </td>
   <td xml:lang="en-US">
 Locking out user accounts after a number of incorrect attempts prevents direct password
 guessing attacks. In combination with the <tt>silent</tt> option, user enumeration attacks
 are also mitigated.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_dir=ol8</td>
 </tr>
 <tr>
   <td>SI-7<br/>SI-7(1)<br/>CM-6(a)</td>
@@ -7591,7 +7611,7 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
 text and is not commented out:
-<tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt>
+<tt>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</tt>
   </td>
   <td xml:lang="en-US">
 Overriding the system crypto policy makes the behavior of the OpenSSH
@@ -8031,7 +8051,7 @@ place for the storage and control of files they should own.
   <td>N/A</td>
   <td>All Interactive Users Home Directories Must Exist</td>
   <td xml:lang="en-US">
-Create home directories to all interactive users that currently do not
+Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <tt>/etc/passwd</tt>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
@@ -8606,18 +8626,15 @@ should not be able to execute SUID or SGID binaries from temporary storage parti
   <td>N/A</td>
   <td>Remove Host-Based Authentication Files</td>
   <td xml:lang="en-US">
-The <tt>shosts.equiv</tt> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+The <tt>shosts.equiv</tt> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
   </td>
   <td xml:lang="en-US">
-The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.
+The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.
   </td>
   <td></td>
 </tr>
@@ -8948,7 +8965,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_rekey_limit_time=1hour<br/>var_rekey_limit_size=1G</td>
+  <td>var_rekey_limit_size=1G<br/>var_rekey_limit_time=1hour</td>
 </tr>
 <tr>
   <td></td>

@@ -1153,9 +1153,14 @@ user password guessing, also known as brute-forcing, is reduced. Limits are impo
 the account.</td>
 <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <code>pam_faillock.so</code>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>deny = &lt;count&gt;</code>
+Where count should be less than or equal to 
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy"></xccdf-1.2:sub> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
@@ -1221,7 +1226,9 @@ tally directory must be set with the "dir" option.</pre>
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
-depending on the OS version.</td>
+depending on the OS version.
+
+The chosen profile expects the directory to be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub></code>.</td>
 <td><pre>To ensure the tally directory is configured correctly, run the following command:
 $ sudo grep 'dir =' /etc/security/faillock.conf
 The output should show that dir is set to something other than "/var/run/faillock"
@@ -1243,7 +1250,15 @@ access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.</td>
 <td>Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>fail_interval = &lt;interval-in-seconds&gt;</code> where <code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_fail_interval" use="legacy"></xccdf-1.2:sub></code> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 <td><pre>To ensure the failed password attempt policy is configured correctly, run the following command:
 
 $ grep fail_interval /etc/security/faillock.conf
@@ -1296,6 +1311,12 @@ access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.</td>
 <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <code>pam_faillock.so</code>.
+
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>unlock_time=&lt;interval-in-seconds&gt;</code> where
+<code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time" use="legacy"></xccdf-1.2:sub></code> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -1532,7 +1553,7 @@ Therefore, this rule will report a finding for home directories like <code>/user
 
 $ sudo awk -F: '($3&gt;=1000)&amp;&amp;($7 !~ /nologin/){print $1, $3, $6}' /etc/passwd
 
-Inspect the output and verify that all interactive users (normally users with a UID greater that 1000) have a home directory defined.
+Inspect the output and verify that all interactive users (normally users with a UID greater than 1000) have a home directory defined.
       Is it the case that users home directory is not defined?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -1551,7 +1572,7 @@ the user may be given access to the / directory as the current working directory
 upon logon. This could create a Denial of Service because the user would not be
 able to access their logon configuration files, and it may give them visibility
 to system files they normally would not be able to access.</td>
-<td>Create home directories to all interactive users that currently do not
+<td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <code>/etc/passwd</code>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
@@ -2924,9 +2945,9 @@ edits of files involved in storing logon events:
 </td>
 <td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | grep /var/run/faillock
+$ sudo auditctl -l | grep /var/log/faillock
 
--w /var/run/faillock -p wa -k logins
+-w /var/log/faillock -p wa -k logins
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
 <td>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
@@ -4246,7 +4267,7 @@ account changes:
 </td>
 <td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -4282,7 +4303,7 @@ account changes:
 </td>
 <td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -4320,7 +4341,7 @@ account changes:
 </td>
 <td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -4356,7 +4377,7 @@ account changes:
 </td>
 <td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -4392,7 +4413,7 @@ account changes:
 </td>
 <td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity
       Is it the case that command does not return a line, or the line is commented out?
@@ -5456,8 +5477,7 @@ debug problems. Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
 debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</td>
-<td>The <code>Storage</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code>
+<td>The <code>Storage</code> option in <code>[Coredump]</code> sectionof <code>/etc/systemd/coredump.conf</code>
 can be set to <code>none</code> to disable storing core dumps permanently.</td>
 <td><pre>Verify Oracle Linux 8 disables storing core dumps for all users by issuing the following command:
 
@@ -5951,6 +5971,14 @@ following command:
 </td>
 <td><pre>To find world-writable directories that lack the sticky bit, run the following command:
 $ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2&gt;/dev/null
+fixtext: |-
+Configure all world-writable directories to have the sticky bit set to prevent unauthorized and unintended information transferred via shared system resources.
+
+Set the sticky bit on all world-writable directories using the command, replace "[World-Writable Directory]" with any directory path missing the sticky bit:
+
+$ chmod a+t [World-Writable Directory]
+srg_requirement:
+A sticky bit must be set on all Oracle Linux 8 public directories to prevent unauthorized and unintended information transferred via shared system resources.
       Is it the case that any world-writable directories are missing the sticky bit?
       </pre></td>
 <td>SRG-OS-000138-GPOS-00069<br>
@@ -7418,7 +7446,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br><br>
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br><br>
 Once the superuser account has been added,
 update the
@@ -7931,12 +7959,12 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <code>/etc/crypto-policies/back-ends/opensshserver.config</code> contains the following
 text and is not commented out:
-<code>-oMACS=hmac-sha2-512,hmac-sha2-256</code>
+<code>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</code>
 </td>
 <td><pre>To verify if the OpenSSH server uses defined MACs in the Crypto Policy, run:
 $ grep -Po '(-oMACs=\S+)' /etc/crypto-policies/back-ends/opensshserver.config
 and verify that the line matches:
--oMACS=hmac-sha2-512,hmac-sha2-256
+-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
       Is it the case that Crypto Policy for OpenSSH Server is not configured correctly?
       </pre></td>
 <td>SRG-OS-000125-GPOS-00065<br>SRG-OS-000250-GPOS-00093<br>
@@ -9200,19 +9228,15 @@ $ sudo chown user file
 <td>xccdf_org.ssgproject.content_rule_no_host_based_files</td>
 <td>high</td>
 <td>Remove Host-Based Authentication Files</td>
-<td>The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.</td>
-<td>The <code>shosts.equiv</code> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+<td>The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.</td>
+<td>The <code>shosts.equiv</code> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
 </td>
-<td><pre>Verify that there are no shosts.equiv files
-on the system, run the following command:
+<td><pre>Verify that there are no shosts.equiv files on the system, run the following command:
 $ find / -name shosts.equiv
       Is it the case that shosts.equiv files exist?
       </pre></td>

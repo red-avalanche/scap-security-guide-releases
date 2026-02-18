@@ -1425,26 +1425,25 @@ authentication device.
 </tr>
 <tr>
   <td>AC-2(2)<br/>AC-2(3)<br/>CM-6(a)</td>
-  <td>CCE-88242-3</td>
-  <td>Assign Expiration Date to Emergency Accounts</td>
+  <td>CCE-81000-2</td>
+  <td>Assign Expiration Date to Temporary Accounts</td>
   <td xml:lang="en-US">
-Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
+Temporary accounts are established as part of normal account activation
+procedures when there is a need for short-term accounts. In the event
+temporary accounts are required, configure the system to
+terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
+it, substituting <tt><i>USER</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
 appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<pre>$ sudo chage -E <i>YYYY-MM-DD USER</i></pre>
 <tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
 account. For U.S. Government systems, the operating system must be
 configured to automatically terminate these types of accounts after a
 period of 72 hours.
   </td>
   <td xml:lang="en-US">
-If emergency user accounts remain active when no longer needed or for
+If temporary user accounts remain active when no longer needed or for
 an excessive period, these accounts may be used to gain unauthorized access.
-To mitigate this risk, automated termination of all emergency accounts
+To mitigate this risk, automated termination of all temporary accounts
 must be set upon account creation.
 <br />
   </td>
@@ -2049,6 +2048,33 @@ privileges.
 </tr>
 <tr>
   <td>AC-3(4)<br/>AC-6(10)</td>
+  <td>CCE-86544-4</td>
+  <td>Confine SELinux Users To Roles That Conform To Least Privilege</td>
+  <td xml:lang="en-US">
+Configure the operating system to confine SELinux users to roles that conform
+to least privilege. Use the following command to map the "staff_u" SELinux user
+to the "staff_r" and "sysadm_r" roles:
+<pre>$ sudo semanage user -m staff_u -R staff_r -R sysadm_r</pre>
+<br /><br />
+Use the following command to map the "user_u" SELinux user to the "user_r" role:
+<pre>$ sudo semanage -m user_u -R user_r</pre>
+  </td>
+  <td xml:lang="en-US">
+Preventing non-privileged users from executing privileged functions mitigates
+the risk that unauthorized individuals or processes may gain unnecessary access
+to information or privileges.
+<br /><br />
+Privileged functions include, for example,
+establishing accounts, performing system integrity checks, or administering
+cryptographic key management activities. Non-privileged users are individuals
+who do not possess appropriate authorizations. Circumventing intrusion detection
+and prevention mechanisms or malicious code protection mechanisms are examples
+of privileged functions that require protection from non-privileged users.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AC-3(4)<br/>AC-6(10)</td>
   <td>CCE-86020-5</td>
   <td>Elevate The SELinux Context When An Administrator Calls The Sudo Command</td>
   <td xml:lang="en-US">
@@ -2072,6 +2098,22 @@ cryptographic key management activities. Non-privileged users are individuals
 who do not possess appropriate authorizations. Circumventing intrusion detection
 and prevention mechanisms or malicious code protection mechanisms are examples
 of privileged functions that require protection from non-privileged users.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-3(5)</td>
+  <td>CCE-86611-1</td>
+  <td>The mailx Package Is Installed</td>
+  <td xml:lang="en-US">
+A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo yum install mailx</pre>
+  </td>
+  <td xml:lang="en-US">
+Emails can be used to notify designated personnel about important
+system events such as failures or warnings.
   </td>
   <td></td>
 </tr>
@@ -2902,6 +2944,37 @@ approved Certificate Authority (CA).
   <td></td>
 </tr>
 <tr>
+  <td>CM-5(3)<br/>SI-7<br/>SC-12<br/>SC-12(3)<br/>CM-6(a)</td>
+  <td>CCE-26957-1</td>
+  <td>Ensure Red Hat GPG Key Installed</td>
+  <td xml:lang="en-US">
+To ensure the system can cryptographically verify base software packages
+come from Red Hat (and to connect to the Red Hat Network to receive them),
+the Red Hat GPG key must properly be installed. To install the Red Hat GPG
+key, run:
+<pre>$ sudo subscription-manager register</pre>
+
+If the system is not connected to the Internet or an RHN Satellite, then
+install the Red Hat GPG key from trusted media such as the Red Hat
+installation CD-ROM or DVD. Assuming the disc is mounted in
+<tt>/media/cdrom</tt>, use the following command as the root user to import
+it into the keyring:
+<pre>$ sudo rpm --import /media/cdrom/RPM-GPG-KEY</pre>
+
+Alternatively, the key may be pre-loaded during the RHEL installation. In
+such cases, the key can be installed by running the following command:
+<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release</pre>
+  </td>
+  <td xml:lang="en-US">
+Changes to software components can have significant effects on the overall
+security of the operating system. This requirement ensures the software has
+not been tampered with and that it has been provided by a trusted vendor.
+The Red Hat GPG key is necessary to cryptographically verify packages are
+from Red Hat.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-6(a)<br/>AC-7(a)<br/>IA-5(4)</td>
   <td>CCE-27160-1</td>
   <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
@@ -2932,9 +3005,14 @@ is different from account lockout, which is provided by the pam_faillock module.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment <tt>deny=&lt;count&gt;</tt> where count should be less than or equal to 
+<tt>3</tt> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -2945,7 +3023,7 @@ By limiting the number of failed logon attempts, the risk of unauthorized system
 user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
 the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_deny=3</td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(b)<br/>IA-5(c)</td>
@@ -2975,13 +3053,24 @@ the account.
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment
+<tt>fail_interval=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><tt>900</tt></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_fail_interval=900</td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(b)</td>
@@ -2990,6 +3079,14 @@ Limits are imposed by locking the account.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><tt>never</tt></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -3004,7 +3101,7 @@ By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_unlock_time=never</td>
 </tr>
 <tr>
   <td>CM-6(a)</td>
@@ -3128,6 +3225,33 @@ A locally logged-in user who presses Ctrl-Alt-Del, when at the console,
 can reboot the system. If accidentally pressed, as could happen in
 the case of mixed OS environment, this can create the risk of short-term
 loss of availability of systems due to unintentional reboot.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(a)<br/>AC-23</td>
+  <td>CCE-80106-8</td>
+  <td>Disable the GNOME3 Login User List</td>
+  <td xml:lang="en-US">
+In the default graphical environment, users logging directly into the
+system are greeted with a login screen that displays all known users.
+This functionality should be disabled by setting <tt>disable-user-list</tt>
+to <tt>true</tt>.
+<br /><br />
+To disable, add or edit <tt>disable-user-list</tt> to
+<tt>/etc/dconf/db/gdm.d/00-security-settings</tt>. For example:
+<pre>[org/gnome/login-screen]
+disable-user-list=true</pre>
+Once the setting has been added, add a lock to
+<tt>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</tt> to prevent
+user modification. For example:
+<pre>/org/gnome/login-screen/disable-user-list</pre>
+After the settings have been set, run <tt>dconf update</tt>.
+  </td>
+  <td xml:lang="en-US">
+Leaving the user list enabled is a security risk since it allows anyone
+with physical access to the system to quickly enumerate known user accounts
+without logging in.
   </td>
   <td></td>
 </tr>
@@ -3460,7 +3584,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br /><br />
 Once the superuser account has been added,
 update the
@@ -3647,6 +3771,29 @@ any NFS mounts.
   <td xml:lang="en-US">
 NFS mounts should not present suid binaries to users. Only vendor-supplied suid executables
 should be installed to their default location on the local filesystem.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(b)<br/>CM-6.1(iv)</td>
+  <td>CCE-86347-2</td>
+  <td>Ensure There Are No Accounts With Blank or Null Passwords</td>
+  <td xml:lang="en-US">
+Check the "/etc/shadow" file for blank passwords with the
+following command:
+<pre>$ sudo awk -F: '!$2 {print $1}' /etc/shadow</pre>
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+<pre>$ sudo passwd [username]</pre>
+Lock an account:
+<pre>$ sudo passwd -l [username]</pre>
+  </td>
+  <td xml:lang="en-US">
+If an account has an empty password, anyone could log in and
+run commands with the privileges of that account. Accounts with
+empty passwords should never be used in operational environments.
   </td>
   <td></td>
 </tr>
@@ -5328,6 +5475,23 @@ of the information system but does not want to logout because of the temporary n
   <td>var_screensaver_lock_delay=5_seconds</td>
 </tr>
 <tr>
+  <td>IA-11</td>
+  <td>CCE-86408-2</td>
+  <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+  <td xml:lang="en-US">
+Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.
+  </td>
+  <td xml:lang="en-US">
+Without re-authentication, users may access resources or perform tasks for which they do not
+have authorization. When operating systems provide the capability to escalate a functional
+capability, it is critical the user re-authenticate.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-11(a)<br/>CM-11(b)<br/>CM-6(a)<br/>CM-5(3)<br/>SA-12<br/>SA-12(10)</td>
   <td>CCE-80347-8</td>
   <td>Ensure gpgcheck Enabled for Local Packages</td>
@@ -5985,7 +6149,7 @@ must be documented with the Information System Security Officer (ISSO).
   <td>CCE-80529-1</td>
   <td>All Interactive Users Home Directories Must Exist</td>
   <td xml:lang="en-US">
-Create home directories to all interactive users that currently do not
+Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <tt>/etc/passwd</tt>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
@@ -6318,18 +6482,15 @@ configured to use removable media as the boot loader.
   <td>CCE-80513-5</td>
   <td>Remove Host-Based Authentication Files</td>
   <td xml:lang="en-US">
-The <tt>shosts.equiv</tt> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+The <tt>shosts.equiv</tt> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
   </td>
   <td xml:lang="en-US">
-The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.
+The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.
   </td>
   <td></td>
 </tr>

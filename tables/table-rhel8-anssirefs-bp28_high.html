@@ -906,24 +906,6 @@ able to execute them.
 </tr>
 <tr>
   <td>BP28(R12)</td>
-  <td>CCE-81050-7</td>
-  <td>Add nosuid Option to /home</td>
-  <td xml:lang="en-US">
-The <tt>nosuid</tt> mount option can be used to prevent
-execution of setuid programs in <tt>/home</tt>. The SUID and SGID permissions
-should not be required in these user data directories.
-Add the <code>nosuid</code> option to the fourth column of
-<tt>/etc/fstab</tt> for the line which controls mounting of
-<code>/home</code>.
-  </td>
-  <td xml:lang="en-US">
-The presence of SUID and SGID executables should be tightly controlled. Users
-should not be able to execute SUID or SGID binaries from user home directory partitions.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>BP28(R12)</td>
   <td>CCE-82069-6</td>
   <td>Add nodev Option to Non-Root Local Partitions</td>
   <td xml:lang="en-US">
@@ -1062,7 +1044,7 @@ designated for log files.
   <td>Add noexec Option to /var</td>
   <td xml:lang="en-US">
 The <tt>noexec</tt> mount option can be used to prevent binaries from being
-executed out of <tt>/var</tt>. 
+executed out of <tt>/var</tt>.
 Add the <code>noexec</code> option to the fourth column of
 <tt>/etc/fstab</tt> for the line which controls mounting of
 <code>/var</code>.
@@ -2464,9 +2446,14 @@ re-used by a user.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>deny = &lt;count&gt;</tt>
+Where count should be less than or equal to 
+<tt>3</tt> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -2477,7 +2464,7 @@ By limiting the number of failed logon attempts, the risk of unauthorized system
 user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
 the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_deny=3</td>
 </tr>
 <tr>
   <td>BP28(R18)</td>
@@ -2507,13 +2494,21 @@ the account.
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>fail_interval = &lt;interval-in-seconds&gt;</tt> where <tt>interval-in-seconds</tt> is <tt><tt>900</tt></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_fail_interval=900</td>
 </tr>
 <tr>
   <td>BP28(R18)</td>
@@ -2522,6 +2517,12 @@ Limits are imposed by locking the account.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><tt>900</tt></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -2536,7 +2537,7 @@ By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_unlock_time=900</td>
 </tr>
 <tr>
   <td>BP28(R18)</td>
@@ -3994,6 +3995,24 @@ This is a countermeasure to the Meltdown attack.
   <td></td>
 </tr>
 <tr>
+  <td>BP28(R28)</td>
+  <td>CCE-81050-7</td>
+  <td>Add nosuid Option to /home</td>
+  <td xml:lang="en-US">
+The <tt>nosuid</tt> mount option can be used to prevent
+execution of setuid programs in <tt>/home</tt>. The SUID and SGID permissions
+should not be required in these user data directories.
+Add the <code>nosuid</code> option to the fourth column of
+<tt>/etc/fstab</tt> for the line which controls mounting of
+<code>/home</code>.
+  </td>
+  <td xml:lang="en-US">
+The presence of SUID and SGID executables should be tightly controlled. Users
+should not be able to execute SUID or SGID binaries from user home directory partitions.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>BP28(R29)</td>
   <td>CCE-80673-7</td>
   <td>Set Interactive Session Timeout</td>
@@ -4042,31 +4061,6 @@ enabled on the console or console port that has been let unattended.
   <td>sshd_idle_timeout_value=10_minutes</td>
 </tr>
 <tr>
-  <td>BP28(R29)</td>
-  <td>CCE-80907-9</td>
-  <td>Set SSH Client Alive Count Max</td>
-  <td xml:lang="en-US">
-The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
-during a SSH session and waits for a response from the SSH client.
-The option <tt>ClientAliveInterval</tt> configures timeout after
-each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered unresponsive
-and terminated.
-For SSH earlier than v8.2, a <tt>ClientAliveCountMax</tt> value of <tt>0</tt>
-causes a timeout precisely when the <tt>ClientAliveInterval</tt> is set.
-Starting with v8.2, a value of <tt>0</tt> disables the timeout functionality
-completely. If the option is set to a number greater than <tt>0</tt>, then
-the session will be disconnected after
-<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds without receiving
-a keep alive message.
-  </td>
-  <td xml:lang="en-US">
-This ensures a user login will be terminated as soon as the <tt>ClientAliveInterval</tt>
-is reached.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>BP28(R31)</td>
   <td>CCE-88248-0</td>
   <td>Enable authselect</td>
@@ -4083,42 +4077,6 @@ That way, it avoids potential breakage of configuration, as it ships several tes
 that are well tested and supported to solve different use-cases.
   </td>
   <td>var_authselect_profile=minimal</td>
-</tr>
-<tr>
-  <td>BP28(R32)</td>
-  <td>CCE-83403-6</td>
-  <td>Set number of Password Hashing Rounds - password-auth</td>
-  <td xml:lang="en-US">
-Configure the number or rounds for the password hashing algorithm. This can be
-accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
-<br /><br />
-In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
-to the <tt>pam_unix.so</tt> entry, as shown below:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
-The system's default number of rounds is 5000.
-  </td>
-  <td xml:lang="en-US">
-Using a higher number of rounds makes password cracking attacks more difficult.
-  </td>
-  <td>var_password_pam_unix_rounds=65536</td>
-</tr>
-<tr>
-  <td>BP28(R32)</td>
-  <td>CCE-83386-3</td>
-  <td>Set number of Password Hashing Rounds - system-auth</td>
-  <td xml:lang="en-US">
-Configure the number or rounds for the password hashing algorithm. This can be
-accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
-<br /><br />
-In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
-to the <tt>pam_unix.so</tt> entry, as shown below:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
-The system's default number of rounds is 5000.
-  </td>
-  <td xml:lang="en-US">
-Using a higher number of rounds makes password cracking attacks more difficult.
-  </td>
-  <td>var_password_pam_unix_rounds=65536</td>
 </tr>
 <tr>
   <td>BP28(R32)</td>
@@ -4152,6 +4110,31 @@ configured to store only encrypted representations of passwords.
 Additionally, the <tt>crypt_style</tt> configuration option ensures the use
 of a strong hashing algorithm that makes password cracking attacks more
 difficult.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>BP28(R32)</td>
+  <td>CCE-80907-9</td>
+  <td>Set SSH Client Alive Count Max</td>
+  <td xml:lang="en-US">
+The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
+during a SSH session and waits for a response from the SSH client.
+The option <tt>ClientAliveInterval</tt> configures timeout after
+each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
+receive a response from the client, then the connection is considered unresponsive
+and terminated.
+For SSH earlier than v8.2, a <tt>ClientAliveCountMax</tt> value of <tt>0</tt>
+causes a timeout precisely when the <tt>ClientAliveInterval</tt> is set.
+Starting with v8.2, a value of <tt>0</tt> disables the timeout functionality
+completely. If the option is set to a number greater than <tt>0</tt>, then
+the session will be disconnected after
+<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds without receiving
+a keep alive message.
+  </td>
+  <td xml:lang="en-US">
+This ensures a user login will be terminated as soon as the <tt>ClientAliveInterval</tt>
+is reached.
   </td>
   <td></td>
 </tr>
@@ -4389,6 +4372,19 @@ strictly controlled on the system.
   <td></td>
 </tr>
 <tr>
+  <td>BP28(R38)</td>
+  <td>CCE-83982-9</td>
+  <td>Ensure a dedicated group owns sudo</td>
+  <td xml:lang="en-US">
+Restrict the execution of privilege escalated commands to a dedicated group of users.
+Ensure the group owner of /usr/bin/sudo is <tt>sudogrp</tt>.
+  </td>
+  <td xml:lang="en-US">
+Restricting the set of users able to execute commands as privileged user reduces the attack surface.
+  </td>
+  <td>var_sudo_dedicated_group=sudogrp</td>
+</tr>
+<tr>
   <td>BP28(R39)</td>
   <td>CCE-83732-8</td>
   <td>Configure Polyinstantiation of /tmp Directories</td>
@@ -4460,18 +4456,16 @@ To set the <code>polyinstantiation_enabled</code> SELinux boolean, run the follo
 <tr>
   <td>BP28(R40)</td>
   <td>CCE-83375-6</td>
-  <td>Ensure All World-Writable Directories Are Owned by root user</td>
+  <td>Ensure All World-Writable Directories Are Owned by root User</td>
   <td xml:lang="en-US">
-All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.
+All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.
   </td>
   <td xml:lang="en-US">
-Allowing a user account to own a world-writable directory is
-undesirable because it allows the owner of that directory to remove
-or replace any files that may be placed in the directory by other
-users.
+Allowing a user account to own a world-writable directory is undesirable because it allows the
+owner of that directory to remove or replace any files that may be placed in the directory by
+other users.
   </td>
   <td></td>
 </tr>
@@ -4530,27 +4524,6 @@ caused by world-writable files.
   <td></td>
 </tr>
 <tr>
-  <td>BP28(R43)</td>
-  <td>CCE-82873-1</td>
-  <td>A remote time server for Chrony is configured</td>
-  <td xml:lang="en-US">
-<tt>Chrony</tt> is a daemon which implements the Network Time Protocol (NTP). It is designed to
-synchronize system clocks across a variety of systems and use a source that is highly
-accurate. More information on <tt>chrony</tt> can be found at
-
-    <a xmlns='http://www.w3.org/1999/xhtml' href='http://chrony.tuxfamily.org/'>http://chrony.tuxfamily.org/</a>.
-<tt>Chrony</tt> can be configured to be a client and/or a server.
-Add or edit server or pool lines to <tt>/etc/chrony.conf</tt> as appropriate:
-<pre>server &lt;remote-server&gt;</pre>
-Multiple servers may be configured.
-  </td>
-  <td xml:lang="en-US">
-If <tt>chrony</tt> is in use on the system proper configuration is vital to ensuring time
-synchronization is working properly.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>BP28(R43)<br/>NT12(R18)</td>
   <td>CCE-80794-1</td>
   <td>Ensure Logrotate Runs Periodically</td>
@@ -4566,25 +4539,6 @@ daily</pre>
 Log files that are not properly rotated run the risk of growing so large
 that they fill up the /var/log partition. Valuable logging information could be lost
 if the /var/log partition becomes full.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>BP28(R43)</td>
-  <td>CCE-82874-9</td>
-  <td>The Chrony package is installed</td>
-  <td xml:lang="en-US">
-System time should be synchronized between all systems in an environment. This is
-typically done by establishing an authoritative time server or set of servers and having all
-systems synchronize their clocks to them.
-The <code>chrony</code> package can be installed with the following command:
-<pre>
-$ sudo yum install chrony</pre>
-  </td>
-  <td xml:lang="en-US">
-Time synchronization is important to support time sensitive security mechanisms like
-Kerberos and also ensures log files have consistent time records across the enterprise,
-which aids in forensic investigations.
   </td>
   <td></td>
 </tr>
@@ -4962,19 +4916,6 @@ and the cause should be discovered and addressed.
   <td></td>
 </tr>
 <tr>
-  <td>BP28(R57)</td>
-  <td>CCE-83982-9</td>
-  <td>Ensure a dedicated group owns sudo</td>
-  <td xml:lang="en-US">
-Restrict the execution of privilege escalated commands to a dedicated group of users.
-Ensure the group owner of /usr/bin/sudo is <tt>sudogrp</tt>.
-  </td>
-  <td xml:lang="en-US">
-Restricting the set of users able to execute commands as privileged user reduces the attack surface.
-  </td>
-  <td>var_sudo_dedicated_group=sudogrp</td>
-</tr>
-<tr>
   <td>BP28(R58)</td>
   <td>CCE-83820-1</td>
   <td>Ensure sudo Runs In A Minimal Environment - sudo env_reset</td>
@@ -5247,6 +5188,42 @@ require protection from non-privileged users.
 </tr>
 <tr>
   <td>BP28(R68)</td>
+  <td>CCE-83403-6</td>
+  <td>Set number of Password Hashing Rounds - password-auth</td>
+  <td xml:lang="en-US">
+Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
+<br /><br />
+In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
+to the <tt>pam_unix.so</tt> entry, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
+The system's default number of rounds is 5000.
+  </td>
+  <td xml:lang="en-US">
+Using a higher number of rounds makes password cracking attacks more difficult.
+  </td>
+  <td>var_password_pam_unix_rounds=65536</td>
+</tr>
+<tr>
+  <td>BP28(R68)</td>
+  <td>CCE-83386-3</td>
+  <td>Set number of Password Hashing Rounds - system-auth</td>
+  <td xml:lang="en-US">
+Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
+<br /><br />
+In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
+to the <tt>pam_unix.so</tt> entry, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
+The system's default number of rounds is 5000.
+  </td>
+  <td xml:lang="en-US">
+Using a higher number of rounds makes password cracking attacks more difficult.
+  </td>
+  <td>var_password_pam_unix_rounds=65536</td>
+</tr>
+<tr>
+  <td>BP28(R68)</td>
   <td>CCE-84250-0</td>
   <td>Uninstall setroubleshoot-plugins Package</td>
   <td xml:lang="en-US">
@@ -5296,6 +5273,88 @@ $ sudo yum erase setroubleshoot</pre>
 The SETroubleshoot service is an unnecessary daemon to
 have running on a server, especially if
 X Windows is removed or disabled.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>BP28(R71)</td>
+  <td>CCE-82873-1</td>
+  <td>A remote time server for Chrony is configured</td>
+  <td xml:lang="en-US">
+<tt>Chrony</tt> is a daemon which implements the Network Time Protocol (NTP). It is designed to
+synchronize system clocks across a variety of systems and use a source that is highly
+accurate. More information on <tt>chrony</tt> can be found at
+
+    <a xmlns='http://www.w3.org/1999/xhtml' href='http://chrony.tuxfamily.org/'>http://chrony.tuxfamily.org/</a>.
+<tt>Chrony</tt> can be configured to be a client and/or a server.
+Add or edit server or pool lines to <tt>/etc/chrony.conf</tt> as appropriate:
+<pre>server &lt;remote-server&gt;</pre>
+Multiple servers may be configured.
+  </td>
+  <td xml:lang="en-US">
+If <tt>chrony</tt> is in use on the system proper configuration is vital to ensuring time
+synchronization is working properly.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>BP28(R71)</td>
+  <td>CCE-82874-9</td>
+  <td>The Chrony package is installed</td>
+  <td xml:lang="en-US">
+System time should be synchronized between all systems in an environment. This is
+typically done by establishing an authoritative time server or set of servers and having all
+systems synchronize their clocks to them.
+The <code>chrony</code> package can be installed with the following command:
+<pre>
+$ sudo yum install chrony</pre>
+  </td>
+  <td xml:lang="en-US">
+Time synchronization is important to support time sensitive security mechanisms like
+Kerberos and also ensures log files have consistent time records across the enterprise,
+which aids in forensic investigations.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>BP28(R71)</td>
+  <td>CCE-80874-1</td>
+  <td>Enable the NTP Daemon</td>
+  <td xml:lang="en-US">
+
+
+Run the following command to determine the current status of the
+<code>chronyd</code> service:
+<pre>$ sudo systemctl is-active chronyd</pre>
+If the service is running, it should return the following: <pre>active</pre>
+Note: The <tt>chronyd</tt> daemon is enabled by default.
+<br /><br />
+
+
+Run the following command to determine the current status of the
+<code>ntpd</code> service:
+<pre>$ sudo systemctl is-active ntpd</pre>
+If the service is running, it should return the following: <pre>active</pre>
+Note: The <tt>ntpd</tt> daemon is not enabled by default. Though as mentioned
+in the previous sections in certain environments the <tt>ntpd</tt> daemon might
+be preferred to be used rather than the <tt>chronyd</tt> one. Refer to:
+
+    
+    <a xmlns='http://www.w3.org/1999/xhtml' href='https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite'>https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite</a>
+
+for guidance which NTP daemon to choose depending on the environment used.
+  </td>
+  <td xml:lang="en-US">
+Enabling some of <tt>chronyd</tt> or <tt>ntpd</tt> services ensures
+that the NTP daemon will be running and that the system will synchronize its
+time to any servers specified. This is important whether the system is
+configured to be a client (and synchronize only its own clock) or it is also
+acting as an NTP server to other systems.  Synchronizing time is essential for
+authentication services such as Kerberos, but it is also important for
+maintaining accurate logs and auditing possible security breaches.
+<br /><br />
+The <tt>chronyd</tt> and <tt>ntpd</tt> NTP daemons offer all of the
+functionality of <tt>ntpdate</tt>, which is now deprecated.
   </td>
   <td></td>
 </tr>

@@ -455,7 +455,7 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <code>/etc/crypto-policies/back-ends/opensshserver.config</code> contains the following
 text and is not commented out:
-<code>-oMACS=hmac-sha2-512,hmac-sha2-256</code>
+<code>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</code>
 </td>
 </tr>
 <tr>
@@ -1796,9 +1796,14 @@ The value for <code>remember</code> option must be equal or greater than
 <td>Lock Accounts After Failed Password Attempts</td>
 <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <code>pam_faillock.so</code>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>deny = &lt;count&gt;</code>
+Where count should be less than or equal to 
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy"></xccdf-1.2:sub> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
@@ -1827,7 +1832,9 @@ tally directory must be set with the "dir" option.</pre>
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
-depending on the OS version.</td>
+depending on the OS version.
+
+The chosen profile expects the directory to be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
 <td></td>
@@ -1841,7 +1848,15 @@ account management failed attempt configurations.</td>
 <td>Set Interval For Counting Failed Password Attempts</td>
 <td>Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>fail_interval = &lt;interval-in-seconds&gt;</code> where <code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_fail_interval" use="legacy"></xccdf-1.2:sub></code> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 </tr>
 <tr>
 <td>CCE-87097-2</td>
@@ -1860,6 +1875,12 @@ depending on the OS version.</td>
 <td>Set Lockout Time for Failed Password Attempts</td>
 <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <code>pam_faillock.so</code>.
+
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>unlock_time=&lt;interval-in-seconds&gt;</code> where
+<code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time" use="legacy"></xccdf-1.2:sub></code> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -2590,6 +2611,14 @@ assigned.</td>
 <td>The <code>root</code> user should have a primary group of 0.</td>
 </tr>
 <tr>
+<td>CCE-86072-6</td>
+<td>Ensure the Group Used by pam_wheel Module Exists on System and is Empty</td>
+<td>Ensure that the group <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub>
+referenced by the pam_wheel  <code>group</code> parameter exists and has no
+members. This ensures that no user can run commands with altered
+privileges through the <code>su</code> command.</td>
+</tr>
+<tr>
 <td>CCE-87101-2</td>
 <td>Ensure Authentication Required for Single User Mode</td>
 <td>Single user mode is used for recovery when the system detects an
@@ -2667,6 +2696,16 @@ vc/4</pre>
 run commands with altered privileges through the <code>su</code> command, make
 sure that the following line exists in the file <code>/etc/pam.d/su</code>:
 <pre>auth required pam_wheel.so use_uid</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86065-0</td>
+<td>Enforce Usage of pam_wheel with Group Parameter for su Authentication</td>
+<td>To ensure that only users who are members of the group set in the
+<code>group</code> pam_wheel parameter can run commands with altered
+privileges through the <code>su</code> command, make sure that the
+following line exists in the file <code>/etc/pam.d/su</code>:
+<pre>auth required pam_wheel.so use_uid group=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -2761,7 +2800,7 @@ Therefore, this rule will report a finding for home directories like <code>/user
 <tr>
 <td>CCE-83639-5</td>
 <td>All Interactive Users Home Directories Must Exist</td>
-<td>Create home directories to all interactive users that currently do not
+<td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <code>/etc/passwd</code>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
@@ -3266,6 +3305,24 @@ utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre>
 </td>
+</tr>
+<tr>
+<td>CCE-86368-8</td>
+<td>Record Events When Executables Are Run As Another User</td>
+<td>Verify the system generates an audit record when actions are run as another user.
+sudo provides users with temporary elevated privileges to perform operations, either as the superuser or another user.
+
+If audit is using the "auditctl" tool to load the rules, run the following command:
+
+<pre>$ sudo grep execve /etc/audit/audit.rules</pre>
+
+If audit is using the "augenrules" tool to load the rules, run the following command:
+
+<pre>$ sudo grep -r execve /etc/audit/rules.d</pre>
+<pre>-a always,exit -F arch=b32 -S execve -C euid!=uid -F auid!=unset -k user_emulation</pre>
+<pre>-a always,exit -F arch=b64  S execve -C euid!=uid -F auid!=unset -k user_emulation</pre>
+
+If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.</td>
 </tr>
 <tr>
 <td>CCE-86402-5</td>
@@ -8104,7 +8161,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br><br>
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br><br>
 Once the superuser account has been added,
 update the
@@ -9804,7 +9861,7 @@ modify the following line in
 <tr>
 <td>CCE-84068-6</td>
 <td>Install libreswan Package</td>
-<td>The Libreswan package provides an implementation of IPsec
+<td>The libreswan package provides an implementation of IPsec
 and IKE, which permits the creation of secure tunnels over
 untrusted networks. The <code>libreswan</code> package can be installed with the following command:
 <pre>
@@ -10438,11 +10495,10 @@ Configure the system to disable all wireless network interfaces with the followi
 </tr>
 <tr>
 <td>CCE-83903-5</td>
-<td>Ensure All World-Writable Directories Are Owned by root user</td>
-<td>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
+<td>Ensure All World-Writable Directories Are Owned by root User</td>
+<td>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</td>
 </tr>
 <tr>
 <td>CCE-83895-3</td>
@@ -11525,7 +11581,7 @@ Add the <code>nodev</code> option to the fourth column of
 <td>CCE-83865-6</td>
 <td>Add noexec Option to /var</td>
 <td>The <code>noexec</code> mount option can be used to prevent binaries from being
-executed out of <code>/var</code>. 
+executed out of <code>/var</code>.
 Add the <code>noexec</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/var</code>.</td>
@@ -11772,8 +11828,7 @@ be generated.</td>
 <tr>
 <td>CCE-83979-5</td>
 <td>Disable storing core dump</td>
-<td>The <code>Storage</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code>
+<td>The <code>Storage</code> option in <code>[Coredump]</code> sectionof <code>/etc/systemd/coredump.conf</code>
 can be set to <code>none</code> to disable storing core dumps permanently.</td>
 </tr>
 <tr>
@@ -15635,15 +15690,6 @@ intended for use as an LDAP Server it should be removed.</td>
 <td>The Lightweight Directory Access Protocol (LDAP) is a service that provides a method for looking up information from a central database.</td>
 </tr>
 <tr>
-<td></td>
-<td>The mailx Package Is Installed</td>
-<td>A mail server is required for sending emails.
-The <code>mailx</code> package can be installed with the following command:
-<pre>
-$ sudo dnf install mailx</pre>
-</td>
-</tr>
-<tr>
 <td>CCE-85984-3</td>
 <td>The Postfix package is installed</td>
 <td>A mail server is required for sending emails.
@@ -16043,10 +16089,8 @@ The <code>rlogin</code> socket can be disabled with the following command:
 <tr>
 <td>CCE-90208-0</td>
 <td>Remove Host-Based Authentication Files</td>
-<td>The <code>shosts.equiv</code> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+<td>The <code>shosts.equiv</code> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
 </td>
 </tr>
@@ -16304,14 +16348,10 @@ The <code>sshd</code> service can be enabled with the following command:
 </tr>
 <tr>
 <td></td>
-<td>Disable SSH Server If Possible (Unusual)</td>
-<td>The SSH server service, sshd, is commonly needed.
+<td>Disable SSH Server If Possible</td>
+<td>
+The SSH server service, sshd, is commonly needed.
 However, if it can be disabled, do so.
-
-
-The <code>sshd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now sshd.service</pre>
-
 This is unusual, as SSH is a common method for encrypted and authenticated
 remote access.</td>
 </tr>
@@ -16322,6 +16362,18 @@ remote access.</td>
 To properly set the group owner of <code>/etc/ssh/sshd_config</code>, run the command:
 <pre>$ sudo chgrp root /etc/ssh/sshd_config</pre>
 </td>
+</tr>
+<tr>
+<td>CCE-86127-8</td>
+<td>Verify Group Ownership on SSH Server Private *_key Key Files</td>
+<td>SSH server private keys, files that match the <code>/etc/ssh/*_key</code> glob, must be
+group-owned by <code>ssh_keys</code> group.</td>
+</tr>
+<tr>
+<td>CCE-86136-9</td>
+<td>Verify Group Ownership on SSH Server Public *.pub Key Files</td>
+<td>SSH server public keys, files that match the <code>/etc/ssh/*.pub</code> glob, must be
+group-owned by <code>root</code> group.</td>
 </tr>
 <tr>
 <td>CCE-90821-0</td>

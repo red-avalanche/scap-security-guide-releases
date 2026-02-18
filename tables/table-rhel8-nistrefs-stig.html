@@ -764,6 +764,30 @@ to have an audit trail of modules that have been introduced into the kernel.
 </tr>
 <tr>
   <td>AU-2(d)<br/>AU-12(c)<br/>AC-6(9)<br/>CM-6(a)</td>
+  <td>CCE-80718-0</td>
+  <td>Record Attempts to Alter Logon and Logout Events - faillock</td>
+  <td xml:lang="en-US">
+The audit system already collects login information for all users
+and root. If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+  </td>
+  <td xml:lang="en-US">
+Manual editing of these files may indicate nefarious activity, such
+as an attacker attempting to remove evidence of an intrusion.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AU-2(d)<br/>AU-12(c)<br/>AC-6(9)<br/>CM-6(a)</td>
   <td>CCE-80719-8</td>
   <td>Record Attempts to Alter Logon and Logout Events - lastlog</td>
   <td xml:lang="en-US">
@@ -1398,33 +1422,6 @@ can be held accountable for their actions.
 </tr>
 <tr>
   <td>AC-2(2)<br/>AC-2(3)<br/>CM-6(a)</td>
-  <td>CCE-85910-8</td>
-  <td>Assign Expiration Date to Emergency Accounts</td>
-  <td xml:lang="en-US">
-Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
-appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
-<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
-account. For U.S. Government systems, the operating system must be
-configured to automatically terminate these types of accounts after a
-period of 72 hours.
-  </td>
-  <td xml:lang="en-US">
-If emergency user accounts remain active when no longer needed or for
-an excessive period, these accounts may be used to gain unauthorized access.
-To mitigate this risk, automated termination of all emergency accounts
-must be set upon account creation.
-<br />
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>AC-2(2)<br/>AC-2(3)<br/>CM-6(a)</td>
   <td>CCE-82474-8</td>
   <td>Assign Expiration Date to Temporary Accounts</td>
   <td xml:lang="en-US">
@@ -2004,6 +2001,22 @@ privileges.
   <td>var_selinux_state=enforcing</td>
 </tr>
 <tr>
+  <td>CM-3(5)</td>
+  <td>CCE-87036-0</td>
+  <td>The mailx Package Is Installed</td>
+  <td xml:lang="en-US">
+A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo yum install mailx</pre>
+  </td>
+  <td xml:lang="en-US">
+Emails can be used to notify designated personnel about important
+system events such as failures or warnings.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-3(6)<br/>SC-12(2)<br/>SC-12(3)<br/>IA-7<br/>SC-13<br/>CM-6(a)<br/>SC-12</td>
   <td>CCE-80942-6</td>
   <td>Enable FIPS Mode</td>
@@ -2226,6 +2239,33 @@ Setting the minimum password age protects against users cycling back to a
 favorite password after satisfying the password reuse requirement.
   </td>
   <td>var_accounts_minimum_age_login_defs=1</td>
+</tr>
+<tr>
+  <td>IA-5(f)<br/>IA-5(1)(a)<br/>CM-6(a)</td>
+  <td>CCE-80652-1</td>
+  <td>Set Password Minimum Length in login.defs</td>
+  <td xml:lang="en-US">
+To specify password length requirements for new accounts, edit the file
+<tt>/etc/login.defs</tt> and add or correct the following line:
+<pre>PASS_MIN_LEN <tt>15</tt></pre>
+<br /><br />
+The DoD requirement is <tt>15</tt>.
+The FISMA requirement is <tt>12</tt>.
+The profile requirement is
+<tt><tt>15</tt></tt>.
+If a program consults <tt>/etc/login.defs</tt> and also another PAM module
+(such as <tt>pam_pwquality</tt>) during a password change operation, then
+the most restrictive must be satisfied. See PAM section for more
+information about enforcing password quality requirements.
+  </td>
+  <td xml:lang="en-US">
+Requiring a minimum password length makes password
+cracking attacks more difficult by ensuring a larger
+search space. However, any security benefit from an onerous requirement
+must be carefully weighed against usability problems, support costs, or counterproductive
+behavior that may result.
+  </td>
+  <td>var_accounts_password_minlen_login_defs=15</td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
@@ -2836,6 +2876,34 @@ analysis.
   <td></td>
 </tr>
 <tr>
+  <td>IA-5 (2) (a)</td>
+  <td>CCE-86312-6</td>
+  <td>SSSD Has a Correct Trust Anchor</td>
+  <td xml:lang="en-US">
+SSSD must have acceptable trust anchor present.
+  </td>
+  <td xml:lang="en-US">
+Without path validation, an informed trust decision by the relying party cannot be made when
+presented with any certificate not already explicitly trusted.
+
+A trust anchor is an authoritative entity represented via a public key and associated data. It
+is used in the context of public key infrastructures, X.509 digital certificates, and DNSSEC.
+
+When there is a chain of trust, usually the top entity to be trusted becomes the trust anchor;
+it can be, for example, a Certification Authority (CA). A certification path starts with the
+subject certificate and proceeds through a number of intermediate certificates up to a trusted
+root certificate, typically issued by a trusted CA.
+
+This requirement verifies that a certification path to an accepted trust anchor is used for
+certificate validation and that the path includes status information. Path validation is
+necessary for a relying party to make an informed trust decision when presented with any
+certificate not already explicitly trusted. Status information for certification paths includes
+certificate revocation lists or online certificate status protocol responses.
+Validation of the certificate status information is out of scope for this requirement.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>IA-5(1)(c)<br/>IA-5(1).1(v)<br/>IA-7<br/>IA-7.1</td>
   <td>CCE-83484-6</td>
   <td>Verify All Account Password Hashes are Shadowed with SHA512</td>
@@ -3241,9 +3309,14 @@ is different from account lockout, which is provided by the pam_faillock module.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>deny = &lt;count&gt;</tt>
+Where count should be less than or equal to 
+<tt>3</tt> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -3254,7 +3327,7 @@ By limiting the number of failed logon attempts, the risk of unauthorized system
 user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
 the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_deny=3</td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(b)<br/>IA-5(c)</td>
@@ -3284,13 +3357,21 @@ the account.
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>fail_interval = &lt;interval-in-seconds&gt;</tt> where <tt>interval-in-seconds</tt> is <tt><tt>900</tt></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_fail_interval=900</td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(b)</td>
@@ -3299,6 +3380,12 @@ Limits are imposed by locking the account.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><tt>never</tt></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -3313,7 +3400,7 @@ By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_unlock_time=never</td>
 </tr>
 <tr>
   <td>CM-6(a)</td>
@@ -3494,8 +3581,7 @@ should be reviewed through local needs and policy.
   <td>CCE-82252-8</td>
   <td>Disable storing core dump</td>
   <td xml:lang="en-US">
-The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
+The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.
   </td>
   <td xml:lang="en-US">
@@ -3991,7 +4077,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br /><br />
 Once the superuser account has been added,
 update the
@@ -4194,6 +4280,24 @@ software.
   <td></td>
 </tr>
 <tr>
+  <td>CM-6(a)<br/>AC-17(a)<br/>AC-2(5)<br/>AC-12<br/>AC-17(a)<br/>SC-10<br/>CM-6(a)</td>
+  <td>CCE-90784-0</td>
+  <td>Configure Logind to terminate idle sessions after certain time of inactivity</td>
+  <td xml:lang="en-US">
+To configure <tt>logind</tt> service to terminate inactive user sessions
+after <tt>300</tt> seconds, edit the file
+<tt>/etc/systemd/logind.conf</tt>. Ensure that there is a section
+<pre>[Login]</pre> which contains the configuration
+<pre>StopIdleSessionSec=<tt>300</tt></pre>.
+  </td>
+  <td xml:lang="en-US">
+Terminating an idle session within a short time period reduces the window of
+opportunity for unauthorized personnel to take control of a management
+session enabled on the console or console port that has been let unattended.
+  </td>
+  <td>var_logind_session_timeout=300</td>
+</tr>
+<tr>
   <td>CM-6(b)<br/>CM-6.1(iv)</td>
   <td>CCE-86038-7</td>
   <td>Add nosuid Option to /boot/efi</td>
@@ -4270,6 +4374,29 @@ any NFS mounts.
   <td xml:lang="en-US">
 NFS mounts should not present suid binaries to users. Only vendor-supplied suid executables
 should be installed to their default location on the local filesystem.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(b)<br/>CM-6.1(iv)</td>
+  <td>CCE-85953-8</td>
+  <td>Ensure There Are No Accounts With Blank or Null Passwords</td>
+  <td xml:lang="en-US">
+Check the "/etc/shadow" file for blank passwords with the
+following command:
+<pre>$ sudo awk -F: '!$2 {print $1}' /etc/shadow</pre>
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+<pre>$ sudo passwd [username]</pre>
+Lock an account:
+<pre>$ sudo passwd -l [username]</pre>
+  </td>
+  <td xml:lang="en-US">
+If an account has an empty password, anyone could log in and
+run commands with the privileges of that account. Accounts with
+empty passwords should never be used in operational environments.
   </td>
   <td></td>
 </tr>
@@ -5166,13 +5293,15 @@ pam_faillock.so module requires multiple entries in pam files. These entries mus
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
+
+The chosen profile expects the directory to be <tt><tt>/var/log/faillock</tt></tt>.
   </td>
   <td xml:lang="en-US">
 Locking out user accounts after a number of incorrect attempts prevents direct password
 guessing attacks. In combination with the <tt>silent</tt> option, user enumeration attacks
 are also mitigated.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_dir=/var/log/faillock</td>
 </tr>
 <tr>
   <td>SI-7<br/>SI-7(1)<br/>CM-6(a)</td>
@@ -6670,6 +6799,23 @@ of the information system but does not want to logout because of the temporary n
   <td>var_screensaver_lock_delay=5_seconds</td>
 </tr>
 <tr>
+  <td>IA-11</td>
+  <td>CCE-86319-1</td>
+  <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+  <td xml:lang="en-US">
+Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.
+  </td>
+  <td xml:lang="en-US">
+Without re-authentication, users may access resources or perform tasks for which they do not
+have authorization. When operating systems provide the capability to escalate a functional
+capability, it is critical the user re-authenticate.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-11(a)<br/>CM-11(b)<br/>CM-6(a)<br/>CM-5(3)<br/>SA-12<br/>SA-12(10)</td>
   <td>CCE-80791-7</td>
   <td>Ensure gpgcheck Enabled for Local Packages</td>
@@ -7267,7 +7413,7 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
 text and is not commented out:
-<tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt>
+<tt>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</tt>
   </td>
   <td xml:lang="en-US">
 Overriding the system crypto policy makes the behavior of the OpenSSH
@@ -7707,7 +7853,7 @@ place for the storage and control of files they should own.
   <td>CCE-83424-2</td>
   <td>All Interactive Users Home Directories Must Exist</td>
   <td xml:lang="en-US">
-Create home directories to all interactive users that currently do not
+Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <tt>/etc/passwd</tt>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
@@ -8098,18 +8244,16 @@ prevent undesired access to system.
 <tr>
   <td></td>
   <td>CCE-83375-6</td>
-  <td>Ensure All World-Writable Directories Are Owned by root user</td>
+  <td>Ensure All World-Writable Directories Are Owned by root User</td>
   <td xml:lang="en-US">
-All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.
+All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.
   </td>
   <td xml:lang="en-US">
-Allowing a user account to own a world-writable directory is
-undesirable because it allows the owner of that directory to remove
-or replace any files that may be placed in the directory by other
-users.
+Allowing a user account to own a world-writable directory is undesirable because it allows the
+owner of that directory to remove or replace any files that may be placed in the directory by
+other users.
   </td>
   <td></td>
 </tr>
@@ -8326,18 +8470,15 @@ should not be able to execute SUID or SGID binaries from temporary storage parti
   <td>CCE-84055-3</td>
   <td>Remove Host-Based Authentication Files</td>
   <td xml:lang="en-US">
-The <tt>shosts.equiv</tt> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+The <tt>shosts.equiv</tt> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
   </td>
   <td xml:lang="en-US">
-The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.
+The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.
   </td>
   <td></td>
 </tr>
@@ -8686,6 +8827,22 @@ of privileged functions that require protection from non-privileged users.
 </tr>
 <tr>
   <td></td>
+  <td>CCE-82831-9</td>
+  <td>Enable the Hardware RNG Entropy Gatherer Service</td>
+  <td xml:lang="en-US">
+The Hardware RNG Entropy Gatherer service should be enabled.
+
+The <code>rngd</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable rngd.service</pre>
+  </td>
+  <td xml:lang="en-US">
+The <tt>rngd</tt> service
+feeds random data from hardware device to kernel random device.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
   <td>CCE-89707-4</td>
   <td>Set Password Hashing Rounds in /etc/login.defs</td>
   <td xml:lang="en-US">
@@ -8747,7 +8904,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_rekey_limit_time=1hour<br/>var_rekey_limit_size=1G</td>
+  <td>var_rekey_limit_size=1G<br/>var_rekey_limit_time=1hour</td>
 </tr>
 <tr>
   <td></td>

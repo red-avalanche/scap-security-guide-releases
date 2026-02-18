@@ -810,9 +810,14 @@ user password guessing, also known as brute-forcing, is reduced. Limits are impo
 the account.</td>
 <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <code>pam_faillock.so</code>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>deny = &lt;count&gt;</code>
+Where count should be less than or equal to 
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy"></xccdf-1.2:sub> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
@@ -871,7 +876,15 @@ access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.</td>
 <td>Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>fail_interval = &lt;interval-in-seconds&gt;</code> where <code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_fail_interval" use="legacy"></xccdf-1.2:sub></code> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 <td><pre>To ensure the failed password attempt policy is configured correctly, run the following command:
 
 $ grep fail_interval /etc/security/faillock.conf
@@ -895,6 +908,12 @@ access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.</td>
 <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <code>pam_faillock.so</code>.
+
+
+Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
+<code>unlock_time=&lt;interval-in-seconds&gt;</code> where
+<code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time" use="legacy"></xccdf-1.2:sub></code> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -1130,7 +1149,7 @@ the user may be given access to the / directory as the current working directory
 upon logon. This could create a Denial of Service because the user would not be
 able to access their logon configuration files, and it may give them visibility
 to system files they normally would not be able to access.</td>
-<td>Create home directories to all interactive users that currently do not
+<td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <code>/etc/passwd</code>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
@@ -3621,7 +3640,7 @@ account changes:
 </td>
 <td><pre>Verify Oracle Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -3657,7 +3676,7 @@ account changes:
 </td>
 <td><pre>Verify Oracle Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -3695,7 +3714,7 @@ account changes:
 </td>
 <td><pre>Verify Oracle Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -3731,7 +3750,7 @@ account changes:
 </td>
 <td><pre>Verify Oracle Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -3767,7 +3786,7 @@ account changes:
 </td>
 <td><pre>Verify Oracle Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity
       Is it the case that command does not return a line, or the line is commented out?
@@ -5542,7 +5561,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br><br>
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br><br>
 Once the superuser account has been added,
 update the
@@ -6191,6 +6210,79 @@ $ sudo grep nameserver /etc/resolv.conf
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_network_implement_access_control</td>
+<td>medium</td>
+<td>Grant Or Deny System Access To Specific Hosts And Services</td>
+<td>If the systems access control program is not configured with appropriate
+rules for allowing and denying access to system network resources,
+services may be accessible to unauthorized hosts.</td>
+<td>To verify the system's access control program is configured
+to grant or deny system access to specific hosts check to see
+if "firewalld" is active with the following command:
+
+<pre># systemctl status firewalld
+firewalld.service - firewalld - dynamic firewall daemon
+Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled)
+Active: active (running) since Sun 2014-04-20 14:06:46 BST; 30s ago</pre>
+
+If "firewalld" is active, check to see if it is configured to grant or deny
+access to specific hosts or services with the following commands:
+
+<pre># firewall-cmd --get-default-zone
+public
+
+# firewall-cmd --list-all --zone=public
+public (active)
+target: default
+icmp-block-inversion: no
+interfaces: eth0
+sources:
+services: mdns ssh
+ports:
+protocols:
+masquerade: no
+forward-ports:
+icmp-blocks:</pre>
+
+If "firewalld" is not active, determine whether "tcpwrappers" is being used by checking
+whether the "hosts.allow" and "hosts.deny" files are empty with the following commands:
+
+<pre># ls -al /etc/hosts.allow
+rw-r----- 1 root root 9 Aug 2 23:13 /etc/hosts.allow
+
+# ls -al /etc/hosts.deny
+-rw-r----- 1 root root 9 Apr 9 2007 /etc/hosts.deny</pre>
+
+If "firewalld" and "tcpwrappers" are not installed, configured, and active,
+ask the SA if another access control program (such as iptables) is installed
+and active.
+
+Ask the SA to show that the running configuration grants or denies access
+to specific hosts or services.
+
+If "firewalld" is active and is not configured to grant access to specific
+hosts or "tcpwrappers" is not configured to grant or deny access to
+specific hosts, this is a finding.</td>
+<td><pre>To verify there is a system access control program configured
+to grant or deny system access to specific hosts check to see
+if "firewalld" is active and the default zone is "public".
+
+If "firewalld" is not active, determine whether "tcpwrappers"
+is being used by checking whether the "hosts.allow" and "hosts.deny"
+files are empty.
+
+If "firewalld" is not active and configured, and the "hosts.allow" and
+"hosts.deny" files are empty, this is a finding.
+      Is it the case that the system access control program is not configured?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_network_sniffer_disabled</td>
 <td>medium</td>
 <td>Ensure System is Not Acting as a Network Sniffer</td>
@@ -6325,19 +6417,15 @@ $ sudo chown user file
 <td>xccdf_org.ssgproject.content_rule_no_host_based_files</td>
 <td>high</td>
 <td>Remove Host-Based Authentication Files</td>
-<td>The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.</td>
-<td>The <code>shosts.equiv</code> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+<td>The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.</td>
+<td>The <code>shosts.equiv</code> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
 </td>
-<td><pre>Verify that there are no shosts.equiv files
-on the system, run the following command:
+<td><pre>Verify that there are no shosts.equiv files on the system, run the following command:
 $ find / -name shosts.equiv
       Is it the case that shosts.equiv files exist?
       </pre></td>
@@ -7224,7 +7312,7 @@ Use the following command to map the "user_u" SELinux user to the "user_r" role:
 <pre>$ sudo semanage -m user_u -R user_r</pre>
 </td>
 <td><pre>Verify the operating system confines SELinux users to roles that conform to least
-privilege. Check the SELinux User list to SELinux Roles mapping by using the 
+privilege. Check the SELinux User list to SELinux Roles mapping by using the
 following command:
 sudo semanage user -l
 The output should look like this:
@@ -7580,33 +7668,6 @@ If the service is running, it should return the following: active
 <td>CCI-002418<br>CCI-002420<br>CCI-002421<br>CCI-002422<br>
 </td>
 <td></td>
-</tr>
-<tr>
-<td>xccdf_org.ssgproject.content_rule_set_firewalld_default_zone</td>
-<td>medium</td>
-<td>Set Default firewalld Zone for Incoming Packets</td>
-<td>In <code>firewalld</code> the default zone is applied only after all
-the applicable rules in the table are examined for a match. Setting the
-default zone to <code>drop</code> implements proper design for a firewall, i.e.
-any packets which are not explicitly permitted should not be
-accepted.</td>
-<td>To set the default zone to <code>drop</code> for
-the built-in default zone which processes incoming IPv4 and IPv6 packets,
-modify the following line in
-<code>/etc/firewalld/firewalld.conf</code> to be:
-<pre>DefaultZone=drop</pre>
-</td>
-<td><pre>Inspect the file /etc/firewalld/firewalld.conf to determine
-the default zone for the firewalld. It should be set to DefaultZone=drop:
-$ sudo grep DefaultZone /etc/firewalld/firewalld.conf
-      Is it the case that the default zone is not set to DROP?
-      </pre></td>
-<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
-</td>
-<td>CCI-000366<br>
-</td>
-<td>CM-6 b<br>
-</td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_libuserconf</td>

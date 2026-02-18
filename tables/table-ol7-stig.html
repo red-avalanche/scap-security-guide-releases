@@ -1460,6 +1460,12 @@ the line is missing, or commented out?
 	<td><pre>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using pam_faillock.so.
 
+
+Ensure that the file /etc/security/faillock.conf contains the following entry:
+unlock_time=<interval-in-seconds> where
+interval-in-seconds is  or greater.
+
+
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
 it is recommended to use the appropriate tools, such as authselect or authconfig,
@@ -1955,7 +1961,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 
 Change the superuser to a different username (The default is 'root').
-$ sed -i 's/\(set superuser=\).*/\1"<unique user ID>"/g' /etc/grub.d/01_users
+$ sed -i 's/\(set superusers=\).*/\1"<unique user ID>"/g' /etc/grub.d/01_users
 
 Once the superuser account has been added,
 update the
@@ -2196,7 +2202,7 @@ who do not possess appropriate authorizations. Circumventing intrusion detection
 and prevention mechanisms or malicious code protection mechanisms are examples
 of privileged functions that require protection from non-privileged users.</pre></td>
 	<td><pre>Verify the operating system confines SELinux users to roles that conform to least
-privilege. Check the SELinux User list to SELinux Roles mapping by using the 
+privilege. Check the SELinux User list to SELinux Roles mapping by using the
 following command:
 sudo semanage user -l
 The output should look like this:
@@ -3073,7 +3079,7 @@ user 'mailnull': directory 'var/spool/mqueue' does not exist
 The output should not return any interactive users.
       Is it the case that users home directory does not exist?
       </pre></td>
-	<td><pre>Create home directories to all interactive users that currently do not
+	<td><pre>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in /etc/passwd:
 $ sudo mkdir /home/USER</pre></td>
@@ -5487,7 +5493,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Oracle Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -5521,7 +5527,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Oracle Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -5555,7 +5561,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Oracle Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -5591,7 +5597,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Oracle Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity
       Is it the case that command does not return a line, or the line is commented out?
@@ -5625,7 +5631,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Oracle Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -6753,20 +6759,16 @@ $ sudo find / -name '.shosts' -type f -delete</pre></td>
 	<td>high</td>
 	<td>The Oracle Linux operating system must not contain shosts.equiv files.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.</pre></td>
-	<td><pre>Verify that there are no shosts.equiv files
-on the system, run the following command:
+	<td><pre>The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.</pre></td>
+	<td><pre>Verify that there are no shosts.equiv files on the system, run the following command:
 $ find / -name shosts.equiv
       Is it the case that shosts.equiv files exist?
       </pre></td>
-	<td><pre>The shosts.equiv file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+	<td><pre>The shosts.equiv file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 $ sudo rm /[path]/[to]/[file]/shosts.equiv</pre></td>
 	<td>OL07-00-040550</td>
 	<td>no_host_based_files</td>
@@ -7384,23 +7386,70 @@ $ sudo service snmpd restart</pre></td>
 	<td>medium</td>
 	<td>The Oracle Linux operating system access control program must be configured to grant or deny system access to specific hosts and services.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>In firewalld the default zone is applied only after all
-the applicable rules in the table are examined for a match. Setting the
-default zone to drop implements proper design for a firewall, i.e.
-any packets which are not explicitly permitted should not be
-accepted.</pre></td>
-	<td><pre>Inspect the file /etc/firewalld/firewalld.conf to determine
-the default zone for the firewalld. It should be set to DefaultZone=drop:
-$ sudo grep DefaultZone /etc/firewalld/firewalld.conf
-      Is it the case that the default zone is not set to DROP?
+	<td><pre>If the systems access control program is not configured with appropriate
+rules for allowing and denying access to system network resources,
+services may be accessible to unauthorized hosts.</pre></td>
+	<td><pre>To verify there is a system access control program configured
+to grant or deny system access to specific hosts check to see
+if "firewalld" is active and the default zone is "public".
+
+If "firewalld" is not active, determine whether "tcpwrappers"
+is being used by checking whether the "hosts.allow" and "hosts.deny"
+files are empty.
+
+If "firewalld" is not active and configured, and the "hosts.allow" and
+"hosts.deny" files are empty, this is a finding.
+      Is it the case that the system access control program is not configured?
       </pre></td>
-	<td><pre>To set the default zone to drop for
-the built-in default zone which processes incoming IPv4 and IPv6 packets,
-modify the following line in
-/etc/firewalld/firewalld.conf to be:
-DefaultZone=drop</pre></td>
+	<td><pre>To verify the system's access control program is configured
+to grant or deny system access to specific hosts check to see
+if "firewalld" is active with the following command:
+
+# systemctl status firewalld
+firewalld.service - firewalld - dynamic firewall daemon
+Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled)
+Active: active (running) since Sun 2014-04-20 14:06:46 BST; 30s ago
+
+If "firewalld" is active, check to see if it is configured to grant or deny
+access to specific hosts or services with the following commands:
+
+# firewall-cmd --get-default-zone
+public
+
+# firewall-cmd --list-all --zone=public
+public (active)
+target: default
+icmp-block-inversion: no
+interfaces: eth0
+sources:
+services: mdns ssh
+ports:
+protocols:
+masquerade: no
+forward-ports:
+icmp-blocks:
+
+If "firewalld" is not active, determine whether "tcpwrappers" is being used by checking
+whether the "hosts.allow" and "hosts.deny" files are empty with the following commands:
+
+# ls -al /etc/hosts.allow
+rw-r----- 1 root root 9 Aug 2 23:13 /etc/hosts.allow
+
+# ls -al /etc/hosts.deny
+-rw-r----- 1 root root 9 Apr 9 2007 /etc/hosts.deny
+
+If "firewalld" and "tcpwrappers" are not installed, configured, and active,
+ask the SA if another access control program (such as iptables) is installed
+and active.
+
+Ask the SA to show that the running configuration grants or denies access
+to specific hosts or services.
+
+If "firewalld" is active and is not configured to grant access to specific
+hosts or "tcpwrappers" is not configured to grant or deny access to
+specific hosts, this is a finding.</pre></td>
 	<td>OL07-00-040810</td>
-	<td>set_firewalld_default_zone</td>
+	<td>network_implement_access_control</td>
 </tr>
 
 <tr>

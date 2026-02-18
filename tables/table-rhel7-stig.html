@@ -48,17 +48,11 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>241</td>
-			<td>3</td>
-			<td>238</td>
-			<td>98.76%</td>
+			<td>244</td>
+			<td>0</td>
+			<td>244</td>
+			<td>100.00%</td>
 			<td>
-				
-					RHEL-07-010291
-				
-					RHEL-07-010344
-				
-					RHEL-07-020021
 				
 			</td>
 		</tr>
@@ -112,6 +106,43 @@ the correct values:
 $ sudo rpm --setperms PACKAGENAME</pre></td>
 	<td>RHEL-07-010010</td>
 	<td>rpm_verify_permissions</td>
+</tr>
+
+<tr>
+	<td>V-256968</td>
+	<td>1749</td>
+	<td>medium</td>
+	<td>The Red Hat Enterprise Linux operating system must ensure cryptographic verification of vendor software packages.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Changes to software components can have significant effects on the overall
+security of the operating system. This requirement ensures the software has
+not been tampered with and that it has been provided by a trusted vendor.
+The Red Hat GPG key is necessary to cryptographically verify packages are
+from Red Hat.</pre></td>
+	<td><pre>To ensure that the GPG key is installed, run:
+$ rpm -q --queryformat "%{SUMMARY}\n" gpg-pubkey
+The command should return the string below:
+gpg(Red Hat, Inc. (release key 2)  <security@redhat.com>
+      Is it the case that the Red Hat GPG Key is not installed?
+      </pre></td>
+	<td><pre>To ensure the system can cryptographically verify base software packages
+come from Red Hat (and to connect to the Red Hat Network to receive them),
+the Red Hat GPG key must properly be installed. To install the Red Hat GPG
+key, run:
+$ sudo subscription-manager register
+
+If the system is not connected to the Internet or an RHN Satellite, then
+install the Red Hat GPG key from trusted media such as the Red Hat
+installation CD-ROM or DVD. Assuming the disc is mounted in
+/media/cdrom, use the following command as the root user to import
+it into the keyring:
+$ sudo rpm --import /media/cdrom/RPM-GPG-KEY
+
+Alternatively, the key may be pre-loaded during the RHEL installation. In
+such cases, the key can be installed by running the following command:
+sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release</pre></td>
+	<td>RHEL-07-010019</td>
+	<td>ensure_redhat_gpgkey_installed</td>
 </tr>
 
 <tr>
@@ -372,6 +403,41 @@ For example:
 After the settings have been set, run dconf update.</pre></td>
 	<td>RHEL-07-010062</td>
 	<td>dconf_gnome_screensaver_lock_locked</td>
+</tr>
+
+<tr>
+	<td>V-256969</td>
+	<td>366</td>
+	<td>medium</td>
+	<td>The Red Hat Enterprise Linux operating system must disable the login screen user list for graphical user interfaces.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Leaving the user list enabled is a security risk since it allows anyone
+with physical access to the system to quickly enumerate known user accounts
+without logging in.</pre></td>
+	<td><pre>To ensure the user list is disabled, run the following command:
+$ grep disable-user-list /etc/dconf/db/gdm.d/*
+The output should be true.
+To ensure that users cannot enable displaying the user list, run the following:
+$ grep disable-user-list /etc/dconf/db/gdm.d/locks/*
+If properly configured, the output should be /org/gnome/login-screen/disable-user-list
+      Is it the case that disable-user-list has not been configured or is not disabled?
+      </pre></td>
+	<td><pre>In the default graphical environment, users logging directly into the
+system are greeted with a login screen that displays all known users.
+This functionality should be disabled by setting disable-user-list
+to true.
+
+To disable, add or edit disable-user-list to
+/etc/dconf/db/gdm.d/00-security-settings. For example:
+[org/gnome/login-screen]
+disable-user-list=true
+Once the setting has been added, add a lock to
+/etc/dconf/db/gdm.d/locks/00-security-settings-lock to prevent
+user modification. For example:
+/org/gnome/login-screen/disable-user-list
+After the settings have been set, run dconf update.</pre></td>
+	<td>RHEL-07-010063</td>
+	<td>dconf_gnome_disable_user_list</td>
 </tr>
 
 <tr>
@@ -1187,36 +1253,34 @@ password  pam_pwhistory.so use_authtok remember=</pre></td>
 	<td>V-254523</td>
 	<td>1682</td>
 	<td>medium</td>
-	<td>The Red Hat Enterprise Linux operating system emergency accounts must be automatically removed or disabled after the crisis is resolved or within 72 hours.</td>
+	<td>The Red Hat Enterprise Linux operating system must automatically expire temporary accounts within 72 hours.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>If emergency user accounts remain active when no longer needed or for
+	<td><pre>If temporary user accounts remain active when no longer needed or for
 an excessive period, these accounts may be used to gain unauthorized access.
-To mitigate this risk, automated termination of all emergency accounts
+To mitigate this risk, automated termination of all temporary accounts
 must be set upon account creation.
 </pre></td>
-	<td><pre>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
-
-For every emergency account, run the following command to obtain its account aging and expiration information:
-
-$ sudo chage -l emergency_account_name
-
-Verify each of these accounts has an expiration date set within 72 hours or as documented.
-      Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?
+	<td><pre>Verify that temporary accounts have been provisioned with an expiration date
+of 72 hours. For every temporary account, run the following command to
+obtain its account aging and expiration information:
+$ sudo chage -l temporary_account_name
+Verify each of these accounts has an expiration date set within 72 hours or
+as documented.
+      Is it the case that any temporary accounts have no expiration date set or do not expire within 72 hours?
       </pre></td>
-	<td><pre>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-ACCOUNT_NAME and YYYY-MM-DD
+	<td><pre>Temporary accounts are established as part of normal account activation
+procedures when there is a need for short-term accounts. In the event
+temporary accounts are required, configure the system to
+terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
+it, substituting USER and YYYY-MM-DD
 appropriately:
-$ sudo chage -E YYYY-MM-DD ACCOUNT_NAME
+$ sudo chage -E YYYY-MM-DD USER
 YYYY-MM-DD indicates the documented expiration date for the
 account. For U.S. Government systems, the operating system must be
 configured to automatically terminate these types of accounts after a
 period of 72 hours.</pre></td>
 	<td>RHEL-07-010271</td>
-	<td>account_emergency_expire_date</td>
+	<td>account_temp_expire_date</td>
 </tr>
 
 <tr>
@@ -1281,15 +1345,31 @@ to prevent logins with empty passwords.</pre></td>
 
 <tr>
 	<td>V-251702</td>
-	<td></td>
+	<td>366</td>
 	<td>high</td>
 	<td>The Red Hat Enterprise Linux operating system must not have accounts configured with blank or null passwords.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>If an account has an empty password, anyone could log in and
+run commands with the privileges of that account. Accounts with
+empty passwords should never be used in operational environments.</pre></td>
+	<td><pre>To verify that null passwords cannot be used, run the following command:
+$ sudo awk -F: '!$2 {print $1}' /etc/shadow
+If this produces any output, it may be possible to log into accounts
+with empty passwords.
+      Is it the case that Blank or NULL passwords can be used?
+      </pre></td>
+	<td><pre>Check the "/etc/shadow" file for blank passwords with the
+following command:
+$ sudo awk -F: '!$2 {print $1}' /etc/shadow
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+$ sudo passwd [username]
+Lock an account:
+$ sudo passwd -l [username]</pre></td>
 	<td>RHEL-07-010291</td>
-	<td>Missing Rule</td>
+	<td>no_empty_passwords_etc_shadow</td>
 </tr>
 
 <tr>
@@ -1380,6 +1460,14 @@ the line is missing, or commented out?
       </pre></td>
 	<td><pre>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using pam_faillock.so.
+
+
+Ensure that pam_faillock.so module entries in
+/etc/pam.d/password-auth and /etc/pam.d/system-auth are
+followed by the assignment
+unlock_time=<interval-in-seconds> where
+interval-in-seconds is  or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -1567,15 +1655,24 @@ and the user will not have to re-authenticate for privileged actions until the u
 
 <tr>
 	<td>V-251704</td>
-	<td></td>
+	<td>2038</td>
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system must not be configured to bypass password requirements for privilege escalation.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Without re-authentication, users may access resources or perform tasks for which they do not
+have authorization. When operating systems provide the capability to escalate a functional
+capability, it is critical the user re-authenticate.</pre></td>
+	<td><pre>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+$ sudo grep pam_succeed_if /etc/pam.d/sudo
+      Is it the case that system is configured to bypass password requirements for privilege escalation?
+      </pre></td>
+	<td><pre>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+$ sudo grep pam_succeed_if /etc/pam.d/sudo
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</pre></td>
 	<td>RHEL-07-010344</td>
-	<td>Missing Rule</td>
+	<td>disallow_bypass_password_sudo</td>
 </tr>
 
 <tr>
@@ -1867,7 +1964,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 
 Change the superuser to a different username (The default is 'root').
-$ sed -i 's/\(set superuser=\).*/\1"<unique user ID>"/g' /etc/grub.d/01_users
+$ sed -i 's/\(set superusers=\).*/\1"<unique user ID>"/g' /etc/grub.d/01_users
 
 Once the superuser account has been added,
 update the
@@ -2102,15 +2199,46 @@ $ sudo semanage login -m -s user_u USER</pre></td>
 
 <tr>
 	<td>V-250312</td>
-	<td></td>
+	<td>2235</td>
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system must confine SELinux users to roles that conform to least privilege.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Preventing non-privileged users from executing privileged functions mitigates
+the risk that unauthorized individuals or processes may gain unnecessary access
+to information or privileges.
+
+Privileged functions include, for example,
+establishing accounts, performing system integrity checks, or administering
+cryptographic key management activities. Non-privileged users are individuals
+who do not possess appropriate authorizations. Circumventing intrusion detection
+and prevention mechanisms or malicious code protection mechanisms are examples
+of privileged functions that require protection from non-privileged users.</pre></td>
+	<td><pre>Verify the operating system confines SELinux users to roles that conform to least
+privilege. Check the SELinux User list to SELinux Roles mapping by using the
+following command:
+sudo semanage user -l
+The output should look like this:
+SELinuxUser LabelingPrefix MLS/MCSLevel MLS/MCSRange SELinuxRoles
+guest_u            user  s0  s0  guest_r
+root                   user  s0  s0-s0:c0.c1023  staff_r sysadm_r system_r unconfined_r
+staff_u              user  s0  s0-s0:c0.c1023  staff_r sysadm_r
+sysadm_u         user  s0  s0-s0:c0.c1023  sysadm_r
+system_u          user  s0  s0-s0:c0.c1023  system_r unconfined_r
+unconfined_u  user  s0  s0-s0:c0.c1023  system_r unconfined_r
+user_u               user  s0  s0  user_r
+xguest_u           user  s0  s0  xguest_r
+
+      Is it the case that selinux users are not confined to least privilege?
+      </pre></td>
+	<td><pre>Configure the operating system to confine SELinux users to roles that conform
+to least privilege. Use the following command to map the "staff_u" SELinux user
+to the "staff_r" and "sysadm_r" roles:
+$ sudo semanage user -m staff_u -R staff_r -R sysadm_r
+
+Use the following command to map the "user_u" SELinux user to the "user_r" role:
+$ sudo semanage -m user_u -R user_r</pre></td>
 	<td>RHEL-07-020021</td>
-	<td>Missing Rule</td>
+	<td>selinux_confine_to_least_privilege</td>
 </tr>
 
 <tr>
@@ -2180,6 +2308,25 @@ SELinux context with the use of the sudo command:
 %wheel ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL</pre></td>
 	<td>RHEL-07-020023</td>
 	<td>selinux_context_elevation_for_sudo</td>
+</tr>
+
+<tr>
+	<td>V-256970</td>
+	<td>1744</td>
+	<td>medium</td>
+	<td>The Red Hat Enterprise Linux operating system must be configured to allow sending email notifications of configuration changes and adverse events to designated personnel.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Emails can be used to notify designated personnel about important
+system events such as failures or warnings.</pre></td>
+	<td><pre>Run the following command to determine if the mailx package is installed: $ rpm -q mailx
+      Is it the case that the package is not installed?
+      </pre></td>
+	<td><pre>A mail server is required for sending emails.
+The mailx package can be installed with the following command:
+
+$ sudo yum install mailx</pre></td>
+	<td>RHEL-07-020028</td>
+	<td>package_mailx_installed</td>
 </tr>
 
 <tr>
@@ -2944,7 +3091,7 @@ user 'mailnull': directory 'var/spool/mqueue' does not exist
 The output should not return any interactive users.
       Is it the case that users home directory does not exist?
       </pre></td>
-	<td><pre>Create home directories to all interactive users that currently do not
+	<td><pre>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in /etc/passwd:
 $ sudo mkdir /home/USER</pre></td>
@@ -5358,7 +5505,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -5392,7 +5539,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -5426,7 +5573,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -5462,7 +5609,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity
       Is it the case that command does not return a line, or the line is commented out?
@@ -5496,7 +5643,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -5999,7 +6146,7 @@ $ sudo systemctl enable sshd.service</pre></td>
 	<td>V-204587</td>
 	<td>2361</td>
 	<td>medium</td>
-	<td>The Red Hat Enterprise Linux operating system must be configured so that all network connections associated with SSH traffic are terminated at the end of the session or after 10 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
+	<td>The Red Hat Enterprise Linux operating system must be configured so that all network connections associated with SSH traffic are terminated after 10 minutes of becoming unresponsive.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Terminating an idle ssh session within a short time period reduces the window of
 opportunity for unauthorized personnel to take control of a management session
@@ -6063,7 +6210,7 @@ RhostsRSAAuthentication no</pre></td>
 	<td>V-204589</td>
 	<td>2361</td>
 	<td>medium</td>
-	<td>The Red Hat Enterprise Linux operating system must be configured so that all network connections associated with SSH traffic terminate after a period of inactivity.</td>
+	<td>The Red Hat Enterprise Linux operating system must be configured so that all network connections associated with SSH traffic terminate after becoming unresponsive.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>This ensures a user login will be terminated as soon as the ClientAliveInterval
 is reached.</pre></td>
@@ -6577,20 +6724,16 @@ $ sudo find / -name '.shosts' -type f -delete</pre></td>
 	<td>high</td>
 	<td>The Red Hat Enterprise Linux operating system must not contain shosts.equiv files.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.</pre></td>
-	<td><pre>Verify that there are no shosts.equiv files
-on the system, run the following command:
+	<td><pre>The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.</pre></td>
+	<td><pre>Verify that there are no shosts.equiv files on the system, run the following command:
 $ find / -name shosts.equiv
       Is it the case that shosts.equiv files exist?
       </pre></td>
-	<td><pre>The shosts.equiv file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+	<td><pre>The shosts.equiv file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 $ sudo rm /[path]/[to]/[file]/shosts.equiv</pre></td>
 	<td>RHEL-07-040550</td>
 	<td>no_host_based_files</td>

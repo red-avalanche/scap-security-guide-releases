@@ -48,17 +48,11 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>372</td>
-			<td>16</td>
-			<td>356</td>
-			<td>95.70%</td>
+			<td>375</td>
+			<td>12</td>
+			<td>363</td>
+			<td>96.80%</td>
 			<td>
-				
-					RHEL-08-010090
-				
-					RHEL-08-010121
-				
-					RHEL-08-010385
 				
 					RHEL-08-010471
 				
@@ -68,21 +62,19 @@
 				
 					RHEL-08-020014
 				
-					RHEL-08-020015
+					RHEL-08-020016
 				
 					RHEL-08-020018
 				
 					RHEL-08-020020
 				
-					RHEL-08-020023
+					RHEL-08-020022
 				
 					RHEL-08-020028
 				
 					RHEL-08-020102
 				
 					RHEL-08-020103
-				
-					RHEL-08-020231
 				
 					RHEL-08-020332
 				
@@ -176,6 +168,43 @@ NOTE: U.S. Defense systems are required to be patched within 30 days or sooner a
 dictates.</pre></td>
 	<td>RHEL-08-010010</td>
 	<td>security_patches_up_to_date</td>
+</tr>
+
+<tr>
+	<td>V-256973</td>
+	<td>1749</td>
+	<td>medium</td>
+	<td>RHEL 8 must ensure cryptographic verification of vendor software packages.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Changes to software components can have significant effects on the overall
+security of the operating system. This requirement ensures the software has
+not been tampered with and that it has been provided by a trusted vendor.
+The Red Hat GPG key is necessary to cryptographically verify packages are
+from Red Hat.</pre></td>
+	<td><pre>To ensure that the GPG key is installed, run:
+$ rpm -q --queryformat "%{SUMMARY}\n" gpg-pubkey
+The command should return the string below:
+gpg(Red Hat, Inc. (release key 2)  <security@redhat.com>
+      Is it the case that the Red Hat GPG Key is not installed?
+      </pre></td>
+	<td><pre>To ensure the system can cryptographically verify base software packages
+come from Red Hat (and to connect to the Red Hat Network to receive them),
+the Red Hat GPG key must properly be installed. To install the Red Hat GPG
+key, run:
+$ sudo subscription-manager register
+
+If the system is not connected to the Internet or an RHN Satellite, then
+install the Red Hat GPG key from trusted media such as the Red Hat
+installation CD-ROM or DVD. Assuming the disc is mounted in
+/media/cdrom, use the following command as the root user to import
+it into the keyring:
+$ sudo rpm --import /media/cdrom/RPM-GPG-KEY
+
+Alternatively, the key may be pre-loaded during the RHEL installation. In
+such cases, the key can be installed by running the following command:
+sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release</pre></td>
+	<td>RHEL-08-010019</td>
+	<td>ensure_redhat_gpgkey_installed</td>
 </tr>
 
 <tr>
@@ -456,15 +485,51 @@ auth.*;authpriv.*;daemon.*                              /var/log/secure</pre></t
 
 <tr>
 	<td>V-230229</td>
-	<td></td>
+	<td>185</td>
 	<td>medium</td>
 	<td>RHEL 8, for PKI-based authentication, must validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Without path validation, an informed trust decision by the relying party cannot be made when
+presented with any certificate not already explicitly trusted.
+
+A trust anchor is an authoritative entity represented via a public key and associated data. It
+is used in the context of public key infrastructures, X.509 digital certificates, and DNSSEC.
+
+When there is a chain of trust, usually the top entity to be trusted becomes the trust anchor;
+it can be, for example, a Certification Authority (CA). A certification path starts with the
+subject certificate and proceeds through a number of intermediate certificates up to a trusted
+root certificate, typically issued by a trusted CA.
+
+This requirement verifies that a certification path to an accepted trust anchor is used for
+certificate validation and that the path includes status information. Path validation is
+necessary for a relying party to make an informed trust decision when presented with any
+certificate not already explicitly trusted. Status information for certification paths includes
+certificate revocation lists or online certificate status protocol responses.
+Validation of the certificate status information is out of scope for this requirement.</pre></td>
+	<td><pre>Verify Red Hat Enterprise Linux 8 for PKI-based authentication has valid certificates by constructing a
+certification path (which includes status information) to an accepted trust anchor.
+
+Check that the system has a valid DoD root CA installed with the following command:
+
+$ sudo openssl x509 -text -in /etc/sssd/pki/sssd_auth_ca_db.pem
+
+Certificate:
+Data:
+Version: 3 (0x2)
+Serial Number: 1 (0x1)
+Signature Algorithm: sha256WithRSAEncryption
+Issuer: C = US, O = U.S. Government, OU = DoD, OU = PKI, CN = DoD Root CA 3
+Validity
+Not Before: Mar 20 18:46:41 2012 GMT
+Not After : Dec 30 18:46:41 2029 GMT
+Subject: C = US, O = U.S. Government, OU = DoD, OU = PKI, CN = DoD Root CA 3
+Subject Public Key Info:
+Public Key Algorithm: rsaEncryption
+      Is it the case that root CA file is not a DoD-issued certificate with a valid date and installed in the /etc/sssd/pki/sssd_auth_ca_db.pem location?
+      </pre></td>
+	<td><pre>SSSD must have acceptable trust anchor present.</pre></td>
 	<td>RHEL-08-010090</td>
-	<td>Missing Rule</td>
+	<td>sssd_has_trust_anchor</td>
 </tr>
 
 <tr>
@@ -555,15 +620,31 @@ this is a finding.</pre></td>
 
 <tr>
 	<td>V-251706</td>
-	<td></td>
+	<td>366</td>
 	<td>high</td>
 	<td>The RHEL 8 operating system must not have accounts configured with blank or null passwords.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>If an account has an empty password, anyone could log in and
+run commands with the privileges of that account. Accounts with
+empty passwords should never be used in operational environments.</pre></td>
+	<td><pre>To verify that null passwords cannot be used, run the following command:
+$ sudo awk -F: '!$2 {print $1}' /etc/shadow
+If this produces any output, it may be possible to log into accounts
+with empty passwords.
+      Is it the case that Blank or NULL passwords can be used?
+      </pre></td>
+	<td><pre>Check the "/etc/shadow" file for blank passwords with the
+following command:
+$ sudo awk -F: '!$2 {print $1}' /etc/shadow
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+$ sudo passwd [username]
+Lock an account:
+$ sudo passwd -l [username]</pre></td>
 	<td>RHEL-08-010121</td>
-	<td>Missing Rule</td>
+	<td>no_empty_passwords_etc_shadow</td>
 </tr>
 
 <tr>
@@ -692,7 +773,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 
 Change the superuser to a different username (The default is 'root').
-$ sed -i 's/\(set superuser=\).*/\1"<unique user ID>"/g' /etc/grub.d/01_users
+$ sed -i 's/\(set superusers=\).*/\1"<unique user ID>"/g' /etc/grub.d/01_users
 
 Once the superuser account has been added,
 update the
@@ -1026,6 +1107,14 @@ system, by users for temporary file storage (such as /tmp), and
 for directories requiring global read/write access.</pre></td>
 	<td><pre>To find world-writable directories that lack the sticky bit, run the following command:
 $ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2>/dev/null
+fixtext: |-
+Configure all world-writable directories to have the sticky bit set to prevent unauthorized and unintended information transferred via shared system resources.
+
+Set the sticky bit on all world-writable directories using the command, replace "[World-Writable Directory]" with any directory path missing the sticky bit:
+
+$ chmod a+t [World-Writable Directory]
+srg_requirement:
+A sticky bit must be set on all Red Hat Enterprise Linux 8 public directories to prevent unauthorized and unintended information transferred via shared system resources.
       Is it the case that any world-writable directories are missing the sticky bit?
       </pre></td>
 	<td><pre>When the so-called 'sticky bit' is set on a directory,
@@ -1050,7 +1139,7 @@ $ sudo chmod +t DIR</pre></td>
 	<td>V-230244</td>
 	<td>1133</td>
 	<td>medium</td>
-	<td>RHEL 8 must be configured so that all network connections associated with SSH traffic are terminated at the end of the session or after 10 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
+	<td>RHEL 8 must be configured so that all network connections associated with SSH traffic terminate after becoming unresponsive.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>This ensures a user login will be terminated as soon as the ClientAliveInterval
 is reached.</pre></td>
@@ -1086,7 +1175,7 @@ a keep alive message.</pre></td>
 	<td>V-244525</td>
 	<td>1133</td>
 	<td>medium</td>
-	<td>The RHEL 8 SSH daemon must be configured with a timeout interval.</td>
+	<td>RHEL 8 must be configured so that all network connections associated with SSH traffic are terminated after 10 minutes of becoming unresponsive.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Terminating an idle ssh session within a short time period reduces the window of
 opportunity for unauthorized personnel to take control of a management session
@@ -1281,7 +1370,7 @@ fragmented.</pre></td>
 	<td><pre>To verify if the OpenSSH server uses defined MACs in the Crypto Policy, run:
 $ grep -Po '(-oMACs=\S+)' /etc/crypto-policies/back-ends/opensshserver.config
 and verify that the line matches:
--oMACS=hmac-sha2-512,hmac-sha2-256
+-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
       Is it the case that Crypto Policy for OpenSSH Server is not configured correctly?
       </pre></td>
 	<td><pre>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
@@ -1291,7 +1380,7 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 /etc/crypto-policies/back-ends/opensshserver.config contains the following
 text and is not commented out:
--oMACS=hmac-sha2-512,hmac-sha2-256</pre></td>
+-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</pre></td>
 	<td>RHEL-08-010290</td>
 	<td>harden_sshd_macs_opensshserver_conf_crypto_policy</td>
 </tr>
@@ -1759,6 +1848,25 @@ $ sudo chgrp root DIR</pre></td>
 </tr>
 
 <tr>
+	<td>V-256974</td>
+	<td>1744</td>
+	<td>medium</td>
+	<td>RHEL 8 must be configured to allow sending email notifications of unauthorized configuration changes to designated personnel.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Emails can be used to notify designated personnel about important
+system events such as failures or warnings.</pre></td>
+	<td><pre>Run the following command to determine if the mailx package is installed: $ rpm -q mailx
+      Is it the case that the package is not installed?
+      </pre></td>
+	<td><pre>A mail server is required for sending emails.
+The mailx package can be installed with the following command:
+
+$ sudo yum install mailx</pre></td>
+	<td>RHEL-08-010358</td>
+	<td>package_mailx_installed</td>
+</tr>
+
+<tr>
 	<td>V-251710</td>
 	<td>2696</td>
 	<td>medium</td>
@@ -2164,15 +2272,24 @@ and the user will not have to re-authenticate for privileged actions until the u
 
 <tr>
 	<td>V-251712</td>
-	<td></td>
+	<td>2038</td>
 	<td>medium</td>
 	<td>The RHEL 8 operating system must not be configured to bypass password requirements for privilege escalation.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Without re-authentication, users may access resources or perform tasks for which they do not
+have authorization. When operating systems provide the capability to escalate a functional
+capability, it is critical the user re-authenticate.</pre></td>
+	<td><pre>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+$ sudo grep pam_succeed_if /etc/pam.d/sudo
+      Is it the case that system is configured to bypass password requirements for privilege escalation?
+      </pre></td>
+	<td><pre>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+$ sudo grep pam_succeed_if /etc/pam.d/sudo
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</pre></td>
 	<td>RHEL-08-010385</td>
-	<td>Missing Rule</td>
+	<td>disallow_bypass_password_sudo</td>
 </tr>
 
 <tr>
@@ -2493,20 +2610,16 @@ use cases.</pre></td>
 	<td>high</td>
 	<td>There must be no shosts.equiv files on the RHEL 8 operating system.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.</pre></td>
-	<td><pre>Verify that there are no shosts.equiv files
-on the system, run the following command:
+	<td><pre>The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.</pre></td>
+	<td><pre>Verify that there are no shosts.equiv files on the system, run the following command:
 $ find / -name shosts.equiv
       Is it the case that shosts.equiv files exist?
       </pre></td>
-	<td><pre>The shosts.equiv file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+	<td><pre>The shosts.equiv file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 $ sudo rm /[path]/[to]/[file]/shosts.equiv</pre></td>
 	<td>RHEL-08-010460</td>
 	<td>no_host_based_files</td>
@@ -3352,8 +3465,7 @@ $ grep -i storage /etc/systemd/coredump.conf
 Storage=none
       Is it the case that Storage is not set to none or is commented out and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?
       </pre></td>
-	<td><pre>The Storage option in [Coredump] section
-of /etc/systemd/coredump.conf
+	<td><pre>The Storage option in [Coredump] sectionof /etc/systemd/coredump.conf
 can be set to none to disable storing core dumps permanently.</pre></td>
 	<td>RHEL-08-010674</td>
 	<td>coredump_disable_storage</td>
@@ -3466,19 +3578,17 @@ directory other than the users home directory.</pre></td>
 	<td>medium</td>
 	<td>All RHEL 8 world-writable directories must be owned by root, sys, bin, or an application user.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Allowing a user account to own a world-writable directory is
-undesirable because it allows the owner of that directory to remove
-or replace any files that may be placed in the directory by other
-users.</pre></td>
+	<td><pre>Allowing a user account to own a world-writable directory is undesirable because it allows the
+owner of that directory to remove or replace any files that may be placed in the directory by
+other users.</pre></td>
 	<td><pre>The following command will discover and print world-writable directories that
-are not owned by root.  Run it once for each local partition PART:
+are not owned by root. Run it once for each local partition PART:
 $ sudo find PART -xdev -type d -perm -0002 -uid +0 -print
-      Is it the case that there is output?
+      Is it the case that there are world-writable directories not owned by root?
       </pre></td>
-	<td><pre>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</pre></td>
+	<td><pre>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</pre></td>
 	<td>RHEL-08-010700</td>
 	<td>dir_perms_world_writable_root_owned</td>
 </tr>
@@ -3521,7 +3631,7 @@ place for the storage and control of files they should own.</pre></td>
 
 $ sudo awk -F: '($3>=1000)&&($7 !~ /nologin/){print $1, $3, $6}' /etc/passwd
 
-Inspect the output and verify that all interactive users (normally users with a UID greater that 1000) have a home directory defined.
+Inspect the output and verify that all interactive users (normally users with a UID greater than 1000) have a home directory defined.
       Is it the case that users home directory is not defined?
       </pre></td>
 	<td><pre>Assign home directories to all interactive users that currently do not
@@ -3651,7 +3761,7 @@ user 'mailnull': directory 'var/spool/mqueue' does not exist
 The output should not return any interactive users.
       Is it the case that users home directory does not exist?
       </pre></td>
-	<td><pre>Create home directories to all interactive users that currently do not
+	<td><pre>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in /etc/passwd:
 $ sudo mkdir /home/USER</pre></td>
@@ -3924,9 +4034,14 @@ or less (but not "0"), is missing or commented out?
       </pre></td>
 	<td><pre>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using pam_faillock.so.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file /etc/security/faillock.conf contains the following entry:
+deny = <count>
+Where count should be less than or equal to 
+ and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as authselect or authconfig,
@@ -3953,7 +4068,15 @@ or less (but not "0"), the line is commented out, or the line is missing?
       </pre></td>
 	<td><pre>Utilizing pam_faillock.so, the fail_interval directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</pre></td>
+period.
+
+Ensure that the file /etc/security/faillock.conf contains the following entry:
+fail_interval = <interval-in-seconds> where interval-in-seconds is  or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as authselect or authconfig,
+depending on the OS version.</pre></td>
 	<td>RHEL-08-020012</td>
 	<td>accounts_passwords_pam_faillock_interval</td>
 </tr>
@@ -3986,22 +4109,9 @@ period.</pre></td>
 
 <tr>
 	<td>V-230337</td>
-	<td></td>
-	<td>medium</td>
-	<td>RHEL 8 must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>RHEL-08-020015</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-230338</td>
 	<td>44</td>
 	<td>medium</td>
-	<td>RHEL 8 must ensure account lockouts persist.</td>
+	<td>RHEL 8 must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
@@ -4019,6 +4129,12 @@ the line is missing, or commented out?
 	<td><pre>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using pam_faillock.so.
 
+
+Ensure that the file /etc/security/faillock.conf contains the following entry:
+unlock_time=<interval-in-seconds> where
+interval-in-seconds is  or greater.
+
+
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
 it is recommended to use the appropriate tools, such as authselect or authconfig,
@@ -4026,8 +4142,21 @@ depending on the OS version.
 
 If unlock_time is set to 0, manual intervention by an administrator is required
 to unlock a user. This should be done using the faillock tool.</pre></td>
-	<td>RHEL-08-020016</td>
+	<td>RHEL-08-020015</td>
 	<td>accounts_passwords_pam_faillock_unlock_time</td>
+</tr>
+
+<tr>
+	<td>V-230338</td>
+	<td></td>
+	<td>medium</td>
+	<td>RHEL 8 must ensure account lockouts persist.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td>RHEL-08-020016</td>
+	<td>Missing Rule</td>
 </tr>
 
 <tr>
@@ -4053,7 +4182,9 @@ tally directory must be set with the "dir" option.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as authselect or authconfig,
-depending on the OS version.</pre></td>
+depending on the OS version.
+
+The chosen profile expects the directory to be .</pre></td>
 	<td>RHEL-08-020017</td>
 	<td>accounts_passwords_pam_faillock_dir</td>
 </tr>
@@ -4133,6 +4264,19 @@ audit
 
 <tr>
 	<td>V-230344</td>
+	<td></td>
+	<td>medium</td>
+	<td>RHEL 8 must include root when automatically locking an account until the locked account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td>RHEL-08-020022</td>
+	<td>Missing Rule</td>
+</tr>
+
+<tr>
+	<td>V-230345</td>
 	<td>44</td>
 	<td>medium</td>
 	<td>RHEL 8 must include root when automatically locking an account until the locked account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.</td>
@@ -4155,21 +4299,8 @@ pam_faillock.so module requires multiple entries in pam files. These entries mus
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as authselect or authconfig,
 depending on the OS version.</pre></td>
-	<td>RHEL-08-020022</td>
-	<td>accounts_passwords_pam_faillock_deny_root</td>
-</tr>
-
-<tr>
-	<td>V-230345</td>
-	<td></td>
-	<td>medium</td>
-	<td>RHEL 8 must include root when automatically locking an account until the locked account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
 	<td>RHEL-08-020023</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_deny_root</td>
 </tr>
 
 <tr>
@@ -4381,6 +4512,30 @@ user modification. For example:
 After the settings have been set, run dconf update.</pre></td>
 	<td>RHEL-08-020032</td>
 	<td>dconf_gnome_disable_user_list</td>
+</tr>
+
+<tr>
+	<td>V-257258</td>
+	<td>1133</td>
+	<td>medium</td>
+	<td>RHEL 8 must terminate idle user sessions.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Terminating an idle session within a short time period reduces the window of
+opportunity for unauthorized personnel to take control of a management
+session enabled on the console or console port that has been let unattended.</pre></td>
+	<td><pre>Display the contents of the file /etc/systemd/logind.conf:
+cat /etc/systemd/logind.conf
+Ensure that there is a section [login] which contains the
+configuration StopIdleSessionSec=.
+      Is it the case that the option is not configured?
+      </pre></td>
+	<td><pre>To configure logind service to terminate inactive user sessions
+after  seconds, edit the file
+/etc/systemd/logind.conf. Ensure that there is a section
+[Login] which contains the configuration
+StopIdleSessionSec=.</pre></td>
+	<td>RHEL-08-020035</td>
+	<td>logind_session_timeout</td>
 </tr>
 
 <tr>
@@ -5287,15 +5442,34 @@ after pam_pwquality to set minimum password length requirements.</pre></td>
 
 <tr>
 	<td>V-230370</td>
-	<td></td>
+	<td>205</td>
 	<td>medium</td>
 	<td>RHEL 8 passwords for new users must have a minimum of 15 characters.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Requiring a minimum password length makes password
+cracking attacks more difficult by ensuring a larger
+search space. However, any security benefit from an onerous requirement
+must be carefully weighed against usability problems, support costs, or counterproductive
+behavior that may result.</pre></td>
+	<td><pre>To check the minimum password length, run the command:
+$ grep PASS_MIN_LEN /etc/login.defs
+The DoD requirement is 15.
+      Is it the case that it is not set to the required value?
+      </pre></td>
+	<td><pre>To specify password length requirements for new accounts, edit the file
+/etc/login.defs and add or correct the following line:
+PASS_MIN_LEN 
+
+The DoD requirement is 15.
+The FISMA requirement is 12.
+The profile requirement is
+.
+If a program consults /etc/login.defs and also another PAM module
+(such as pam_pwquality) during a password change operation, then
+the most restrictive must be satisfied. See PAM section for more
+information about enforcing password quality requirements.</pre></td>
 	<td>RHEL-08-020231</td>
-	<td>Missing Rule</td>
+	<td>accounts_password_minlen_login_defs</td>
 </tr>
 
 <tr>
@@ -5403,7 +5577,7 @@ useradd man page for more information.</pre></td>
 	<td>V-230374</td>
 	<td>1682</td>
 	<td>medium</td>
-	<td>RHEL 8 emergency accounts must be automatically removed or disabled after the crisis is resolved or within 72 hours.</td>
+	<td>RHEL 8 must automatically expire temporary accounts within 72 hours.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>If emergency user accounts remain active when no longer needed or for
 an excessive period, these accounts may be used to gain unauthorized access.
@@ -6356,7 +6530,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity
       Is it the case that command does not return a line, or the line is commented out?
@@ -6390,7 +6564,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -6424,7 +6598,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -6458,7 +6632,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -6494,7 +6668,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -7879,9 +8053,9 @@ form to /etc/audit/audit.rules:
 as an attacker attempting to remove evidence of an intrusion.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | grep /var/run/faillock
+$ sudo auditctl -l | grep /var/log/faillock
 
--w /var/run/faillock -p wa -k logins
+-w /var/log/faillock -p wa -k logins
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
 	<td><pre>The audit system already collects login information for all users

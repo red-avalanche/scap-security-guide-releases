@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>372</td>
+			<td>375</td>
 			<td>0</td>
-			<td>372</td>
+			<td>375</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -211,20 +211,22 @@ Selection of a cryptographic mechanism is based on the need to protect the integ
 Satisfies: SRG-OS-000185-GPOS-00079, SRG-OS-000404-GPOS-00183, SRG-OS-000405-GPOS-00184</pre></td>
 	<td><pre>Verify RHEL 8 prevents unauthorized disclosure or modification of all information requiring at-rest protection by using disk encryption. 
 
-If there is a documented and approved reason for not having data-at-rest encryption, this requirement is Not Applicable.
+If there is a documented and approved reason for not having data-at-rest encryption at the operating system level, such as encryption provided by a hypervisor or a disk storage array in a virtualized environment, this requirement is not applicable.
 
 Verify all system partitions are encrypted with the following command:
 
-$ sudo blkid
+     $ sudo blkid
 
-/dev/mapper/rhel-root:  UUID="67b7d7fe-de60-6fd0-befb-e6748cf97743" TYPE="crypto_LUKS"
+     /dev/mapper/rhel-root:  UUID="67b7d7fe-de60-6fd0-befb-e6748cf97743" TYPE="crypto_LUKS"
 
-Every persistent disk partition present must be of type "crypto_LUKS". If any partitions other than the boot partition or pseudo file systems (such as /proc or /sys) are not type "crypto_LUKS", ask the administrator to indicate how the partitions are encrypted.  If there is no evidence that these partitions are encrypted, this is a finding.</pre></td>
+Every persistent disk partition present must be of type "crypto_LUKS". If any partitions other than the boot partition or pseudo file systems (such as /proc or /sys) are not type "crypto_LUKS", ask the administrator to indicate how the partitions are encrypted. 
+
+If there is no evidence that these partitions are encrypted, this is a finding.</pre></td>
 	<td><pre>Configure RHEL 8 to prevent unauthorized modification of all information at rest by using disk encryption. 
 
 Encrypting a partition in an already installed system is more difficult, because existing partitions will need to be resized and changed. To encrypt an entire partition, dedicate a partition for encryption in the partition layout.</pre></td>
 	<td>RHEL-08-010030</td>
-	<td>SV-230224r809268_rule</td>
+	<td>SV-230224r917864_rule</td>
 </tr>
 
 <tr>
@@ -866,37 +868,39 @@ $ sudo chmod 1777 [World-Writable Directory]</pre></td>
 	<td>V-230244</td>
 	<td>CCI-001133</td>
 	<td>medium</td>
-	<td>RHEL 8 must be configured so that all network connections associated with SSH traffic are terminated at the end of the session or after 10 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
+	<td>RHEL 8 must be configured so that all network connections associated with SSH traffic terminate after becoming unresponsive.</td>
 	<td>SRG-OS-000163-GPOS-00072</td>
-	<td><pre>Terminating an idle SSH session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended. In addition, quickly terminating an idle SSH session will also free up resources committed by the managed network element.
+	<td><pre>Terminating an unresponsive SSH session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended. In addition, quickly terminating an idle SSH session will also free up resources committed by the managed network element.
 
-Terminating network connections associated with communications sessions includes, for example, de-allocating associated TCP/IP address/port pairs at the operating system level and de-allocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean that the operating system terminates all sessions or network access; it only ends the inactive session and releases the resources associated with that session.
+Terminating network connections associated with communications sessions includes, for example, deallocating associated TCP/IP address/port pairs at the operating system level and deallocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean the operating system terminates all sessions or network access; it only ends the unresponsive session and releases the resources associated with that session.
 
-RHEL 8 utilizes /etc/ssh/sshd_config for configurations of OpenSSH. Within the sshd_config the product of the values of "ClientAliveInterval" and "ClientAliveCountMax" are used to establish the inactivity threshold. The "ClientAliveInterval" is a timeout interval in seconds after which if no data has been received from the client, sshd will send a message through the encrypted channel to request a response from the client. The "ClientAliveCountMax" is the number of client alive messages that may be sent without sshd receiving any messages back from the client. If this threshold is met, sshd will disconnect the client. For more information on these settings and others, refer to the sshd_config man pages.
+RHEL 8 uses /etc/ssh/sshd_config for configurations of OpenSSH. Within the sshd_config, the product of the values of "ClientAliveInterval" and "ClientAliveCountMax" is used to establish the inactivity threshold. The "ClientAliveInterval" is a timeout interval in seconds after which if no data has been received from the client, sshd will send a message through the encrypted channel to request a response from the client. The "ClientAliveCountMax" is the number of client alive messages that may be sent without sshd receiving any messages back from the client. If this threshold is met, sshd will disconnect the client. For more information on these settings and others, refer to the sshd_config man pages.
 
 Satisfies: SRG-OS-000163-GPOS-00072, SRG-OS-000126-GPOS-00066, SRG-OS-000279-GPOS-00109</pre></td>
-	<td><pre>Verify all network connections associated with SSH traffic are automatically terminated at the end of the session or after 10 minutes of inactivity.
+	<td><pre>Verify the SSH server automatically terminates a user session after the SSH client has become unresponsive.
 
 Check that the "ClientAliveCountMax" is set to "1" by performing the following command:
 
-$ sudo grep -ir clientalive /etc/ssh/sshd_config*
+     $ sudo grep -ir clientalivecountmax /etc/ssh/sshd_config*
 
-ClientAliveInterval 600
-ClientAliveCountMax 1
+     ClientAliveCountMax 1
 
 If "ClientAliveCountMax" do not exist, is not set to a value of "1" in "/etc/ssh/sshd_config", or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure RHEL 8 to automatically terminate all network connections associated with SSH traffic at the end of a session or after 10 minutes of inactivity.
+	<td><pre>Note: This setting must be applied in conjunction with RHEL-08-010201 to function correctly.
+
+Configure the SSH server to terminate a user session automatically after the SSH client has become unresponsive.
 
 Modify or append the following lines in the "/etc/ssh/sshd_config" file:
 
-ClientAliveCountMax 1
+     ClientAliveCountMax 1
 
-In order for the changes to take effect, the SSH daemon must be restarted.
+For the changes to take effect, the SSH daemon must be restarted:
 
-$ sudo systemctl restart sshd.service</pre></td>
+     $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010200</td>
-	<td>SV-230244r858697_rule</td>
+	<td>SV-230244r917867_rule</td>
 </tr>
 
 <tr>
@@ -1056,18 +1060,18 @@ The system will attempt to use the first hash presented by the client that match
 Satisfies: SRG-OS-000250-GPOS-00093, SRG-OS-000393-GPOS-00173, SRG-OS-000394-GPOS-00174, SRG-OS-000125-GPOS-00065</pre></td>
 	<td><pre>Verify the SSH server is configured to use only MACs employing FIPS 140-2-approved algorithms with the following command:
 
-$ sudo grep -i macs /etc/crypto-policies/back-ends/opensshserver.config
+     $ sudo grep -i macs /etc/crypto-policies/back-ends/opensshserver.config
 
--oMACS=hmac-sha2-512,hmac-sha2-256
+     -oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
 
-If the MACs entries in the "opensshserver.config" file have any hashes other than "hmac-sha2-512" and "hmac-sha2-256", the order differs from the example above, they are missing, or commented out, this is a finding.</pre></td>
+If the MACs entries in the "opensshserver.config" file have any hashes other than shown here, the order differs from the example above, or they are missing or commented out, this is a finding.</pre></td>
 	<td><pre>Configure the RHEL 8 SSH server to use only MACs employing FIPS 140-2-approved algorithms by updating the "/etc/crypto-policies/back-ends/opensshserver.config" file with the following line:
 
--oMACS=hmac-sha2-512,hmac-sha2-256
+-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
 
 A reboot is required for the changes to take effect.</pre></td>
 	<td>RHEL-08-010290</td>
-	<td>SV-230251r877394_rule</td>
+	<td>SV-230251r917870_rule</td>
 </tr>
 
 <tr>
@@ -1089,18 +1093,18 @@ The system will attempt to use the first hash presented by the client that match
 Satisfies: SRG-OS-000250-GPOS-00093, SRG-OS-000393-GPOS-00173, SRG-OS-000394-GPOS-00174, SRG-OS-000125-GPOS-00065</pre></td>
 	<td><pre>Verify the SSH server is configured to use only ciphers employing FIPS 140-2-approved algorithms with the following command:
 
-$ sudo grep -i ciphers /etc/crypto-policies/back-ends/opensshserver.config
+     $ sudo grep -i ciphers /etc/crypto-policies/back-ends/opensshserver.config
 
-CRYPTO_POLICY='-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr'
+     CRYPTO_POLICY='-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr,aes256-gcm@openssh.com,aes128-gcm@openssh.com'
 
-If the cipher entries in the "opensshserver.config" file have any ciphers other than "aes256-ctr,aes192-ctr,aes128-ctr", the order differs from the example above, they are missing, or commented out, this is a finding.</pre></td>
+If the cipher entries in the "opensshserver.config" file have any ciphers other than shown here, the order differs from the example above, or they are missing or commented out, this is a finding.</pre></td>
 	<td><pre>Configure the RHEL 8 SSH server to use only ciphers employing FIPS 140-2-approved algorithms by updating the "/etc/crypto-policies/back-ends/opensshserver.config" file with the following line:
 
--oCiphers=aes256-ctr,aes192-ctr,aes128-ctr
+-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr,aes256-gcm@openssh.com,aes128-gcm@openssh.com
 
 A reboot is required for the changes to take effect.</pre></td>
 	<td>RHEL-08-010291</td>
-	<td>SV-230252r877394_rule</td>
+	<td>SV-230252r917873_rule</td>
 </tr>
 
 <tr>
@@ -1421,7 +1425,7 @@ Check the cron directories for scripts controlling the execution and notificatio
      $ sudo more /etc/cron.daily/aide
 
      #!/bin/bash
-     /usr/sbin/aide --check | /var/spool/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil
+     /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
 
 If the file integrity application does not exist, or a script file controlling the execution of the file integrity application does not exist, or the file integrity application does not notify designated personnel of changes, this is a finding.</pre></td>
 	<td><pre>Configure the file integrity tool to run automatically on the system at least weekly and to notify designated personnel if baseline configurations are changed in an unauthorized manner. The AIDE tool can be configured to email designated personnel with the use of the cron system.
@@ -1432,9 +1436,11 @@ The following example output is generic. It will set cron to run AIDE daily and 
 
      #!/bin/bash
 
-     /usr/sbin/aide --check | /var/spool/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil</pre></td>
+     /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
+
+Note: Per requirement RHEL-08-010358, the "mailx" package must be installed on the system to enable email functionality.</pre></td>
 	<td>RHEL-08-010360</td>
-	<td>SV-230263r880708_rule</td>
+	<td>SV-230263r902716_rule</td>
 </tr>
 
 <tr>
@@ -2268,7 +2274,9 @@ $ sudo rm /[path]/[to]/[file]/.shosts</pre></td>
 	<td><pre>The most important characteristic of a random number generator is its randomness, namely its ability to deliver random numbers that are impossible to predict.  Entropy in computer security is associated with the unpredictability of a source of randomness.  The random source with high entropy tends to achieve a uniform distribution of random values.  Random number generators are one of the most important building blocks of cryptosystems.  
 
 The rngd service feeds random data from hardware device to kernel random device. Quality (non-predictable) random number generation is important for several security functions (i.e., ciphers).</pre></td>
-	<td><pre>Check that  RHEL 8 has enabled the hardware random number generator entropy gatherer service.
+	<td><pre>Note: For RHEL versions 8.4 and above running with kernel FIPS mode enabled as specified by RHEL-08-010020, this requirement is not applicable.
+
+Check that  RHEL 8 has enabled the hardware random number generator entropy gatherer service.
 
 Verify the rngd service is enabled and active with the following commands:
 
@@ -2280,14 +2288,14 @@ $ sudo systemctl is-active rngd
 
 active
 
-If the service is not "enable and "active", this is a finding.</pre></td>
-	<td><pre>Start the rngd service, and enable the rngd service with the following commands:
+If the service is not "enabled" and "active", this is a finding.</pre></td>
+	<td><pre>Start the rngd service and enable the rngd service with the following commands:
 
-$ sudo systemctl start rngd.service
+     $ sudo systemctl start rngd.service
 
-$ sudo systemctl enable rngd.service</pre></td>
+     $ sudo systemctl enable rngd.service</pre></td>
 	<td>RHEL-08-010471</td>
-	<td>SV-230285r627750_rule</td>
+	<td>SV-230285r917876_rule</td>
 </tr>
 
 <tr>
@@ -2435,18 +2443,18 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL 8 must use a separate file system for /var.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>The use of separate file systems for different paths can protect the system from failures resulting from a file system becoming full or failing.</pre></td>
-	<td><pre>Verify that a separate file system/partition has been created for "/var".
+	<td><pre>Verify that a separate file system has been created for "/var".
 
-Check that a file system/partition has been created for "/var" with the following command:
+Check that a file system has been created for "/var" with the following command:
 
-$ sudo grep /var /etc/fstab
+     $ sudo grep /var /etc/fstab
 
-UUID=c274f65f /var xfs noatime,nobarrier 1 2
+     /dev/mapper/...   /var   xfs   defaults,nodev 0 0
 
 If a separate entry for "/var" is not in use, this is a finding.</pre></td>
 	<td><pre>Migrate the "/var" path onto a separate file system.</pre></td>
 	<td>RHEL-08-010540</td>
-	<td>SV-230292r627750_rule</td>
+	<td>SV-230292r902718_rule</td>
 </tr>
 
 <tr>
@@ -2456,18 +2464,18 @@ If a separate entry for "/var" is not in use, this is a finding.</pre></td>
 	<td>RHEL 8 must use a separate file system for /var/log.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>The use of separate file systems for different paths can protect the system from failures resulting from a file system becoming full or failing.</pre></td>
-	<td><pre>Verify that a separate file system/partition has been created for "/var/log".
+	<td><pre>Verify that a separate file system has been created for "/var/log".
 
-Check that a file system/partition has been created for "/var/log" with the following command:
+Check that a file system has been created for "/var/log" with the following command:
 
-$ sudo grep /var/log /etc/fstab
+     $ sudo grep /var/log /etc/fstab
 
-UUID=c274f65f /var/log xfs noatime,nobarrier 1 2
+     /dev/mapper/...   /var/log   xfs   defaults,nodev,noexec,nosuid 0 0
 
 If a separate entry for "/var/log" is not in use, this is a finding.</pre></td>
 	<td><pre>Migrate the "/var/log" path onto a separate file system.</pre></td>
 	<td>RHEL-08-010541</td>
-	<td>SV-230293r627750_rule</td>
+	<td>SV-230293r902720_rule</td>
 </tr>
 
 <tr>
@@ -3258,20 +3266,20 @@ CREATE_HOME yes</pre></td>
 
 Note: The example will be for the "smithj" user, who has a home directory of "/home/smithj".
 
-$ sudo ls -al /home/smithj/.[^.]* | more
+     $ sudo ls -al /home/smithj/.[^.]* | more
 
--rwxr-xr-x 1 smithj users 896 Mar 10 2011 .profile
--rwxr-xr-x 1 smithj users 497 Jan 6 2007 .login
--rwxr-xr-x 1 smithj users 886 Jan 6 2007 .something
+     -rw-------. 1 smithj users 2984 Apr 27 19:02 .bash_history
+     -rw-r--r--. 1 smithj users   18 Aug 21  2019 .bash_logout
+     -rw-r--r--. 1 smithj users  193 Aug 21  2019 .bash_profile
 
 If any local initialization files have a mode more permissive than "0740", this is a finding.</pre></td>
 	<td><pre>Set the mode of the local initialization files to "0740" with the following command:
 
 Note: The example will be for the smithj user, who has a home directory of "/home/smithj".
 
-$ sudo chmod 0740 /home/smithj/.<INIT_FILE></pre></td>
+     $ sudo chmod 0740 /home/smithj/.<INIT_FILE></pre></td>
 	<td>RHEL-08-010770</td>
-	<td>SV-230325r627750_rule</td>
+	<td>SV-230325r917879_rule</td>
 </tr>
 
 <tr>
@@ -3327,30 +3335,30 @@ $ sudo chgrp <group> <file></pre></td>
 	<td>A separate RHEL 8 filesystem must be used for user home directories (such as /home or an equivalent).</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>The use of separate file systems for different paths can protect the system from failures resulting from a file system becoming full or failing.</pre></td>
-	<td><pre>Verify that a separate file system/partition has been created for non-privileged local interactive user home directories.
+	<td><pre>Verify that a separate file system has been created for non-privileged local interactive user home directories.
 
 Check the home directory assignment for all non-privileged users, users with a User Identifier (UID) greater than 1000, on the system with the following command:
 
-$ sudo awk -F: '($3>=1000)&&($7 !~ /nologin/){print $1,$3,$6}' /etc/passwd
+     $ sudo awk -F: '($3>=1000)&&($7 !~ /nologin/){print $1,$3,$6}' /etc/passwd
 
-adamsj 1001 /home/adamsj 
-jacksonm 1002 /home/jacksonm 
-smithj 1003 /home/smithj 
+     doej 1001 /home/doej 
+     publicj 1002 /home/publicj 
+     smithj 1003 /home/smithj
 
 The output of the command will give the directory/partition that contains the home directories for the non-privileged users on the system (in this example, "/home") and users’ shell. All accounts with a valid shell (such as /bin/bash) are considered interactive users.
 
-Check that a file system/partition has been created for the non-privileged interactive users with the following command:
+Check that a file system/partition has been created for the nonprivileged interactive users with the following command:
 
 Note: The partition of "/home" is used in the example.
 
-$ sudo grep /home /etc/fstab
+     $ sudo grep /home /etc/fstab
 
-UUID=333ada18 /home ext4 noatime,nobarrier,nodev 1 2
+     /dev/mapper/...   /home   xfs   defaults,noexec,nosuid,nodev 0 0
 
-If a separate entry for the file system/partition containing the non-privileged interactive user home directories does not exist, this is a finding.</pre></td>
-	<td><pre>Migrate the "/home" directory onto a separate file system/partition.</pre></td>
+If a separate entry for the file system/partition containing the nonprivileged interactive user home directories does not exist, this is a finding.</pre></td>
+	<td><pre>Migrate the "/home" directory onto a separate file system.</pre></td>
 	<td>RHEL-08-010800</td>
-	<td>SV-230328r627750_rule</td>
+	<td>SV-230328r902723_rule</td>
 </tr>
 
 <tr>
@@ -4090,7 +4098,7 @@ Tmux is a terminal multiplexer that enables a number of terminals to be created,
 Satisfies: SRG-OS-000028-GPOS-00009, SRG-OS-000030-GPOS-00011</pre></td>
 	<td><pre>Verify the operating system enables the user to manually initiate a session lock with the following command:
 
-     $ sudo grep -Ei lock-command|lock-session /etc/tmux.conf
+     $ sudo grep -Ei 'lock-command|lock-session' /etc/tmux.conf
 
      set -g lock-command vlock
      bind X lock-session
@@ -4107,7 +4115,7 @@ Reload tmux configuration to take effect. This can be performed in tmux while it
 
      $ tmux source-file /etc/tmux.conf</pre></td>
 	<td>RHEL-08-020040</td>
-	<td>SV-230348r880720_rule</td>
+	<td>SV-230348r902725_rule</td>
 </tr>
 
 <tr>
@@ -4116,11 +4124,7 @@ Reload tmux configuration to take effect. This can be performed in tmux while it
 	<td>medium</td>
 	<td>RHEL 8 must ensure session control is automatically started at shell initialization.</td>
 	<td>SRG-OS-000028-GPOS-00009</td>
-	<td><pre>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
-
-The session lock is implemented at the point where session activity can be determined. Rather than be forced to wait for a period of time to expire before the user session can be locked, RHEL 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
-
-Tmux is a terminal multiplexer that enables a number of terminals to be created, accessed, and controlled from a single screen. Red Hat endorses tmux as the recommended session controlling package.
+	<td><pre>Tmux is a terminal multiplexer that enables a number of terminals to be created, accessed, and controlled from a single screen. Red Hat endorses tmux as the recommended session controlling package.
 
 Satisfies: SRG-OS-000028-GPOS-00009, SRG-OS-000030-GPOS-00011</pre></td>
 	<td><pre>Verify the operating system shell initialization file is configured to start each shell with the tmux terminal multiplexer with the following commands:
@@ -4155,7 +4159,7 @@ fi
 
 This setting will take effect at next logon.</pre></td>
 	<td>RHEL-08-020041</td>
-	<td>SV-230349r880737_rule</td>
+	<td>SV-230349r917920_rule</td>
 </tr>
 
 <tr>
@@ -4396,18 +4400,18 @@ RHEL 8 utilizes "pwquality" as a mechanism to enforce password complexity. This 
 
 Check for the use of "pwquality" in the password-auth file with the following command:
 
-$ sudo cat /etc/pam.d/password-auth | grep pam_pwquality
+     $ sudo cat /etc/pam.d/password-auth | grep pam_pwquality
 
-password required pam_pwquality.so 
+     password requisite pam_pwquality.so 
 
-If the command does not return a line containing the value "pam_pwquality.so", or the line is commented out, this is a finding.</pre></td>
+If the command does not return a line containing the value "pam_pwquality.so" as shown, or the line is commented out, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to use "pwquality" to enforce password complexity rules.
 
 Add the following line to the "/etc/pam.d/password-auth" file (or modify the line to have the required value):
 
-password required pam_pwquality.so</pre></td>
+     password requisite pam_pwquality.so</pre></td>
 	<td>RHEL-08-020100</td>
-	<td>SV-230356r809379_rule</td>
+	<td>SV-230356r902728_rule</td>
 </tr>
 
 <tr>
@@ -4723,18 +4727,18 @@ Note that manual changes to the listed files may be overwritten by the "authsele
 
 Check for the value of the "remember" argument in "/etc/pam.d/password-auth" with the following command:
 
-$ sudo grep -i remember /etc/pam.d/password-auth
+     $ sudo grep -i remember /etc/pam.d/password-auth
 
-password required pam_pwhistory.so use_authtok remember=5 retry=3
+     password requisite pam_pwhistory.so use_authtok remember=5 retry=3
 
 If the line containing "pam_pwhistory.so" does not have the "remember" module argument set, is commented out, or the value of the "remember" module argument is set to less than "5", this is a finding.</pre></td>
 	<td><pre>Configure the operating system in the password-auth file to prohibit password reuse for a minimum of five generations.
 
 Add the following line in "/etc/pam.d/password-auth" (or modify the line to have the required value):
 
-password required pam_pwhistory.so use_authtok remember=5 retry=3</pre></td>
+     password requisite pam_pwhistory.so use_authtok remember=5 retry=3</pre></td>
 	<td>RHEL-08-020220</td>
-	<td>SV-230368r810414_rule</td>
+	<td>SV-230368r902759_rule</td>
 </tr>
 
 <tr>
@@ -4910,28 +4914,26 @@ DoD recommendation is 35 days, but a lower value is acceptable. The value "-1" w
 	<td>V-230374</td>
 	<td>CCI-001682</td>
 	<td>medium</td>
-	<td>RHEL 8 emergency accounts must be automatically removed or disabled after the crisis is resolved or within 72 hours.</td>
+	<td>RHEL 8 must automatically expire temporary accounts within 72 hours.</td>
 	<td>SRG-OS-000123-GPOS-00064</td>
-	<td><pre>Emergency accounts are privileged accounts established in response to crisis situations where the need for rapid account activation is required. Therefore, emergency account activation may bypass normal account authorization processes. If these accounts are automatically disabled, system maintenance during emergencies may not be possible, thus adversely affecting system availability.
+	<td><pre>Temporary accounts are privileged or nonprivileged accounts that are established during pressing circumstances, such as new software or hardware configuration or an incident response, where the need for prompt account activation requires bypassing normal account authorization procedures. If any inactive temporary accounts are left enabled on the system and are not either manually removed or automatically expired within 72 hours, the security posture of the system will be degraded and exposed to exploitation by unauthorized users or insider threat actors.
 
-Emergency accounts are different from infrequently used accounts (i.e., local logon accounts used by the organization's system administrators when network or normal logon/access is not available). Infrequently used accounts are not subject to automatic termination dates. Emergency accounts are accounts created in response to crisis situations, usually for use by maintenance personnel. The automatic expiration or disabling time period may be extended as needed until the crisis is resolved; however, it must not be extended indefinitely. A permanent account should be established for privileged users who need long-term maintenance accounts.
+Temporary accounts are different from emergency accounts. Emergency accounts, also known as "last resort" or "break glass" accounts, are local logon accounts enabled on the system for emergency use by authorized system administrators to manage a system when standard logon methods are failing or not available. Emergency accounts are not subject to manual removal or scheduled expiration requirements.
 
-To address access requirements, many RHEL 8 systems can be integrated with enterprise-level authentication/access mechanisms that meet or exceed access control policy requirements.</pre></td>
-	<td><pre>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
+The automatic expiration of temporary accounts may be extended as needed by the circumstances but it must not be extended indefinitely. A documented permanent account should be established for privileged users who need long-term maintenance accounts.</pre></td>
+	<td><pre>Verify temporary accounts have been provisioned with an expiration date of 72 hours.
 
-For every existing emergency account, run the following command to obtain its account expiration information.
+For every existing temporary account, run the following command to obtain its account expiration information:
 
-$ sudo chage -l system_account_name
+     $ sudo chage -l <temporary_account_name> | grep -i "account expires"
 
 Verify each of these accounts has an expiration date set within 72 hours.
-If any emergency accounts have no expiration date set or do not expire within 72 hours, this is a finding.</pre></td>
-	<td><pre>If an emergency account must be created, configure the system to terminate the account after 72 hours with the following command to set an expiration date for the account. Substitute "system_account_name" with the account to be created.
+If any temporary accounts have no expiration date set or do not expire within 72 hours, this is a finding.</pre></td>
+	<td><pre>Configure the operating system to expire temporary accounts after 72 hours with the following command:
 
-$ sudo chage -E `date -d "+3 days" +%Y-%m-%d` system_account_name
-
-The automatic expiration or disabling time period may be extended as needed until the crisis is resolved.</pre></td>
+     $ sudo chage -E $(date -d +3days +%Y-%m-%d) <temporary_account_name></pre></td>
 	<td>RHEL-08-020270</td>
-	<td>SV-230374r627750_rule</td>
+	<td>SV-230374r903129_rule</td>
 </tr>
 
 <tr>
@@ -5547,11 +5549,11 @@ $ sudo stat -c "%a %n" /var/log/audit/audit.log
 600 /var/log/audit/audit.log
 
 If the audit log has a mode more permissive than "0600", this is a finding.</pre></td>
-	<td><pre>Configure the audit log to be protected from unauthorized read access by configuring the log group in the /etc/audit/auditd.conf file:
-
-log_group = root</pre></td>
+	<td><pre>Configure the audit log to be protected from unauthorized read access by setting the correct permissive mode with the following command: 
+ 
+$ sudo chmod 0600 /var/log/audit/audit.log</pre></td>
 	<td>RHEL-08-030070</td>
-	<td>SV-230396r627750_rule</td>
+	<td>SV-230396r902733_rule</td>
 </tr>
 
 <tr>
@@ -7612,20 +7614,24 @@ RELP *.* :omrelp:remotesystemname:2514
 Note that a port number was given as there is no standard port for RELP.
 
 Satisfies: SRG-OS-000342-GPOS-00133, SRG-OS-000479-GPOS-00224</pre></td>
-	<td><pre>Verify the audit system off-loads audit records onto a different system or media from the system being audited with the following command:
+	<td><pre>Verify the audit system offloads audit records onto a different system or media from the system being audited with the following command:
 
-$ sudo grep @@ /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+     $ sudo grep @@ /etc/rsyslog.conf /etc/rsyslog.d/*.conf
 
-/etc/rsyslog.conf:*.* @@[remoteloggingserver]:[port]
+     /etc/rsyslog.conf:*.* @@[logaggregationserver.example.mil]:[port]
 
-If a remote server is not configured, or the line is commented out, ask the System Administrator to indicate how the audit logs are off-loaded to a different system or media. 
+If a remote server is not configured, or the line is commented out, ask the system administrator to indicate how the audit logs are offloaded to a different system or media. 
 
-If there is no evidence that the audit logs are being off-loaded to another system or media, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to off-load audit records onto a different system or media from the system being audited by specifying the remote logging server in "/etc/rsyslog.conf" or "/etc/rsyslog.d/[customfile].conf" with the name or IP address of the log aggregation server.
+If there is no evidence that the audit logs are being offloaded to another system or media, this is a finding.</pre></td>
+	<td><pre>Configure the operating system to offload audit records onto a different system or media from the system being audited by specifying the remote logging server in "/etc/rsyslog.conf" or "/etc/rsyslog.d/[customfile].conf" with the name or IP address of the log aggregation server.
 
-*.* @@[remoteloggingserver]:[port]</pre></td>
+For UDP:
+     *.* @[logaggregationserver.example.mil]:[port]
+
+For TCP: 
+     *.* @@[logaggregationserver.example.mil]:[port]</pre></td>
 	<td>RHEL-08-030690</td>
-	<td>SV-230479r877390_rule</td>
+	<td>SV-230479r917883_rule</td>
 </tr>
 
 <tr>
@@ -9131,13 +9137,13 @@ $ sudo grep -i firewallbackend /etc/firewalld/firewalld.conf
 FirewallBackend=nftables
 
 If the "nftables" is not set as the "firewallbackend" default, this is a finding.</pre></td>
-	<td><pre>Configure "nftables" to be the default "firewallbackend" for "firewalld" by adding or editing the following line in "etc/firewalld/firewalld.conf":
+	<td><pre>Configure "nftables" to be the default "firewallbackend" for "firewalld" by adding or editing the following line in "/etc/firewalld/firewalld.conf":
 
 FirewallBackend=nftables
 
 Establish rate-limiting rules based on organization-defined types of DoS attacks on impacted network interfaces.</pre></td>
 	<td>RHEL-08-040150</td>
-	<td>SV-230525r854066_rule</td>
+	<td>SV-230525r902735_rule</td>
 </tr>
 
 <tr>
@@ -9169,7 +9175,7 @@ If "sshd" does not show a status of "active" and "running", this is a finding.</
 
 $ sudo systemctl enable sshd.service</pre></td>
 	<td>RHEL-08-040160</td>
-	<td>SV-230526r854067_rule</td>
+	<td>SV-230526r916422_rule</td>
 </tr>
 
 <tr>
@@ -10800,37 +10806,39 @@ password sufficient pam_unix.so sha512</pre></td>
 	<td>V-244525</td>
 	<td>CCI-001133</td>
 	<td>medium</td>
-	<td>The RHEL 8 SSH daemon must be configured with a timeout interval.</td>
+	<td>RHEL 8 must be configured so that all network connections associated with SSH traffic are terminated after 10 minutes of becoming unresponsive.</td>
 	<td>SRG-OS-000163-GPOS-00072</td>
-	<td><pre>Terminating an idle SSH session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended. In addition, quickly terminating an idle SSH session will also free up resources committed by the managed network element.
+	<td><pre>Terminating an unresponsive SSH session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended. In addition, quickly terminating an idle SSH session will also free up resources committed by the managed network element.
 
-Terminating network connections associated with communications sessions includes, for example, de-allocating associated TCP/IP address/port pairs at the operating system level and de-allocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean that the operating system terminates all sessions or network access; it only ends the inactive session and releases the resources associated with that session.
+Terminating network connections associated with communications sessions includes, for example, deallocating associated TCP/IP address/port pairs at the operating system level and deallocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean that the operating system terminates all sessions or network access; it only ends the unresponsive session and releases the resources associated with that session.
 
-RHEL 8 utilizes /etc/ssh/sshd_config for configurations of OpenSSH. Within the sshd_config the product of the values of "ClientAliveInterval" and "ClientAliveCountMax" are used to establish the inactivity threshold. The "ClientAliveInterval" is a timeout interval in seconds after which if no data has been received from the client, sshd will send a message through the encrypted channel to request a response from the client. The "ClientAliveCountMax" is the number of client alive messages that may be sent without sshd receiving any messages back from the client. If this threshold is met, sshd will disconnect the client. For more information on these settings and others, refer to the sshd_config man pages.
+RHEL 8 uses /etc/ssh/sshd_config for configurations of OpenSSH. Within the sshd_config, the product of the values of "ClientAliveInterval" and "ClientAliveCountMax" is used to establish the inactivity threshold. The "ClientAliveInterval" is a timeout interval in seconds after which if no data has been received from the client, sshd will send a message through the encrypted channel to request a response from the client. The "ClientAliveCountMax" is the number of client alive messages that may be sent without sshd receiving any messages back from the client. If this threshold is met, sshd will disconnect the client. For more information on these settings and others, refer to the sshd_config man pages.
 
 Satisfies: SRG-OS-000163-GPOS-00072, SRG-OS-000126-GPOS-00066, SRG-OS-000279-GPOS-00109</pre></td>
-	<td><pre>Verify all network connections associated with SSH traffic are automatically terminated at the end of the session or after 10 minutes of inactivity.
+	<td><pre>Verify the SSH server automatically terminates a user session after the SSH client has been unresponsive for 10 minutes.
 
 Check that the "ClientAliveInterval" variable is set to a value of "600" or less by performing the following command:
 
-$ sudo grep -ir clientalive /etc/ssh/sshd_config*
+     $ sudo grep -ir clientaliveinterval /etc/ssh/sshd_config*
 
-ClientAliveInterval 600
-ClientAliveCountMax 1
+     ClientAliveInterval 600
 
-If "ClientAliveInterval" does not exist, does not have a value of "600" or less in "/etc/ssh/sshd_config", or is commented out, this is a finding.
+If "ClientAliveInterval" does not exist, does not have a value of "600" or less in "/etc/ssh/sshd_config" or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure RHEL 8 to automatically terminate all network connections associated with SSH traffic at the end of a session or after 10 minutes of inactivity.
+	<td><pre>Note: This setting must be applied in conjunction with RHEL-08-010200 to function correctly.
+
+Configure the SSH server to terminate a user session automatically after the SSH client has been unresponsive for 10 minutes.
 
 Modify or append the following lines in the "/etc/ssh/sshd_config" file:
 
-ClientAliveInterval 600
+     ClientAliveInterval 600
 
-In order for the changes to take effect, the SSH daemon must be restarted.
+For the changes to take effect, the SSH daemon must be restarted.
 
-$ sudo systemctl restart sshd.service</pre></td>
+     $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010201</td>
-	<td>SV-244525r858699_rule</td>
+	<td>SV-244525r917886_rule</td>
 </tr>
 
 <tr>
@@ -10922,18 +10930,18 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL 8 must use a separate file system for /var/tmp.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>The use of separate file systems for different paths can protect the system from failures resulting from a file system becoming full or failing.</pre></td>
-	<td><pre>Verify that a separate file system/partition has been created for "/var/tmp".
+	<td><pre>Verify that a separate file system has been created for "/var/tmp".
 
-Check that a file system/partition has been created for "/var/tmp" with the following command:
+Check that a file system has been created for "/var/tmp" with the following command:
 
-$ sudo grep /var/tmp /etc/fstab
+     $ sudo grep /var/tmp /etc/fstab
 
-UUID=c274f65f /var/tmp xfs noatime,nobarrier 1 2
+     /dev/mapper/...   /var/tmp   xfs   defaults,nodev,noexec,nosuid 0 0
 
 If a separate entry for "/var/tmp" is not in use, this is a finding.</pre></td>
 	<td><pre>Migrate the "/var/tmp" path onto a separate file system.</pre></td>
 	<td>RHEL-08-010544</td>
-	<td>SV-244529r743836_rule</td>
+	<td>SV-244529r902737_rule</td>
 </tr>
 
 <tr>
@@ -11581,7 +11589,7 @@ If the "SSH server" package is not installed, this is a finding.</pre></td>
 
 $ sudo yum install openssh-server.x86_64</pre></td>
 	<td>RHEL-08-040159</td>
-	<td>SV-244549r854078_rule</td>
+	<td>SV-244549r916422_rule</td>
 </tr>
 
 <tr>
@@ -12257,18 +12265,18 @@ RHEL 8 uses "pwquality" as a mechanism to enforce password complexity. This is s
 
 Check for the use of "pwquality" in the system-auth file with the following command:
 
-$ sudo cat /etc/pam.d/system-auth | grep pam_pwquality
+     $ sudo cat /etc/pam.d/system-auth | grep pam_pwquality
 
-password required pam_pwquality.so
+     password requisite pam_pwquality.so
 
-If the command does not return a line containing the value "pam_pwquality.so", or the line is commented out, this is a finding.</pre></td>
+If the command does not return a line containing the value "pam_pwquality.so" as shown, or the line is commented out, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to use "pwquality" to enforce password complexity rules.
 
-Add the following line to the "/etc/pam.d/system-auth" file(or modify the line to have the required value):
+Add the following line to the "/etc/pam.d/system-auth" file (or modify the line to have the required value):
 
-password required pam_pwquality.so</pre></td>
+     password requisite pam_pwquality.so</pre></td>
 	<td>RHEL-08-020101</td>
-	<td>SV-251713r810407_rule</td>
+	<td>SV-251713r902740_rule</td>
 </tr>
 
 <tr>
@@ -12290,18 +12298,18 @@ Verify the operating system is configured to limit the "pwquality" retry option 
 
 Check for the use of the "pwquality" retry option in the system-auth file with the following command:
 
-$ sudo cat /etc/pam.d/system-auth | grep pam_pwquality
+     $ sudo cat /etc/pam.d/system-auth | grep pam_pwquality
 
-password required pam_pwquality.so retry=3
+     password requisite pam_pwquality.so retry=3
 
 If the value of "retry" is set to "0" or greater than "3", this is a finding.</pre></td>
 	<td><pre>Configure the operating system to limit the "pwquality" retry option to 3.
 
 Add the following line to the "/etc/pam.d/system-auth" file (or modify the line to have the required value):
 
-password required pam_pwquality.so retry=3</pre></td>
+     password requisite pam_pwquality.so retry=3</pre></td>
 	<td>RHEL-08-020102</td>
-	<td>SV-251714r810410_rule</td>
+	<td>SV-251714r902743_rule</td>
 </tr>
 
 <tr>
@@ -12323,18 +12331,18 @@ Verify the operating system is configured to limit the "pwquality" retry option 
 
 Check for the use of the "pwquality" retry option in the password-auth file with the following command:
 
-$ sudo cat /etc/pam.d/password-auth | grep pam_pwquality
+     $ sudo cat /etc/pam.d/password-auth | grep pam_pwquality
 
-password required pam_pwquality.so retry=3
+     password requisite pam_pwquality.so retry=3
 
 If the value of "retry" is set to "0" or greater than "3", this is a finding.</pre></td>
 	<td><pre>Configure the operating system to limit the "pwquality" retry option to 3.
 
 Add the following line to the "/etc/pam.d/password-auth" file (or modify the line to have the required value):
 
-password required pam_pwquality.so retry=3</pre></td>
+     password requisite pam_pwquality.so retry=3</pre></td>
 	<td>RHEL-08-020103</td>
-	<td>SV-251715r810412_rule</td>
+	<td>SV-251715r902746_rule</td>
 </tr>
 
 <tr>
@@ -12396,18 +12404,18 @@ Note that manual changes to the listed files may be overwritten by the "authsele
 
 Check for the value of the "remember" argument in "/etc/pam.d/system-auth" with the following command:
 
-$ sudo grep -i remember /etc/pam.d/system-auth
+     $ sudo grep -i remember /etc/pam.d/system-auth
 
-password required pam_pwhistory.so use_authtok remember=5 retry=3
+     password requisite pam_pwhistory.so use_authtok remember=5 retry=3
 
 If the line containing "pam_pwhistory.so" does not have the "remember" module argument set, is commented out, or the value of the "remember" module argument is set to less than "5", this is a finding.</pre></td>
 	<td><pre>Configure the operating system in the system-auth file to prohibit password reuse for a minimum of five generations.
 
 Add the following line in "/etc/pam.d/system-auth" (or modify the line to have the required value):
 
-password required pam_pwhistory.so use_authtok remember=5 retry=3</pre></td>
+     password requisite pam_pwhistory.so use_authtok remember=5 retry=3</pre></td>
 	<td>RHEL-08-020221</td>
-	<td>SV-251717r858745_rule</td>
+	<td>SV-251717r902749_rule</td>
 </tr>
 
 <tr>
@@ -12507,14 +12515,124 @@ The system will attempt to use the first algorithm presented by the client that 
 
      CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'
 
-If the entries following "KexAlgorithms" have any algorithms defined other than "ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512", appear in different order than shown, are missing, or commented out, this is a finding.</pre></td>
+If the entries following "KexAlgorithms" have any algorithms defined other than "ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512", appear in different order than shown, or are missing or commented out, this is a finding.</pre></td>
 	<td><pre>Configure the SSH server to use only FIPS-validated key exchange algorithms by adding or modifying the following line in "/etc/crypto-policies/back-ends/opensshserver.config":
 
 -oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512
 
 A reboot is required for the changes to take effect.</pre></td>
 	<td>RHEL-08-040342</td>
-	<td>SV-255924r880733_rule</td>
+	<td>SV-255924r917888_rule</td>
+</tr>
+
+<tr>
+	<td>V-256973</td>
+	<td>CCI-001749</td>
+	<td>medium</td>
+	<td>RHEL 8 must ensure cryptographic verification of vendor software packages.</td>
+	<td>SRG-OS-000366-GPOS-00153</td>
+	<td><pre>Cryptographic verification of vendor software packages ensures that all software packages are obtained from a valid source and protects against spoofing that could lead to installation of malware on the system. Red Hat cryptographically signs all software packages, which includes updates, with a GPG key to verify that they are valid.</pre></td>
+	<td><pre>Confirm Red Hat package-signing keys are installed on the system and verify their fingerprints match vendor values.
+
+Note: For RHEL 8 software packages, Red Hat uses GPG keys labeled "release key 2" and "auxiliary key 2". The keys are defined in key file "/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release" by default.
+
+List Red Hat GPG keys installed on the system:
+
+     $ sudo rpm -q --queryformat "%{SUMMARY}\n" gpg-pubkey | grep -i "red hat"
+
+     gpg(Red Hat, Inc. (release key 2) <security@redhat.com>)
+     gpg(Red Hat, Inc. (auxiliary key) <security@redhat.com>)
+
+If Red Hat GPG keys "release key 2" and "auxiliary key 2" are not installed, this is a finding.
+
+Note: The "auxiliary key 2" appears as "auxiliary key" on a RHEL 8 system.
+
+List key fingerprints of installed Red Hat GPG keys:
+
+     $ sudo gpg -q --keyid-format short --with-fingerprint /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+If key file "/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release" is missing, this is a finding.
+
+Example output:
+
+     pub   rsa4096/FD431D51 2009-10-22 [SC]
+           Key fingerprint = 567E 347A D004 4ADE 55BA  8A5F 199E 2F91 FD43 1D51
+     uid                   Red Hat, Inc. (release key 2) <security@redhat.com>
+     pub   rsa4096/D4082792 2018-06-27 [SC]
+           Key fingerprint = 6A6A A7C9 7C88 90AE C6AE  BFE2 F76F 66C3 D408 2792
+     uid                   Red Hat, Inc. (auxiliary key) <security@redhat.com>
+     sub   rsa4096/1B5584D3 2018-06-27 [E]
+	   
+Compare key fingerprints of installed Red Hat GPG keys with fingerprints listed for RHEL 8 on Red Hat "Product Signing Keys" webpage at https://access.redhat.com/security/team/key.
+
+If key fingerprints do not match, this is a finding.</pre></td>
+	<td><pre>Install Red Hat package-signing keys on the system and verify their fingerprints match vendor values.
+
+Insert RHEL 8 installation disc or attach RHEL 8 installation image to the system. Mount the disc or image to make the contents accessible inside the system.
+
+Assuming the mounted location is "/media/cdrom", use the following command to copy Red Hat GPG key file onto the system:
+
+     $ sudo cp /media/cdrom/RPM-GPG-KEY-redhat-release /etc/pki/rpm-gpg/
+	 
+Import Red Hat GPG keys from key file into system keyring:
+
+     $ sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+	 
+Using the steps listed in the Check Text, confirm the newly imported keys show as installed on the system and verify their fingerprints match vendor values.</pre></td>
+	<td>RHEL-08-010019</td>
+	<td>SV-256973r902752_rule</td>
+</tr>
+
+<tr>
+	<td>V-256974</td>
+	<td>CCI-001744</td>
+	<td>medium</td>
+	<td>RHEL 8 must be configured to allow sending email notifications of unauthorized configuration changes to designated personnel.</td>
+	<td>SRG-OS-000363-GPOS-00150</td>
+	<td><pre>Unauthorized changes to the baseline configuration could make the system vulnerable to various attacks or allow unauthorized access to the operating system. Changes to operating system configurations can have unintended side effects, some of which may be relevant to security.
+
+Detecting such changes and providing an automated response can help avoid unintended, negative consequences that could ultimately affect the security state of the operating system. The operating system's IMO/ISSO and SAs must be notified via email and/or monitoring system trap when there is an unauthorized modification of a configuration item.</pre></td>
+	<td><pre>Verify that the operating system is configured to allow sending email notifications.
+
+Note: The "mailx" package provides the "mail" command that is used to send email messages.
+
+Verify that the "mailx" package is installed on the system:
+
+     $ sudo yum list installed mailx
+
+     mailx.x86_64     12.5-29.el8     @rhel-8-for-x86_64-baseos-rpm
+	 
+If "mailx" package is not installed, this is a finding.</pre></td>
+	<td><pre>Install the "mailx" package on the system:
+
+     $ sudo yum install mailx</pre></td>
+	<td>RHEL-08-010358</td>
+	<td>SV-256974r902755_rule</td>
+</tr>
+
+<tr>
+	<td>V-257258</td>
+	<td>CCI-001133</td>
+	<td>medium</td>
+	<td>RHEL 8 must terminate idle user sessions.</td>
+	<td>SRG-OS-000163-GPOS-00072</td>
+	<td><pre>Terminating an idle session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended.</pre></td>
+	<td><pre>Verify that RHEL 8 logs out sessions that are idle for 15 minutes with the following command:
+
+     $ sudo grep -i ^StopIdleSessionSec /etc/systemd/logind.conf
+
+     StopIdleSessionSec=900
+
+If "StopIdleSessionSec" is not configured to "900" seconds, this is a finding.</pre></td>
+	<td><pre>Configure RHEL 8 to log out idle sessions by editing the /etc/systemd/logind.conf file with the following line:
+
+     StopIdleSessionSec=900
+
+The "logind" service must be restarted for the changes to take effect. To restart the "logind" service, run the following command:
+
+     $ sudo systemctl restart systemd-logind</pre></td>
+	<td>RHEL-08-020035</td>
+	<td>SV-257258r917891_rule</td>
 </tr>
 
 </table>

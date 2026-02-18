@@ -2130,26 +2130,6 @@ system events such as failures or warnings.
   <td></td>
 </tr>
 <tr>
-  <td>CA-3(5)<br/>CM-7(b)<br/>SC-7(23)<br/>CM-6(a)</td>
-  <td>N/A</td>
-  <td>Set Default firewalld Zone for Incoming Packets</td>
-  <td xml:lang="en-US">
-To set the default zone to <tt>drop</tt> for
-the built-in default zone which processes incoming IPv4 and IPv6 packets,
-modify the following line in
-<tt>/etc/firewalld/firewalld.conf</tt> to be:
-<pre>DefaultZone=drop</pre>
-  </td>
-  <td xml:lang="en-US">
-In <tt>firewalld</tt> the default zone is applied only after all
-the applicable rules in the table are examined for a match. Setting the
-default zone to <tt>drop</tt> implements proper design for a firewall, i.e.
-any packets which are not explicitly permitted should not be
-accepted.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>IA-4(e)<br/>AC-2(3)<br/>CM-6(a)</td>
   <td>N/A</td>
   <td>Set Account Expiration Following Inactivity</td>
@@ -2517,7 +2497,7 @@ For example:
 Preventing re-use of previous passwords helps ensure that a compromised password is not
 re-used by a user.
   </td>
-  <td>var_password_pam_remember_control_flag=required<br/>var_password_pam_remember=5</td>
+  <td>var_password_pam_remember=5<br/>var_password_pam_remember_control_flag=required</td>
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(e)</td>
@@ -2539,7 +2519,7 @@ For example:
 Preventing re-use of previous passwords helps ensure that a compromised password is not
 re-used by a user.
   </td>
-  <td>var_password_pam_remember_control_flag=required<br/>var_password_pam_remember=5</td>
+  <td>var_password_pam_remember=5<br/>var_password_pam_remember_control_flag=required</td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
@@ -2849,7 +2829,7 @@ default authenticators, then anyone can gather data about the system and the net
 and use the information to potentially compromise the integrity of the system and
 network(s).
   </td>
-  <td>var_snmpd_rw_string=changemerw<br/>var_snmpd_ro_string=changemero</td>
+  <td>var_snmpd_ro_string=changemero<br/>var_snmpd_rw_string=changemerw</td>
 </tr>
 <tr>
   <td>SC-5</td>
@@ -3064,9 +3044,14 @@ is different from account lockout, which is provided by the pam_faillock module.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>deny = &lt;count&gt;</tt>
+Where count should be less than or equal to 
+<tt>3</tt> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -3077,7 +3062,7 @@ By limiting the number of failed logon attempts, the risk of unauthorized system
 user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
 the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_deny=3</td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(b)<br/>IA-5(c)</td>
@@ -3107,13 +3092,21 @@ the account.
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>fail_interval = &lt;interval-in-seconds&gt;</tt> where <tt>interval-in-seconds</tt> is <tt><tt>900</tt></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_fail_interval=900</td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(b)</td>
@@ -3122,6 +3115,12 @@ Limits are imposed by locking the account.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><tt>never</tt></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -3136,7 +3135,7 @@ By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_unlock_time=never</td>
 </tr>
 <tr>
   <td>CM-6(a)</td>
@@ -3619,7 +3618,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br /><br />
 Once the superuser account has been added,
 update the
@@ -3799,6 +3798,66 @@ any NFS mounts.
   <td xml:lang="en-US">
 NFS mounts should not present suid binaries to users. Only vendor-supplied suid executables
 should be installed to their default location on the local filesystem.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6 b<br/>CM-6.1(iv)</td>
+  <td>N/A</td>
+  <td>Grant Or Deny System Access To Specific Hosts And Services</td>
+  <td xml:lang="en-US">
+To verify the system's access control program is configured
+to grant or deny system access to specific hosts check to see
+if "firewalld" is active with the following command:
+
+<pre># systemctl status firewalld
+firewalld.service - firewalld - dynamic firewall daemon
+Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled)
+Active: active (running) since Sun 2014-04-20 14:06:46 BST; 30s ago</pre>
+
+If "firewalld" is active, check to see if it is configured to grant or deny
+access to specific hosts or services with the following commands:
+
+<pre># firewall-cmd --get-default-zone
+public
+
+# firewall-cmd --list-all --zone=public
+public (active)
+target: default
+icmp-block-inversion: no
+interfaces: eth0
+sources:
+services: mdns ssh
+ports:
+protocols:
+masquerade: no
+forward-ports:
+icmp-blocks:</pre>
+
+If "firewalld" is not active, determine whether "tcpwrappers" is being used by checking
+whether the "hosts.allow" and "hosts.deny" files are empty with the following commands:
+
+<pre># ls -al /etc/hosts.allow
+rw-r----- 1 root root 9 Aug 2 23:13 /etc/hosts.allow
+
+# ls -al /etc/hosts.deny
+-rw-r----- 1 root root 9 Apr 9 2007 /etc/hosts.deny</pre>
+
+If "firewalld" and "tcpwrappers" are not installed, configured, and active,
+ask the SA if another access control program (such as iptables) is installed
+and active.
+
+Ask the SA to show that the running configuration grants or denies access
+to specific hosts or services.
+
+If "firewalld" is active and is not configured to grant access to specific
+hosts or "tcpwrappers" is not configured to grant or deny access to
+specific hosts, this is a finding.
+  </td>
+  <td xml:lang="en-US">
+If the systems access control program is not configured with appropriate
+rules for allowing and denying access to system network resources,
+services may be accessible to unauthorized hosts.
   </td>
   <td></td>
 </tr>
@@ -6177,7 +6236,7 @@ must be documented with the Information System Security Officer (ISSO).
   <td>N/A</td>
   <td>All Interactive Users Home Directories Must Exist</td>
   <td xml:lang="en-US">
-Create home directories to all interactive users that currently do not
+Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <tt>/etc/passwd</tt>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
@@ -6510,18 +6569,15 @@ configured to use removable media as the boot loader.
   <td>N/A</td>
   <td>Remove Host-Based Authentication Files</td>
   <td xml:lang="en-US">
-The <tt>shosts.equiv</tt> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+The <tt>shosts.equiv</tt> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
   </td>
   <td xml:lang="en-US">
-The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.
+The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.
   </td>
   <td></td>
 </tr>
