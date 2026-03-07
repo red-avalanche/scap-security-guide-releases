@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>369</td>
+			<td>366</td>
 			<td>0</td>
-			<td>369</td>
+			<td>366</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -155,40 +155,56 @@ If the operating system is in non-compliance with the Information Assurance Vuln
 	<td>V-230223</td>
 	<td>CCI-000068</td>
 	<td>high</td>
-	<td>RHEL 8 must implement NIST FIPS-validated cryptography for the following: To provision digital signatures, to generate cryptographic hashes, and to protect data requiring data-at-rest protections in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards.</td>
+	<td>RHEL 8 must implement a FIPS 140-3-compliant systemwide cryptographic policy.</td>
 	<td>SRG-OS-000033-GPOS-00014</td>
-	<td><pre>Use of weak or untested encryption algorithms undermines the purposes of using encryption to protect data. The operating system must implement cryptographic modules adhering to the higher standards approved by the federal government since this provides assurance they have been tested and validated.
+	<td><pre>Centralized cryptographic policies simplify applying secure ciphers across an operating system and the applications that run on that operating system. Use of weak or untested encryption algorithms undermines the purposes of using encryption to protect data.
 
-RHEL 8 utilizes GRUB 2 as the default bootloader. Note that GRUB 2 command-line parameters are defined in the "kernelopts" variable of the /boot/grub2/grubenv file for all kernel boot entries. The command "fips-mode-setup" modifies the "kernelopts" variable, which in turn updates all kernel boot entries. 
-
-The fips=1 kernel option needs to be added to the kernel command line during system installation so that key generation is done with FIPS-approved algorithms and continuous monitoring tests in place. Users must also ensure the system has plenty of entropy during the installation process by moving the mouse around, or if no mouse is available, ensuring that many keystrokes are typed. The recommended amount of keystrokes is 256 and more. Less than 256 keystrokes may generate a nonunique key.
-
-Satisfies: SRG-OS-000033-GPOS-00014, SRG-OS-000125-GPOS-00065, SRG-OS-000396-GPOS-00176, SRG-OS-000423-GPOS-00187, SRG-OS-000478-GPOS-00223</pre></td>
-	<td><pre>Verify the operating system implements DOD-approved encryption to protect the confidentiality of remote access sessions.
-
-Show the configured systemwide cryptographic policy by running the following command:
+Satisfies: SRG-OS-000033-GPOS-00014, SRG-OS-000125-GPOS-00065, SRG-OS-000396-GPOS-00176, SRG-OS-000423-GPOS-00187, SRG-OS-000478-GPOS-00223, SRG-OS-000393-GPOS-00173, SRG-OS-000394-GPOS-00174</pre></td>
+	<td><pre>Verify RHEL 8 is set to use a FIPS 140-3-compliant systemwide cryptographic policy with the following command:
 
 $ sudo update-crypto-policies --show
-FIPS
 
-If the main policy name is not "FIPS", this is a finding.
+FIPS:STIG
 
-If the AD-SUPPORT subpolicy module is included (e.g., "FIPS:AD-SUPPORT"), and Active Directory support is not documented as an operational requirement with the information system security officer (ISSO), this is a finding.
+If the systemwide crypto policy is not set to "FIPS", this is a finding.
 
-If the NO-ENFORCE-EMS subpolicy module is included (e.g., "FIPS:NO-ENFORCE-EMS"), and not enforcing EMS is not documented as an operational requirement with the ISSO, this is a finding.
+Note: If subpolicies have been configured, they could be listed in a colon-separated list starting with "FIPS" as follows FIPS:<SUBPOLICY-NAME>. This is not a finding.
 
-If any other subpolicy module is included, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to implement DOD-approved encryption by following the steps below:
+Note: Subpolicies like AD-SUPPORT must be configured according to the latest guidance from the operating system vendor.
 
-To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot parameters during system installation so key generation is done with FIPS-approved algorithms and continuous monitoring tests in place.
+Verify the current minimum crypto-policy configuration with the following commands:
 
-Enable FIPS mode after installation (not strict FIPS-compliant) with the following command:
+$ sudo grep -E 'rsa_size|hash' /etc/crypto-policies/state/CURRENT.pol
 
-     $ sudo fips-mode-setup --enable
+hash = SHA2-256 SHA2-384 SHA2-512 SHA2-224 SHA3-256 SHA3-384 SHA3-512
+min_rsa_size = 2048
 
-Reboot the system for the changes to take effect.</pre></td>
+If the "hash" values do not include at least the following FIPS 140-3-compliant algorithms "SHA2-256 SHA2-384 SHA2-512 SHA2-224 SHA3-256 SHA3-384 SHA3-512", this is a finding.
+
+If there are algorithms that include "SHA1" or a hash value less than "224" this is a finding.
+
+If the "min_rsa_size" is not set to a value of at least "2048", this is a finding.
+
+If these commands do not return any output, this is a finding.</pre></td>
+	<td><pre>Configure RHEL 8 to use a FIPS 140-3-compliant systemwide cryptographic policy.
+
+Create a subpolicy for enhancements to the base systemwide crypto-policy by creating the file /etc/crypto-policies/policies/modules/STIG.pmod with the following content:
+
+# Define ciphers and MACs for OpenSSH and libssh
+cipher@SSH=AES-256-GCM AES-256-CTR AES-128-GCM AES-128-CTR
+mac@SSH=HMAC-SHA2-512 HMAC-SHA2-256
+
+Apply the policy enhancements to the FIPS systemwide cryptographic policy level with the following command:
+
+$ sudo update-crypto-policies --set FIPS:STIG
+
+Note: If additional subpolicies are being employed, they must be added to the update-crypto-policies command.
+
+To make the cryptographic settings effective for already running services and applications, restart the system:
+
+$ sudo reboot</pre></td>
 	<td>RHEL-08-010020</td>
-	<td>SV-230223r1069327_rule</td>
+	<td>SV-230223r1155356_rule</td>
 </tr>
 
 <tr>
@@ -639,7 +655,7 @@ $ sudo grub2-setpassword
 Enter password:
 Confirm password:</pre></td>
 	<td>RHEL-08-010140</td>
-	<td>SV-230234r1017053_rule</td>
+	<td>SV-230234r1137691_rule</td>
 </tr>
 
 <tr>
@@ -666,7 +682,7 @@ $ sudo grub2-setpassword
 Enter password:
 Confirm password:</pre></td>
 	<td>RHEL-08-010150</td>
-	<td>SV-230235r1017054_rule</td>
+	<td>SV-230235r1137691_rule</td>
 </tr>
 
 <tr>
@@ -687,7 +703,7 @@ If the "ExecStart" line is configured for anything other than "/usr/lib/systemd/
 
 ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue</pre></td>
 	<td>RHEL-08-010151</td>
-	<td>SV-230236r1017055_rule</td>
+	<td>SV-230236r1137691_rule</td>
 </tr>
 
 <tr>
@@ -855,7 +871,7 @@ Set the sticky bit on all world-writable directories using the command, replace 
 
 $ sudo chmod 1777 [World-Writable Directory]</pre></td>
 	<td>RHEL-08-010190</td>
-	<td>SV-230243r1069294_rule</td>
+	<td>SV-230243r1137695_rule</td>
 </tr>
 
 <tr>
@@ -1039,7 +1055,7 @@ $ sudo chgrp root /var/log</pre></td>
 	<td>V-230251</td>
 	<td>CCI-001453</td>
 	<td>medium</td>
-	<td>The RHEL 8 SSH server must be configured to use only Message Authentication Codes (MACs) employing FIPS 140-3 validated cryptographic hash algorithms.</td>
+	<td>The RHEL 8 SSH server must be configured to use only Message Authentication Codes (MACs) employing FIPS 140-3-validated cryptographic hash algorithms to protect the confidentiality of SSH server connections.</td>
 	<td>SRG-OS-000250-GPOS-00093</td>
 	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
 
@@ -1049,33 +1065,38 @@ Cryptographic mechanisms used for protecting the integrity of information includ
 
 RHEL 8 incorporates systemwide crypto policies by default. The SSH configuration file has no effect on the ciphers, MACs, or algorithms unless specifically defined in the /etc/sysconfig/sshd file. The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/opensshserver.config file.
 
-The system will attempt to use the first hash presented by the client that matches the server list. Listing the values "strongest to weakest" is a method to ensure the use of the strongest hash available to secure the SSH connection.
-
 Satisfies: SRG-OS-000250-GPOS-00093, SRG-OS-000393-GPOS-00173, SRG-OS-000394-GPOS-00174, SRG-OS-000125-GPOS-00065</pre></td>
-	<td><pre>Verify the RHEL 8 SSH server is configured to use only MACs employing FIPS 140-3 approved algorithms.
+	<td><pre>Verify the RHEL 8 SSH server is configured to use only MACs employing FIPS 140-3-approved algorithms.
 
 To verify the MACs in the systemwide SSH configuration file, use the following command:
 
-$ sudo grep -i macs /etc/crypto-policies/back-ends/opensshserver.config
+$ sudo grep -i MACs /etc/crypto-policies/back-ends/opensshserver.config
+
 -oMACs=hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256
 
-If the MACs entries in the "opensshserver.config" file have any hashes other than "hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256", the order differs from the example above, or they are missing or commented out, this is a finding.</pre></td>
-	<td><pre>Configure the RHEL 8 SSH server to use only MACs employing FIPS 140-3 approved algorithms by updating the "/etc/crypto-policies/back-ends/opensshserver.config" file with the following commands.
+If the MACs entries in the "opensshserver.config" file have any hashes other than "hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256", or they are missing or commented out, this is a finding.</pre></td>
+	<td><pre>Configure the RHEL 8 SSH server to use only MACs employing FIPS 140-3-approved algorithms.
 
-To manually update the MACs in the systemwide SSH configuration, use the following command:
+Reinstall crypto-policies with the following command:
 
-$ sudo sed -i -E 's/(-oMACs=)[^ ]*/\1hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256/' "$(readlink -f /etc/crypto-policies/back-ends/opensshserver.config)"
+$ sudo dnf -y reinstall crypto-policies
 
-A reboot is required for the changes to take effect.</pre></td>
+Set the crypto-policy to FIPS with the following command:
+
+$ sudo update-crypto-policies --set FIPS
+
+Setting system policy to FIPS
+
+Note: Systemwide crypto policies are applied on application startup. It is recommended to restart the system for the change of policies to fully take place.</pre></td>
 	<td>RHEL-08-010290</td>
-	<td>SV-230251r1044814_rule</td>
+	<td>SV-230251r1155370_rule</td>
 </tr>
 
 <tr>
 	<td>V-230252</td>
 	<td>CCI-001453</td>
 	<td>medium</td>
-	<td>The RHEL 8 operating system must implement DOD-approved encryption to protect the confidentiality of SSH server connections.</td>
+	<td>The RHEL 8 SSH server must be configured to use only DOD-approved encryption ciphers employing FIPS 140-3-validated cryptographic hash algorithms to protect the confidentiality of SSH server connections.</td>
 	<td>SRG-OS-000250-GPOS-00093</td>
 	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
 
@@ -1085,26 +1106,30 @@ Cryptographic mechanisms used for protecting the integrity of information includ
 
 RHEL 8 incorporates systemwide crypto policies by default. The SSH configuration file has no effect on the ciphers, MACs, or algorithms unless specifically defined in the /etc/sysconfig/sshd file. The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/opensshserver.config file.
 
-The system will attempt to use the first hash presented by the client that matches the server list. Listing the values "strongest to weakest" is a method to ensure the use of the strongest hash available to secure the SSH connection.
-
 Satisfies: SRG-OS-000250-GPOS-00093, SRG-OS-000393-GPOS-00173, SRG-OS-000394-GPOS-00174, SRG-OS-000125-GPOS-00065</pre></td>
-	<td><pre>Verify the SSH server is configured to use only ciphers employing FIPS 140-3 approved algorithms.
+	<td><pre>Verify the RHEL 8 SSH server is configured to use only ciphers employing FIPS 140-3-approved algorithms.
 
 To verify the ciphers in the systemwide SSH configuration file, use the following command:
 
-$ sudo grep -i ciphers /etc/crypto-policies/back-ends/opensshserver.config 
--oCiphers=aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes128-ctr
+$ sudo grep -i Ciphers /etc/crypto-policies/back-ends/opensshserver.config 
+CRYPTO_POLICY='-oCiphers=aes256-gcm@openssh.com,aes256-ctr,aes128-gcm@openssh.com,aes128-ctr
 
-If the ciphers entries in the "opensshserver.config" file have any hashes other than "aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes128-ctr", the order differs from the example above, or they are missing or commented out, this is a finding.</pre></td>
-	<td><pre>Configure the RHEL 8 SSH server to use only ciphers employing FIPS 140-3 approved algorithms by updating the "/etc/crypto-policies/back-ends/opensshserver.config" file with the following commands.
+If the cipher entries in the "opensshserver.config" file have any ciphers other than "aes256-gcm@openssh.com,aes256-ctr,aes128-gcm@openssh.com,aes128-ctr", or they are missing or commented out, this is a finding.</pre></td>
+	<td><pre>Configure the RHEL 8 SSH server to use only ciphers employing FIPS 140-3-approved algorithms.
 
-To manually update the ciphers in the systemwide SSH configuration, use the following command:
+Reinstall crypto-policies with the following command:
 
-$ sudo sed -i -E 's/(-oCiphers=)[^ ]*/\1aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes128-ctr/' "$(readlink -f /etc/crypto-policies/back-ends/opensshserver.config)"
+$ sudo dnf -y reinstall crypto-policies
 
-A reboot is required for the changes to take effect.</pre></td>
+Set the crypto-policy to FIPS with the following command:
+
+$ sudo update-crypto-policies --set FIPS
+
+Setting system policy to FIPS
+
+Note: Systemwide crypto policies are applied on application startup. It is recommended to restart the system for the change of policies to fully take place.</pre></td>
 	<td>RHEL-08-010291</td>
-	<td>SV-230252r1067104_rule</td>
+	<td>SV-230252r1155364_rule</td>
 </tr>
 
 <tr>
@@ -1138,124 +1163,6 @@ Restart the SSH Daemon with the following command:
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010292</td>
 	<td>SV-230253r1044799_rule</td>
-</tr>
-
-<tr>
-	<td>V-230254</td>
-	<td>CCI-001453</td>
-	<td>medium</td>
-	<td>The RHEL 8 operating system must implement DoD-approved encryption in the OpenSSL package.</td>
-	<td>SRG-OS-000250-GPOS-00093</td>
-	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
-
-Remote access (e.g., RDP) is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
-
-Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.
-
-RHEL 8 incorporates system-wide crypto policies by default.  The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/openssl.config file.
-
-Satisfies: SRG-OS-000250-GPOS-00093, SRG-OS-000393-GPOS-00173, SRG-OS-000394-GPOS-00174, SRG-OS-000125-GPOS-00065</pre></td>
-	<td><pre>Verify the OpenSSL library is configured to use only ciphers employing FIPS 140-2-approved algorithms:
-
-Verify that system-wide crypto policies are in effect:
-
-$ sudo grep -i opensslcnf.config /etc/pki/tls/openssl.cnf
-
-.include /etc/crypto-policies/back-ends/opensslcnf.config
-
-If the "opensslcnf.config" is not defined in the "/etc/pki/tls/openssl.cnf" file, this is a finding.
-
-Verify which system-wide crypto policy is in use:
-
-$ sudo update-crypto-policies --show
-
-FIPS
-
-If the system-wide crypto policy is set to anything other than "FIPS", this is a finding.</pre></td>
-	<td><pre>Configure the RHEL 8 OpenSSL library to use only ciphers employing FIPS 140-2-approved algorithms with the following command:
-
-$ sudo fips-mode-setup --enable
-
-A reboot is required for the changes to take effect.</pre></td>
-	<td>RHEL-08-010293</td>
-	<td>SV-230254r1017072_rule</td>
-</tr>
-
-<tr>
-	<td>V-230255</td>
-	<td>CCI-001453</td>
-	<td>medium</td>
-	<td>The RHEL 8 operating system must implement DoD-approved TLS encryption in the OpenSSL package.</td>
-	<td>SRG-OS-000250-GPOS-00093</td>
-	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
-
-Remote access (e.g., RDP) is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
-
-Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.
-
-RHEL 8 incorporates system-wide crypto policies by default.  The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/openssl.config file.
-
-Satisfies: SRG-OS-000250-GPOS-00093, SRG-OS-000393-GPOS-00173, SRG-OS-000394-GPOS-00174, SRG-OS-000125-GPOS-00065</pre></td>
-	<td><pre>Verify the OpenSSL library is configured to use only DoD-approved TLS encryption:
-
-For versions prior to crypto-policies-20210617-1.gitc776d3e.el8.noarch:
-
-$ sudo grep -i  MinProtocol /etc/crypto-policies/back-ends/opensslcnf.config
-
-MinProtocol = TLSv1.2
-
-If the "MinProtocol" is set to anything older than "TLSv1.2", this is a finding.
-
-For version crypto-policies-20210617-1.gitc776d3e.el8.noarch and newer:
-
-$ sudo grep -i  MinProtocol /etc/crypto-policies/back-ends/opensslcnf.config
-
-TLS.MinProtocol = TLSv1.2
-DTLS.MinProtocol = DTLSv1.2
-
-If the "TLS.MinProtocol" is set to anything older than "TLSv1.2" or the "DTLS.MinProtocol" is set to anything older than DTLSv1.2, this is a finding.</pre></td>
-	<td><pre>Configure the RHEL 8 OpenSSL library to use only DoD-approved TLS encryption by editing the following line in the "/etc/crypto-policies/back-ends/opensslcnf.config" file:
-
-For versions prior to crypto-policies-20210617-1.gitc776d3e.el8.noarch:
-MinProtocol = TLSv1.2
-
-For version crypto-policies-20210617-1.gitc776d3e.el8.noarch and newer:
-TLS.MinProtocol = TLSv1.2
-DTLS.MinProtocol = DTLSv1.2
-A reboot is required for the changes to take effect.</pre></td>
-	<td>RHEL-08-010294</td>
-	<td>SV-230255r1017075_rule</td>
-</tr>
-
-<tr>
-	<td>V-230256</td>
-	<td>CCI-001453</td>
-	<td>medium</td>
-	<td>The RHEL 8 operating system must implement DoD-approved TLS encryption in the GnuTLS package.</td>
-	<td>SRG-OS-000250-GPOS-00093</td>
-	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
-
-Transport Layer Security (TLS) encryption is a required security setting as a number of known vulnerabilities have been reported against Secure Sockets Layer (SSL) and earlier versions of TLS. Encryption of private information is essential to ensuring data confidentiality. If private information is not encrypted, it can be intercepted and easily read by an unauthorized party. SQL Server must use a minimum of FIPS 140-2-approved TLS version 1.2, and all non-FIPS-approved SSL and TLS versions must be disabled. NIST SP 800-52 specifies the preferred configurations for government systems.
-
-Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.
-
-The GnuTLS library offers an API to access secure communications protocols.  SSLv2 is not available in the GnuTLS library.  The RHEL 8 system-wide crypto policy defines employed algorithms in the /etc/crypto-policies/back-ends/gnutls.config file.
-
-Satisfies: SRG-OS-000250-GPOS-00093, SRG-OS-000423-GPOS-00187</pre></td>
-	<td><pre>Verify the GnuTLS library is configured to only allow DoD-approved SSL/TLS Versions:
-
-$ sudo grep -io +vers.*  /etc/crypto-policies/back-ends/gnutls.config
-
-+VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0:+COMP-NULL:%PROFILE_MEDIUM
-
-If the "gnutls.config" does not list "-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0" to disable unapproved SSL/TLS versions, this is a finding.</pre></td>
-	<td><pre>Configure the RHEL 8 GnuTLS library to use only DoD-approved encryption by adding the following line to "/etc/crypto-policies/back-ends/gnutls.config":
-
-+VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0
-
-A reboot is required for the changes to take effect.</pre></td>
-	<td>RHEL-08-010295</td>
-	<td>SV-230256r1017076_rule</td>
 </tr>
 
 <tr>
@@ -1375,7 +1282,7 @@ $ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -
 	<td>V-230262</td>
 	<td>CCI-001499</td>
 	<td>medium</td>
-	<td>RHEL 8 library files must be group-owned by root or a system account.</td>
+	<td>RHEL 8 library files must be group-owned by root.</td>
 	<td>SRG-OS-000259-GPOS-00100</td>
 	<td><pre>If RHEL 8 were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
@@ -1389,7 +1296,7 @@ If any output is returned, this is a finding.</pre></td>
 
 $ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec chown :root {} +</pre></td>
 	<td>RHEL-08-010350</td>
-	<td>SV-230262r1101894_rule</td>
+	<td>SV-230262r1155384_rule</td>
 </tr>
 
 <tr>
@@ -1743,7 +1650,7 @@ Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-010375</td>
-	<td>SV-230269r1017087_rule</td>
+	<td>SV-230269r1137695_rule</td>
 </tr>
 
 <tr>
@@ -1804,7 +1711,7 @@ Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-010376</td>
-	<td>SV-230270r1017088_rule</td>
+	<td>SV-230270r1137695_rule</td>
 </tr>
 
 <tr>
@@ -2635,15 +2542,17 @@ If the /boot file system does not have the "nosuid" option set, this is a findin
 	<td>medium</td>
 	<td>RHEL 8 must prevent special devices on non-root local partitions.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>The "nodev" mount option causes the system to not interpret character or block special devices. Executing character or block special devices from untrusted file systems increases the opportunity for unprivileged users to attain unauthorized administrative access.  The only legitimate location for device files is the /dev directory located on the root partition.</pre></td>
-	<td><pre>Verify all non-root local partitions are mounted with the "nodev" option with the following command:
+	<td><pre>The "nodev" mount option causes the system to not interpret character or block special devices. Executing character or block special devices from untrusted file systems increases the opportunity for nonprivileged users to attain unauthorized administrative access. The only legitimate location for device files is the /dev directory located on the root partition.</pre></td>
+	<td><pre>Note: This control is not applicable to vfat file systems.
+
+Verify all non-root local partitions are mounted with the "nodev" option with the following command:
 
 $ sudo mount | grep '^/dev\S* on /\S' | grep --invert-match 'nodev'
 
 If any output is produced, this is a finding.</pre></td>
 	<td><pre>Configure the "/etc/fstab" to use the "nodev" option on all non-root local partitions.</pre></td>
 	<td>RHEL-08-010580</td>
-	<td>SV-230301r1017111_rule</td>
+	<td>SV-230301r1155405_rule</td>
 </tr>
 
 <tr>
@@ -2740,7 +2649,9 @@ If a file system found in "/etc/fstab" refers to removable media and it does not
 	<td>RHEL 8 must prevent code from being executed on file systems that are imported via Network File System (NFS).</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>The "noexec" mount option causes the system not to execute binary files. This option must be used for mounting any file system not containing approved binary as they may be incompatible. Executing files from untrusted file systems increases the opportunity for unprivileged users to attain unauthorized administrative access.</pre></td>
-	<td><pre>Verify that  file systems being imported via NFS are mounted with the "noexec" option with the following command:
+	<td><pre>Note: If no NFS mounts are configured, this requirement is Not Applicable.
+
+Verify file systems being imported via NFS are mounted with the "noexec" option with the following command:
 
 $ sudo grep nfs /etc/fstab | grep noexec
 
@@ -2749,7 +2660,7 @@ UUID=e06097bb-cfcd-437b-9e4d-a691f5662a7d /store nfs rw,nosuid,nodev,noexec 0 0
 If a file system found in "/etc/fstab" refers to NFS and it does not have the "noexec" option set, this is a finding.</pre></td>
 	<td><pre>Configure the "/etc/fstab" to use the "noexec" option on file systems that are being imported via NFS.</pre></td>
 	<td>RHEL-08-010630</td>
-	<td>SV-230306r1017116_rule</td>
+	<td>SV-230306r1155386_rule</td>
 </tr>
 
 <tr>
@@ -2759,7 +2670,9 @@ If a file system found in "/etc/fstab" refers to NFS and it does not have the "n
 	<td>RHEL 8 must prevent special devices on file systems that are imported via Network File System (NFS).</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>The "nodev" mount option causes the system to not interpret character or block special devices. Executing character or block special devices from untrusted file systems increases the opportunity for unprivileged users to attain unauthorized administrative access.</pre></td>
-	<td><pre>Verify file systems that are being NFS-imported are mounted with the "nodev" option with the following command:
+	<td><pre>Note: If no NFS mounts are configured, this requirement is Not Applicable.
+
+Verify file systems that are being NFS-imported are mounted with the "nodev" option with the following command:
 
 $ sudo grep nfs /etc/fstab | grep nodev
 
@@ -2768,7 +2681,7 @@ UUID=e06097bb-cfcd-437b-9e4d-a691f5662a7d /store nfs rw,nosuid,nodev,noexec 0 0
 If a file system found in "/etc/fstab" refers to NFS and it does not have the "nodev" option set, this is a finding.</pre></td>
 	<td><pre>Configure the "/etc/fstab" to use the "nodev" option on file systems that are being imported via NFS.</pre></td>
 	<td>RHEL-08-010640</td>
-	<td>SV-230307r1017117_rule</td>
+	<td>SV-230307r1155388_rule</td>
 </tr>
 
 <tr>
@@ -2778,7 +2691,9 @@ If a file system found in "/etc/fstab" refers to NFS and it does not have the "n
 	<td>RHEL 8 must prevent files with the setuid and setgid bit set from being executed on file systems that are imported via Network File System (NFS).</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>The "nosuid" mount option causes the system not to execute "setuid" and "setgid" files with owner privileges. This option must be used for mounting any file system not containing approved "setuid" and "setguid" files. Executing files from untrusted file systems increases the opportunity for unprivileged users to attain unauthorized administrative access.</pre></td>
-	<td><pre>Verify that file systems being imported via NFS are mounted with the "nosuid" option with the following command:
+	<td><pre>Note: If no NFS mounts are configured, this requirement is Not Applicable.
+
+Verify file systems being imported via NFS are mounted with the "nosuid" option with the following command:
 
 $ sudo grep nfs /etc/fstab | grep nosuid
 
@@ -2787,36 +2702,7 @@ UUID=e06097bb-cfcd-437b-9e4d-a691f5662a7d /store nfs rw,nosuid,nodev,noexec 0 0
 If a file system found in "/etc/fstab" refers to NFS and it does not have the "nosuid" option set, this is a finding.</pre></td>
 	<td><pre>Configure the "/etc/fstab" to use the "nosuid" option on file systems that are being imported via NFS.</pre></td>
 	<td>RHEL-08-010650</td>
-	<td>SV-230308r1017118_rule</td>
-</tr>
-
-<tr>
-	<td>V-230309</td>
-	<td>CCI-000366</td>
-	<td>medium</td>
-	<td>Local RHEL 8 initialization files must not execute world-writable programs.</td>
-	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>If user start-up files execute world-writable programs, especially in unprotected directories, they could be maliciously modified to destroy user files or otherwise compromise the system at the user level. If the system is compromised at the user level, it is easier to elevate privileges to eventually compromise the system at the root and network level.</pre></td>
-	<td><pre>Verify that local initialization files do not execute world-writable programs.
-
-Check the system for world-writable files.
-
-The following command will discover and print world-writable files. Run it once for each local partition [PART]: 
-
-$ sudo find [PART] -xdev -type f -perm -0002 -print
-
-For all files listed, check for their presence in the local initialization files with the following commands:
-
-Note: The example will be for a system that is configured to create user home directories in the "/home" directory.
-
-$ sudo grep <file> /home/*/.*
-
-If any local initialization files are found to reference world-writable files, this is a finding.</pre></td>
-	<td><pre>Set the mode on files being executed by the local initialization files with the following command:
-
-$ sudo chmod 0755 <file></pre></td>
-	<td>RHEL-08-010660</td>
-	<td>SV-230309r1017119_rule</td>
+	<td>SV-230308r1155390_rule</td>
 </tr>
 
 <tr>
@@ -2828,16 +2714,15 @@ $ sudo chmod 0755 <file></pre></td>
 	<td><pre>Kernel core dumps may contain the full contents of system memory at the time of the crash. Kernel core dumps may consume a considerable amount of disk space and may result in denial of service by exhausting the available space on the target file system partition.
 
 RHEL 8 installation media presents the option to enable or disable the kdump service at the time of system installation.</pre></td>
-	<td><pre>Verify that kernel core dumps are disabled unless needed with the following command:
+	<td><pre>Verify RHEL 8 kernel core dumps are disabled unless needed with the following command:
 
 $ sudo systemctl status kdump.service
 
-kdump.service - Crash recovery kernel arming
-Loaded: loaded (/usr/lib/systemd/system/kdump.service; enabled; vendor preset: enabled)
-Active: active (exited) since Mon 2020-05-04 16:08:09 EDT; 3min ago
-Main PID: 1130 (code=exited, status=0/SUCCESS)
+o kdump.service - Crash recovery kernel arming
+   Loaded: loaded (/usr/lib/systemd/system/kdump.service; disabled; vendor preset: enabled)
+   Active: inactive (dead)
 
-If the "kdump" service is active, ask the System Administrator if the use of the service is required and documented with the Information System Security Officer (ISSO).
+If the "kdump" service is active, ask the system administrator if the use of the service is required and documented with the information system security officer (ISSO).
 
 If the service is active and is not documented, this is a finding.</pre></td>
 	<td><pre>If kernel core dumps are not required, disable the "kdump" service with the following command:
@@ -2846,7 +2731,7 @@ If the service is active and is not documented, this is a finding.</pre></td>
 
 If kernel core dumps are required, document the need with the ISSO.</pre></td>
 	<td>RHEL-08-010670</td>
-	<td>SV-230310r1017120_rule</td>
+	<td>SV-230310r1155383_rule</td>
 </tr>
 
 <tr>
@@ -2855,9 +2740,9 @@ If kernel core dumps are required, document the need with the ISSO.</pre></td>
 	<td>medium</td>
 	<td>RHEL 8 must disable the kernel.core_pattern.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
+	<td><pre>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore, may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
 
-The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographical order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
 /etc/sysctl.d/*.conf
 /run/sysctl.d/*.conf
 /usr/local/lib/sysctl.d/*.conf
@@ -2870,36 +2755,20 @@ $ sudo sysctl kernel.core_pattern
 
 kernel.core_pattern = |/bin/false
 
-If the returned line does not have a value of "|/bin/false", or a line is not returned and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
+If the returned line does not have a value of "|/bin/false", or a line is not returned and the need for core dumps is not documented with the information system security officer (ISSO) as an operational requirement, this is a finding.</pre></td>
+	<td><pre>Configure RHEL 8 to restrict usage of ptrace to descendant processes by adding the following line to a dropfile in the "/etc/sysctl.d" directory:
 
-Check that the configuration files are present to enable this kernel parameter.
+Create a dropfile if it does not already exist:
+$ sudo vi /etc/sysctl.d/99-disable-coredump.conf
 
-$ sudo grep -r kernel.core_pattern /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf /etc/sysctl.d/*.conf
-
-/etc/sysctl.d/99-sysctl.conf:kernel.core_pattern = |/bin/false
-
-If "kernel.core_pattern" is not set to "|/bin/false", is missing or commented out, this is a finding.
-
-If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure RHEL 8 to disable storing core dumps.
-
-Add or edit the following line in a system configuration file, in the "/etc/sysctl.d/" directory:
-
+Add the following to the file:
 kernel.core_pattern = |/bin/false
-
-Remove any configurations that conflict with the above from the following locations: 
-/run/sysctl.d/*.conf
-/usr/local/lib/sysctl.d/*.conf
-/usr/lib/sysctl.d/*.conf
-/lib/sysctl.d/*.conf
-/etc/sysctl.conf
-/etc/sysctl.d/*.conf
 
 The system configuration files need to be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-010671</td>
-	<td>SV-230311r1017121_rule</td>
+	<td>SV-230311r1155408_rule</td>
 </tr>
 
 <tr>
@@ -2913,7 +2782,9 @@ $ sudo sysctl --system</pre></td>
 A core dump includes a memory image taken at the time the operating system terminates an application. The memory image could contain sensitive data and is generally useful only for developers trying to debug problems.
 
 When the kernel invokes systemd-coredumpt to handle a core dump, it runs in privileged mode, and will connect to the socket created by the systemd-coredump.socket unit. This, in turn,  will spawn an unprivileged systemd-coredump@.service instance to process the core dump.</pre></td>
-	<td><pre>Verify RHEL 8 is not configured to acquire, save, or process core dumps with the following command:
+	<td><pre>Note: If kernel dumps are disabled in accordance with RHEL-08-010671, this requirement is not applicable.
+
+Verify RHEL 8 is not configured to acquire, save, or process core dumps with the following command:
 
 $ sudo systemctl status systemd-coredump.socket
 
@@ -2921,7 +2792,7 @@ systemd-coredump.socket
 Loaded: masked (Reason: Unit systemd-coredump.socket is masked.)
 Active: inactive (dead)
 
-If the "systemd-coredump.socket" is loaded and not masked and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</pre></td>
+If the "systemd-coredump.socket" is loaded and not masked and the need for core dumps is not documented with the information system security officer (ISSO) as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Configure the system to disable the systemd-coredump.socket with the following commands:
 
 $ sudo systemctl disable --now systemd-coredump.socket
@@ -2934,7 +2805,7 @@ Reload the daemon for this change to take effect.
 
 $ sudo systemctl daemon-reload</pre></td>
 	<td>RHEL-08-010672</td>
-	<td>SV-230312r1017122_rule</td>
+	<td>SV-230312r1134877_rule</td>
 </tr>
 
 <tr>
@@ -2943,25 +2814,31 @@ $ sudo systemctl daemon-reload</pre></td>
 	<td>medium</td>
 	<td>RHEL 8 must disable core dumps for all users.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
+	<td><pre>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore, may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
 
 A core dump includes a memory image taken at the time the operating system terminates an application. The memory image could contain sensitive data and is generally useful only for developers trying to debug problems.</pre></td>
-	<td><pre>Verify the operating system disables core dumps for all users by issuing the following command:
+	<td><pre>Note: If kernel dumps are disabled in accordance with RHEL-08-010671, this requirement is not applicable.
 
-$ sudo grep -r -s '^[^#].*core' /etc/security/limits.conf /etc/security/limits.d/*.conf
+Verify RHEL 8 disables core dumps for all users by issuing the following command:
 
-/etc/security/limits.d/core_dumps.conf:* hard core 0
+$ grep -r -s core /etc/security/limits.conf /etc/security/limits.d/*.conf
+
+/etc/security/limits.conf:* hard core 0
 
 This can be set as a global domain (with the * wildcard) but may be set differently for multiple domains.
 
-If the "core" item is missing, commented out, or the value is anything other than "0" and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned, this is a finding.</pre></td>
+If the "core" item is missing or commented out, or the value is anything other than "0", and the need for core dumps is not documented with the information system security officer (ISSO) as an operational requirement for all domains that have the "core" item assigned, this is a finding.
+
+If entries exist for users or groups with a value set to anything other than "0", this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable core dumps for all users.
 
-Add the following line to the top of the /etc/security/limits.conf or in a ".conf" file defined in /etc/security/limits.d/:
+Add the following line to the top of the /etc/security/limits.conf or in a single ".conf" file defined in /etc/security/limits.d/:
 
-* hard core 0</pre></td>
+* hard core 0
+
+Remove or comment out any entries for users or groups with a value set to anything other than "0".</pre></td>
 	<td>RHEL-08-010673</td>
-	<td>SV-230313r1069304_rule</td>
+	<td>SV-230313r1155379_rule</td>
 </tr>
 
 <tr>
@@ -2973,20 +2850,22 @@ Add the following line to the top of the /etc/security/limits.conf or in a ".con
 	<td><pre>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
 
 A core dump includes a memory image taken at the time the operating system terminates an application. The memory image could contain sensitive data and is generally useful only for developers trying to debug problems.</pre></td>
-	<td><pre>Verify the operating system disables storing core dumps for all users by issuing the following command:
+	<td><pre>Note: If kernel dumps are disabled in accordance with RHEL-08-010671, this requirement is not applicable.
+
+Verify the operating system disables storing core dumps for all users by issuing the following command:
 
 $ sudo grep -i storage /etc/systemd/coredump.conf
 
 Storage=none
 
-If the "Storage" item is missing, commented out, or the value is anything other than "none" and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned, this is a finding.</pre></td>
+If the "Storage" item is missing or commented out, or the value is anything other than "none", and the need for core dumps is not documented with the information system security officer (ISSO) as an operational requirement for all domains that have the "core" item assigned, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable storing core dumps for all users.
 
 Add or modify the following line in /etc/systemd/coredump.conf:
 
 Storage=none</pre></td>
 	<td>RHEL-08-010674</td>
-	<td>SV-230314r1017125_rule</td>
+	<td>SV-230314r1134881_rule</td>
 </tr>
 
 <tr>
@@ -2998,20 +2877,22 @@ Storage=none</pre></td>
 	<td><pre>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
 
 A core dump includes a memory image taken at the time the operating system terminates an application. The memory image could contain sensitive data and is generally useful only for developers trying to debug problems.</pre></td>
-	<td><pre>Verify the operating system disables core dump backtraces by issuing the following command:
+	<td><pre>Note: If kernel dumps are disabled in accordance with RHEL-08-010671, this requirement is not applicable.
+
+Verify the operating system disables core dump backtraces by issuing the following command:
 
 $ sudo grep -i ProcessSizeMax /etc/systemd/coredump.conf
 
 ProcessSizeMax=0
 
-If the "ProcessSizeMax" item is missing, commented out, or the value is anything other than "0" and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned, this is a finding.</pre></td>
+If the "ProcessSizeMax" item is missing or commented out, or the value is anything other than "0", and the need for core dumps is not documented with the information system security officer (ISSO) as an operational requirement for all domains that have the "core" item assigned, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable core dump backtraces.
 
 Add or modify the following line in /etc/systemd/coredump.conf:
 
 ProcessSizeMax=0</pre></td>
 	<td>RHEL-08-010675</td>
-	<td>SV-230315r1017126_rule</td>
+	<td>SV-230315r1134883_rule</td>
 </tr>
 
 <tr>
@@ -3090,14 +2971,18 @@ If a local interactive user requires path variables to reference a directory own
 	<td><pre>If a world-writable directory is not owned by root, sys, bin, or an application User Identifier (UID), unauthorized users may be able to modify files created by others.
 
 The only authorized public directories are those temporary directories supplied with the system or those designed to be temporary file repositories. The setting is normally reserved for directories used by the system and by users for temporary file storage, (e.g., /tmp), and for directories requiring global read/write access.</pre></td>
-	<td><pre>The following command will discover and print world-writable directories that are not owned by a system account, given the assumption that only system accounts have a uid lower than 1000. Run it once for each local partition [PART]: 
+	<td><pre>Verify RHEL 8 world writable directories are owned by root, a system account, or an application account with the following command:
 
-$ sudo find [PART] -xdev -type d -perm -0002 -uid +999 -print
+$ sudo find / -xdev -type d -perm -0002 -uid +999 -exec stat -c "%U, %u, %A, %n" {} \; 2>/dev/null
 
-If there is output, this is a finding.</pre></td>
-	<td><pre>All directories in local partitions which are world-writable should be owned by root or another system account. If any world-writable directories are not owned by a system account, this should be investigated. Following this, the files should be deleted or assigned to an appropriate group.</pre></td>
+If there is output that indicates world-writable directories are owned by any account other than root or an approved system account, this is a finding.</pre></td>
+	<td><pre>Configure all RHEL 8 public directories to be owned by root or a system account to prevent unauthorized and unintended information transferred via shared system resources.
+
+Use the following command template to set ownership of public directories to root or a system account:
+
+$ sudo chown [root or system account] [Public Directory]</pre></td>
 	<td>RHEL-08-010700</td>
-	<td>SV-230318r1017129_rule</td>
+	<td>SV-230318r1155352_rule</td>
 </tr>
 
 <tr>
@@ -3328,30 +3213,29 @@ $ sudo chgrp <group> <file></pre></td>
 	<td>A separate RHEL 8 filesystem must be used for user home directories (such as /home or an equivalent).</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>The use of separate file systems for different paths can protect the system from failures resulting from a file system becoming full or failing.</pre></td>
-	<td><pre>Verify that a separate file system has been created for non-privileged local interactive user home directories.
+	<td><pre>Verify a separate file system has been created for nonprivileged local interactive user home directories.
 
-Check the home directory assignment for all non-privileged users, users with a User Identifier (UID) greater than 1000, on the system with the following command:
+Check the home directory assignment for all nonprivileged users, users with a User Identifier (UID) greater than 1000, on the system with the following command:
 
-     $ sudo awk -F: '($3>=1000)&&($7 !~ /nologin/){print $1,$3,$6}' /etc/passwd
+$ sudo awk -F: '($3>=1000)&&($7 !~ /nologin/){print $1,$3,$6,$7}' /etc/passwd
+pdosadmin 1000 /home/pdosadmin /bin/bash
+systemuser 1001 /home/systemuser /bin/bash
+acas 1002 /home/acas /bin/bash
 
-     doej 1001 /home/doej 
-     publicj 1002 /home/publicj 
-     smithj 1003 /home/smithj
-
-The output of the command will give the directory/partition that contains the home directories for the non-privileged users on the system (in this example, "/home") and users’ shell. All accounts with a valid shell (such as /bin/bash) are considered interactive users.
+The output of the command will give the directory/partition that contains the home directories for the nonprivileged users on the system (in this example, "/home") and users’ shell. All accounts with a valid shell (such as /bin/bash) are considered interactive users.
 
 Check that a file system/partition has been created for the nonprivileged interactive users with the following command:
 
 Note: The partition of "/home" is used in the example.
 
-     $ sudo grep /home /etc/fstab
+$ sudo grep /home /etc/fstab
 
-     /dev/mapper/...   /home   xfs   defaults,noexec,nosuid,nodev 0 0
+/dev/mapper/...   /home   xfs   defaults,noexec,nosuid,nodev 0 0
 
 If a separate entry for the file system/partition containing the nonprivileged interactive user home directories does not exist, this is a finding.</pre></td>
 	<td><pre>Migrate the "/home" directory onto a separate file system.</pre></td>
 	<td>RHEL-08-010800</td>
-	<td>SV-230328r1017139_rule</td>
+	<td>SV-230328r1155410_rule</td>
 </tr>
 
 <tr>
@@ -3409,35 +3293,6 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010830</td>
 	<td>SV-230330r1069305_rule</td>
-</tr>
-
-<tr>
-	<td>V-230331</td>
-	<td>CCI-000016</td>
-	<td>medium</td>
-	<td>RHEL 8 temporary user accounts must be provisioned with an expiration time of 72 hours or less.</td>
-	<td>SRG-OS-000002-GPOS-00002</td>
-	<td><pre>If temporary user accounts remain active when no longer needed or for an excessive period, these accounts may be used to gain unauthorized access. To mitigate this risk, automated termination of all temporary accounts must be set upon account creation.
-
-Temporary accounts are established as part of normal account activation procedures when there is a need for short-term accounts without the demand for immediacy in account activation.
-
-If temporary accounts are used, RHEL 8 must be configured to automatically terminate these types of accounts after a DoD-defined time period of 72 hours.
-
-To address access requirements, many RHEL 8 operating systems may be integrated with enterprise-level authentication/access mechanisms that meet or exceed access control policy requirements.</pre></td>
-	<td><pre>Verify that temporary accounts have been provisioned with an expiration date of 72 hours.
-
-For every existing temporary account, run the following command to obtain its account expiration information.
-
-$ sudo chage -l system_account_name
-
-Verify each of these accounts has an expiration date set within 72 hours.
-
-If any temporary accounts have no expiration date set or do not expire within 72 hours, this is a finding.</pre></td>
-	<td><pre>If a temporary account must be created configure the system to terminate the account after a 72 hour time period with the following command to set an expiration date on it. Substitute "system_account_name" with the account to be created.
-
-$ sudo chage -E `date -d "+3 days" +%Y-%m-%d` system_account_name</pre></td>
-	<td>RHEL-08-020000</td>
-	<td>SV-230331r1017143_rule</td>
 </tr>
 
 <tr>
@@ -3666,22 +3521,20 @@ In RHEL 8.2 the "/etc/security/faillock.conf" file was incorporated to centraliz
 From "faillock.conf" man pages: Note that the default directory that "pam_faillock" uses is usually cleared on system boot so the access will be reenabled after system reboot. If that is undesirable a different tally directory must be set with the "dir" option.
 
 Satisfies: SRG-OS-000021-GPOS-00005, SRG-OS-000329-GPOS-00128</pre></td>
-	<td><pre>Note: If temporary accounts do not exist or are not used this is not applicable.  This check applies to RHEL versions 8.2 or newer, if the system is RHEL version 8.0 or 8.1, this check is not applicable.
-
-Verify the "/etc/security/faillock.conf" file is configured to lock an account until released by an administrator after three unsuccessful logon attempts:
+	<td><pre>Verify the "/etc/security/faillock.conf" file is configured to lock an account until released by an administrator after three unsuccessful logon attempts:
 
 $ sudo grep 'unlock_time =' /etc/security/faillock.conf
 
 unlock_time = 0
 
-If the "unlock_time" option is not set to "0", is missing or commented out, this is a finding.</pre></td>
+If the "unlock_time" option is not set to "0", or is missing or commented out, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to lock an account until released by an administrator when three unsuccessful logon attempts occur in 15 minutes.
 
 Add/Modify the "/etc/security/faillock.conf" file to match the following line:
 
 unlock_time = 0</pre></td>
 	<td>RHEL-08-020015</td>
-	<td>SV-230337r1069292_rule</td>
+	<td>SV-230337r1134885_rule</td>
 </tr>
 
 <tr>
@@ -4127,18 +3980,18 @@ $ sudo dconf update</pre></td>
 The session lock is implemented at the point where session activity can be determined. Rather than be forced to wait for a period of time to expire before the user session can be locked, RHEL 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
 
 Satisfies: SRG-OS-000029-GPOS-00010, SRG-OS-000031-GPOS-00012</pre></td>
-	<td><pre>Verify the operating system initiates a session lock after a 15-minute period of inactivity for graphical user interfaces with the following commands:
+	<td><pre>Verify RHEL 8 initiates a session lock after a 15-minute period of inactivity for graphical user interfaces with the following command:
 
-This requirement assumes the use of the RHEL 8 default graphical user interface, Gnome Shell. If the system does not have any graphical user interface installed, this requirement is Not Applicable.
+Note: This requirement assumes the use of the RHEL 8 default graphical user interface, the GNOME desktop environment. If the system does not have any graphical user interface installed, this requirement is Not Applicable.
 
 $ sudo gsettings get org.gnome.desktop.session idle-delay
 
 uint32 900
 
 If "idle-delay" is set to "0" or a value greater than "900", this is a finding.</pre></td>
-	<td><pre>Configure the operating system to initiate a screensaver after a 15-minute period of inactivity for graphical user interfaces.
+	<td><pre>Configure RHEL 8 to initiate a screensaver after a 15-minute period of inactivity for graphical user interfaces.
 
-Create a database to contain the system-wide screensaver settings (if it does not already exist) with the following command:
+Create a database to contain the systemwide screensaver settings (if it does not already exist) with the following command:
 
 $ sudo touch /etc/dconf/db/local.d/00-screensaver
 
@@ -4152,7 +4005,7 @@ Update the system databases:
 
 $ sudo dconf update</pre></td>
 	<td>RHEL-08-020060</td>
-	<td>SV-230352r1017165_rule</td>
+	<td>SV-230352r1155401_rule</td>
 </tr>
 
 <tr>
@@ -4947,29 +4800,6 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-020330</td>
 	<td>SV-230380r1069308_rule</td>
-</tr>
-
-<tr>
-	<td>V-230381</td>
-	<td>CCI-000052</td>
-	<td>low</td>
-	<td>RHEL 8 must display the date and time of the last successful account logon upon logon.</td>
-	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>Providing users with feedback on when account accesses last occurred facilitates user recognition and reporting of unauthorized account use.</pre></td>
-	<td><pre>Verify users are provided with feedback on when account accesses last occurred with the following command:
-
-$ sudo grep pam_lastlog /etc/pam.d/postlogin
-
-session required pam_lastlog.so showfailed
-
-If "pam_lastlog.so" is missing from "/etc/pam.d/postlogin" file, or the silent option is present, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to provide users with feedback on when account accesses last occurred by setting the required configuration options in "/etc/pam.d/postlogin". 
-
-Add the following line to the top of "/etc/pam.d/postlogin":
-
-session required pam_lastlog.so showfailed</pre></td>
-	<td>RHEL-08-020340</td>
-	<td>SV-230381r1069295_rule</td>
 </tr>
 
 <tr>
@@ -7821,27 +7651,28 @@ GRUB_CMDLINE_LINUX="pti=on"</pre></td>
 	<td>V-230492</td>
 	<td>CCI-000381</td>
 	<td>high</td>
-	<td>RHEL 8 must not have the rsh-server package installed.</td>
+	<td>RHEL 8 must not install packages from the Extra Packages for Enterprise Linux (EPEL) repository.</td>
 	<td>SRG-OS-000095-GPOS-00049</td>
-	<td><pre>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
+	<td><pre>The EPEL is a repository of high-quality open-source packages for enterprise-class Linux distributions such as RHEL, CentOS, AlmaLinux, Rocky Linux, and Oracle Linux. These packages are not part of the official distribution but are built using the same Fedora build system to ensure compatibility and maintain quality standards.</pre></td>
+	<td><pre>Verify that RHEL 8 is not able to install packages from the EPEL with the following command:
 
-Operating systems are capable of providing a wide variety of functions and services. Some of the functions and services, provided by default, may not be necessary to support essential organizational operations (e.g., key missions, functions).
+$ dnf repolist
+rhel-8-for-x86_64-appstream-rpms                      Red Hat Enterprise Linux 8 for x86_64 - AppStream (RPMs)
+rhel-8-for-x86_64-baseos-rpms                         Red Hat Enterprise Linux 8 for x86_64 - BaseOS (RPMs)
+rhel-8-for-x86_64-baseos-source-rpms                  Red Hat Enterprise Linux 8 for x86_64 - BaseOS (Source RPMs)
+rhel-8-for-x86_64-supplementary-rpms                  Red Hat Enterprise Linux 8 for x86_64 - Supplementary (RPMs)
+satellite-tools-6.10-for-rhel-8-x86_64-rpms           Red Hat Satellite Tools 6.10 for RHEL 8 x86_64 (RPMs)
 
-The rsh-server service provides an unencrypted remote access service that does not provide for the confidentiality and integrity of user passwords or the remote session and has very weak authentication.
+If any repositories containing the word "epel" in the name exist, this is a finding.</pre></td>
+	<td><pre>The repo package can be manually removed with the following command:
 
-If a privileged user were to log on using this service, the privileged user password could be compromised.
+$ sudo dnf remove epel-release
 
-Satisfies: SRG-OS-000095-GPOS-00049, SRG-OS-000074-GPOS-00042</pre></td>
-	<td><pre>Check to see if the rsh-server package is installed with the following command:
+Configure the operating system to disable use of the EPEL repository with the following command:
 
-$ sudo yum list installed rsh-server
-
-If the rsh-server package is installed, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to disable non-essential capabilities by removing the rsh-server package from the system with the following command:
-
-$ sudo yum remove rsh-server</pre></td>
+$ sudo dnf config-manager --set-disabled epel</pre></td>
 	<td>RHEL-08-040010</td>
-	<td>SV-230492r1017275_rule</td>
+	<td>SV-230492r1134888_rule</td>
 </tr>
 
 <tr>
@@ -8117,10 +7948,10 @@ If there are additional ports, protocols, or services that are not in the PPSM C
 	<td>V-230502</td>
 	<td>CCI-000778</td>
 	<td>medium</td>
-	<td>The RHEL 8 file system automounter must be disabled unless required.</td>
+	<td>The RHEL 8 file system automounter must be disabled.</td>
 	<td>SRG-OS-000114-GPOS-00059</td>
 	<td><pre>Automatically mounting file systems permits easy introduction of unknown devices, thereby facilitating malicious activity.</pre></td>
-	<td><pre>Verify the operating system disables the ability to automount devices.
+	<td><pre>Verify RHEL 8 disables the ability to automount devices.
 
 Check to see if automounter service is active with the following command:
 
@@ -8128,21 +7959,19 @@ Note: If the autofs service is not installed, this requirement is not applicable
 
 $ sudo systemctl status autofs
 
-autofs.service - Automounts filesystems on demand
-Loaded: loaded (/usr/lib/systemd/system/autofs.service; disabled)
-Active: inactive (dead)
+o autofs.service - Automounts filesystems on demand
+   Loaded: loaded (/usr/lib/systemd/system/autofs.service; disabled)
+   Active: inactive (dead)
 
-If the "autofs" status is set to "active" and is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to disable the ability to automount devices.
+If the "autofs" status is set to "active", this is a finding.</pre></td>
+	<td><pre>Configure RHEL 8 to disable the ability to automount devices.
 
 Turn off the automount service with the following commands:
 
 $ sudo systemctl stop autofs
-$ sudo systemctl disable autofs
-
-If "autofs" is required for Network File System (NFS), it must be documented with the ISSO.</pre></td>
+$ sudo systemctl disable autofs</pre></td>
 	<td>RHEL-08-040070</td>
-	<td>SV-230502r1017284_rule</td>
+	<td>SV-230502r1155393_rule</td>
 </tr>
 
 <tr>
@@ -8874,7 +8703,7 @@ Peripherals include, but are not limited to, such devices as flash drives, exter
 
 A new feature that RHEL 8 provides is the USBGuard software framework. The USBguard-daemon is the main component of the USBGuard software framework. It runs as a service in the background and enforces the USB device authorization policy for all USB devices. The policy is defined by a set of rules using a rule language described in the usbguard-rules.conf file. The policy and the authorization state of USB devices can be modified during runtime using the usbguard tool.
 
-The System Administrator (SA) must work with the site Information System Security Officer (ISSO) to determine a list of authorized peripherals and establish rules within the USBGuard software framework to allow only authorized devices.</pre></td>
+The system administrator (SA) must work with the site information system security officer (ISSO) to determine a list of authorized peripherals and establish rules within the USBGuard software framework to allow only authorized devices.</pre></td>
 	<td><pre>Verify the USBGuard has a policy configured with the following command:
 
 $ sudo usbguard list-rules
@@ -8891,9 +8720,13 @@ This command must be run from a root shell and will create an allow list for any
 
 # usbguard generate-policy > /etc/usbguard/rules.conf
 
-Note: Enabling and starting usbguard without properly configuring it for an individual system will immediately prevent any access over a usb device such as a keyboard or mouse</pre></td>
+Note: Enabling and starting usbguard without properly configuring it for an individual system will immediately prevent any access over a usb device such as a keyboard or mouse.
+
+Restart usbguard service after creation or update of rules with the following command:
+
+$ sudo systemctl restart usbguard</pre></td>
 	<td>RHEL-08-040140</td>
-	<td>SV-230524r1014813_rule</td>
+	<td>SV-230524r1155418_rule</td>
 </tr>
 
 <tr>
@@ -9063,14 +8896,19 @@ $ sudo dconf update</pre></td>
 	<td>The systemd Ctrl-Alt-Delete burst key sequence in RHEL 8 must be disabled.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>A locally logged-on user who presses Ctrl-Alt-Delete when at the console can reboot the system. If accidentally pressed, as could happen in the case of a mixed OS environment, this can create the risk of short-term loss of availability of systems due to unintentional reboot. In a graphical user environment, risk of unintentional reboot from the Ctrl-Alt-Delete sequence is reduced because the user will be prompted before any action is taken.</pre></td>
-	<td><pre>Verify RHEL 8 is not configured to reboot the system when Ctrl-Alt-Delete is pressed seven times within two seconds with the following command:
+	<td><pre>Verify RHEL 8 is configured to not reboot the system when Ctrl-Alt-Delete is pressed seven times within two seconds with the following command:
 
-$ sudo grep -i ctrl /etc/systemd/system.conf
-
-CtrlAltDelBurstAction=none
+$ sudo grep -iR CtrlAltDelBurstAction /etc/systemd/system*
+/etc/systemd/system.conf.d/55-CtrlAltDel-BurstAction:CtrlAltDelBurstAction=none
 
 If the "CtrlAltDelBurstAction" is not set to "none", commented out, or is missing, this is a finding.</pre></td>
-	<td><pre>Configure the system to disable the CtrlAltDelBurstAction by added or modifying the following line in the "/etc/systemd/system.conf" configuration file:
+	<td><pre>Configure RHEL 8 to disable the CtrlAltDelBurstAction by adding it to a drop file in a "/etc/systemd/system.conf.d/" configuration file:
+
+If no drop file exists, create one with the following command:
+
+$ sudo mkdir -p /etc/systemd/system.conf.d && sudo vi /etc/systemd/system.conf.d/55-CtrlAltDel-BurstAction
+
+Edit the file to contain the setting by adding the following text:
 
 CtrlAltDelBurstAction=none
 
@@ -9078,7 +8916,7 @@ Reload the daemon for this change to take effect.
 
 $ sudo systemctl daemon-reload</pre></td>
 	<td>RHEL-08-040172</td>
-	<td>SV-230531r1017292_rule</td>
+	<td>SV-230531r1155396_rule</td>
 </tr>
 
 <tr>
@@ -9780,9 +9618,9 @@ $ sudo sysctl --system</pre></td>
 	<td>medium</td>
 	<td>RHEL 8 must restrict usage of ptrace to descendant  processes.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
+	<td><pre>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore, may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
 
-The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographical order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
 /etc/sysctl.d/*.conf
 /run/sysctl.d/*.conf
 /usr/local/lib/sysctl.d/*.conf
@@ -9795,34 +9633,20 @@ $ sudo sysctl kernel.yama.ptrace_scope
 
 kernel.yama.ptrace_scope = 1
 
-If the returned line does not have a value of "1", or a line is not returned, this is a finding.
+If "kernel.yama.ptrace_scope" is not set to "1", is missing, or commented out, this is a finding.</pre></td>
+	<td><pre>Configure RHEL 8 to restrict usage of ptrace to descendant processes by adding the following line in a dropfile, in the "/etc/sysctl.d" directory with the following commands:
 
-Check that the configuration files are present to enable this network parameter.
+Create the dropfile if it doesn't already exist:
+$ sudo vi /etc/sysctl.d/99-ptrace-restrict.conf
 
-$ sudo grep -r kernel.yama.ptrace_scope /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf /etc/sysctl.d/*.conf
-
-/etc/sysctl.d/99-sysctl.conf: kernel.yama.ptrace_scope = 1
-
-If "kernel.yama.ptrace_scope" is not set to "1", is missing or commented out, this is a finding.
-
-If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure RHEL 8 to restrict usage of ptrace to descendant processes by adding the following line to a file, in the "/etc/sysctl.d" directory:
-
+Add the following line to the file:
 kernel.yama.ptrace_scope = 1
-
-Remove any configurations that conflict with the above from the following locations: 
-/run/sysctl.d/*.conf
-/usr/local/lib/sysctl.d/*.conf
-/usr/lib/sysctl.d/*.conf
-/lib/sysctl.d/*.conf
-/etc/sysctl.conf
-/etc/sysctl.d/*.conf
 
 The system configuration files need to be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040282</td>
-	<td>SV-230546r1017308_rule</td>
+	<td>SV-230546r1155413_rule</td>
 </tr>
 
 <tr>
@@ -9935,49 +9759,37 @@ $ sudo sysctl --system</pre></td>
 	<td>medium</td>
 	<td>RHEL 8 must use reverse path filtering on all IPv4 interfaces.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
+	<td><pre>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore, may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
 
-The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographical order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
 /etc/sysctl.d/*.conf
 /run/sysctl.d/*.conf
 /usr/local/lib/sysctl.d/*.conf
 /usr/lib/sysctl.d/*.conf
 /lib/sysctl.d/*.conf
 /etc/sysctl.conf</pre></td>
-	<td><pre>Verify RHEL 8 uses reverse path filtering on all IPv4 interfaces with the following commands:
+	<td><pre>Verify RHEL 8 uses reverse path filtering on IPv4 interfaces with the following commands:
 
-$ sudo sysctl net.ipv4.conf.all.rp_filter
+$ sudo sysctl net.ipv4.conf.default.rp_filter
 
-net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.default.rp_filter = 1
 
-If the returned line does not have a value of "1" or "2", or a line is not returned, this is a finding.
+If "net.ipv4.conf.default.rp_filter" is not set to "1" or is missing, this is a finding.</pre></td>
+	<td><pre>Configure RHEL 8 to use reverse path filtering on IPv4 interfaces by default.
 
-Check that the configuration files are present to enable this network parameter.
+Add or edit the following line in a single system configuration file in the "/etc/sysctl.d/" directory:
 
-$ sudo grep -r net.ipv4.conf.all.rp_filter /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf /etc/sysctl.d/*.conf
+Create a configuration file if it does not already exist:
 
-/etc/sysctl.d/99-sysctl.conf: net.ipv4.conf.all.rp_filter = 1
+$ sudo vi /etc/sysctl.d/ipv4_rp_filter.conf
 
-If "net.ipv4.conf.all.rp_filter" is not set to "1" or "2", is missing or commented out, this is a finding.
+net.ipv4.conf.default.rp_filter = 1
 
-If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure RHEL 8 to use reverse path filtering on all IPv4 interfaces by adding the following line to a file, in the "/etc/sysctl.d" directory:
-
-net.ipv4.conf.all.rp_filter = 1
-
-Remove any configurations that conflict with the above from the following locations: 
-/run/sysctl.d/*.conf
-/usr/local/lib/sysctl.d/*.conf
-/usr/lib/sysctl.d/*.conf
-/lib/sysctl.d/*.conf
-/etc/sysctl.conf
-/etc/sysctl.d/*.conf
-
-The system configuration files need to be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
+Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040285</td>
-	<td>SV-230549r1017311_rule</td>
+	<td>SV-230549r1155416_rule</td>
 </tr>
 
 <tr>
@@ -10260,20 +10072,20 @@ $ sudo yum remove vsftpd</pre></td>
 Operating systems are capable of providing a wide variety of functions and services. Some of the functions and services, provided by default, may not be necessary to support essential organizational operations (e.g., key missions, functions).
 
 The gssproxy package is a proxy for GSS API credential handling and could expose secrets on some networks. It is not needed for normal function of the OS.</pre></td>
-	<td><pre>Verify the gssproxy package has not been installed on the system with the following commands:
+	<td><pre>Note: If NFS mounts are authorized and in use on the system, this control is not applicable.
 
-$ sudo yum list installed gssproxy
+Verify the gssproxy package is not installed with the following command:
 
-gssproxy.x86_64                                                     0.8.0-14.el8                                                  @anaconda
+$ dnf list --installed gssproxy
 
-If the gssproxy package is installed and is not documented with the information system security officer (ISSO) as an operational requirement, this is a finding.
+Error: No matching Packages to list
 
-If NFS mounts are being used, this is not a finding.</pre></td>
+If the "gssproxy" package is installed and is not documented with the information system security officer (ISSO) as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Document the gssproxy package with the ISSO as an operational requirement or remove it from the system with the following command:
 
 $ sudo yum remove gssproxy</pre></td>
 	<td>RHEL-08-040370</td>
-	<td>SV-230559r1014820_rule</td>
+	<td>SV-230559r1155398_rule</td>
 </tr>
 
 <tr>
@@ -10513,7 +10325,7 @@ Generate a new grub.cfg file with the following command:
 
 $ sudo grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre></td>
 	<td>RHEL-08-010141</td>
-	<td>SV-244521r1017327_rule</td>
+	<td>SV-244521r1137691_rule</td>
 </tr>
 
 <tr>
@@ -10546,7 +10358,7 @@ Generate a new grub.cfg file with the following command:
 
 $ sudo grub2-mkconfig -o /boot/grub2/grub.cfg</pre></td>
 	<td>RHEL-08-010149</td>
-	<td>SV-244522r1017328_rule</td>
+	<td>SV-244522r1137691_rule</td>
 </tr>
 
 <tr>
@@ -10567,7 +10379,7 @@ If the "ExecStart" line is configured for anything other than "/usr/lib/systemd/
 
 ExecStart=-/usr/lib/systemd/systemd-sulogin-shell emergency</pre></td>
 	<td>RHEL-08-010152</td>
-	<td>SV-244523r1017329_rule</td>
+	<td>SV-244523r1137691_rule</td>
 </tr>
 
 <tr>
@@ -10636,37 +10448,6 @@ For the changes to take effect, the SSH daemon must be restarted.
      $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010201</td>
 	<td>SV-244525r1017331_rule</td>
-</tr>
-
-<tr>
-	<td>V-244526</td>
-	<td>CCI-001453</td>
-	<td>medium</td>
-	<td>The RHEL 8 SSH daemon must be configured to use system-wide crypto policies.</td>
-	<td>SRG-OS-000250-GPOS-00093</td>
-	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
-
-Remote access (e.g., RDP) is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
-
-Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.
-
-RHEL 8 incorporates system-wide crypto policies by default. The SSH configuration file has no effect on the ciphers, MACs, or algorithms unless specifically defined in the /etc/sysconfig/sshd file. The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/ directory.
-
-Satisfies: SRG-OS-000250-GPOS-00093, SRG-OS-000393-GPOS-00173, SRG-OS-000394-GPOS-00174, SRG-OS-000125-GPOS-00065</pre></td>
-	<td><pre>Verify that system-wide crypto policies are in effect:
-
-$ sudo grep CRYPTO_POLICY /etc/sysconfig/sshd
-
-# CRYPTO_POLICY=
-
-If the "CRYPTO_POLICY " is uncommented, this is a finding.</pre></td>
-	<td><pre>Configure the RHEL 8 SSH daemon to use system-wide crypto policies by adding the following line to /etc/sysconfig/sshd:
-
-# CRYPTO_POLICY=
-
-A reboot is required for the changes to take effect.</pre></td>
-	<td>RHEL-08-010287</td>
-	<td>SV-244526r1017332_rule</td>
 </tr>
 
 <tr>
@@ -10751,7 +10532,7 @@ If a separate entry for "/var/tmp" is not in use, this is a finding.</pre></td>
 	<td>RHEL 8 must prevent files with the setuid and setgid bit set from being executed on the /boot/efi directory.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>The "nosuid" mount option causes the system not to execute "setuid" and "setgid" files with owner privileges. This option must be used for mounting any file system not containing approved "setuid" and "setguid" files. Executing files from untrusted file systems increases the opportunity for unprivileged users to attain unauthorized administrative access.</pre></td>
-	<td><pre>For systems that use BIOS, this is Not Applicable.
+	<td><pre>Note: For vfat file systems and for systems that use BIOS, this is Not Applicable.
 
 Verify the /boot/efi directory is mounted with the "nosuid" option with the following command:
 
@@ -10762,7 +10543,7 @@ $ sudo mount | grep '\s/boot/efi\s'
 If the /boot/efi file system does not have the "nosuid" option set, this is a finding.</pre></td>
 	<td><pre>Configure the "/etc/fstab" to use the "nosuid" option on the /boot/efi directory.</pre></td>
 	<td>RHEL-08-010572</td>
-	<td>SV-244530r1017337_rule</td>
+	<td>SV-244530r1155403_rule</td>
 </tr>
 
 <tr>
@@ -12152,33 +11933,6 @@ This must be documented with the information system security officer (ISSO) as a
 </tr>
 
 <tr>
-	<td>V-255924</td>
-	<td>CCI-001453</td>
-	<td>medium</td>
-	<td>RHEL 8 SSH server must be configured to use only FIPS-validated key exchange algorithms.</td>
-	<td>SRG-OS-000250-GPOS-00093</td>
-	<td><pre>Without cryptographic integrity protections provided by FIPS-validated cryptographic algorithms, information can be viewed and altered by unauthorized users without detection.
-
-RHEL 8 incorporates system-wide crypto policies by default. The SSH configuration file has no effect on the ciphers, MACs, or algorithms unless specifically defined in the /etc/sysconfig/sshd file. The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/opensshserver.config file.
-
-The system will attempt to use the first algorithm presented by the client that matches the server list. Listing the values "strongest to weakest" is a method to ensure the use of the strongest algorithm available to secure the SSH connection.</pre></td>
-	<td><pre>Verify that the SSH server is configured to use only FIPS-validated key exchange algorithms:
-
-     $ sudo grep -i kexalgorithms /etc/crypto-policies/back-ends/opensshserver.config
-
-     CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'
-
-If the entries following "KexAlgorithms" have any algorithms defined other than "ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512", appear in different order than shown, or are missing or commented out, this is a finding.</pre></td>
-	<td><pre>Configure the SSH server to use only FIPS-validated key exchange algorithms by adding or modifying the following line in "/etc/crypto-policies/back-ends/opensshserver.config":
-
--oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512
-
-A reboot is required for the changes to take effect.</pre></td>
-	<td>RHEL-08-040342</td>
-	<td>SV-255924r1017372_rule</td>
-</tr>
-
-<tr>
 	<td>V-256973</td>
 	<td>CCI-001749</td>
 	<td>medium</td>
@@ -12315,66 +12069,80 @@ Note: Manual changes to the listed file may be overwritten by the "authselect" p
 	<td>V-272482</td>
 	<td>CCI-001453</td>
 	<td>medium</td>
-	<td>RHEL 8 SSH client must be configured to use only Message Authentication Codes (MACs) employing FIPS 140-3 validated cryptographic hash algorithms.</td>
+	<td>The RHEL 8 SSH client must be configured to use only DOD-approved Message Authentication Codes (MACs) employing FIPS 140-3-validated cryptographic hash algorithms to protect the confidentiality of SSH client connections.</td>
 	<td>SRG-OS-000250-GPOS-00093</td>
-	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
+	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection. 
 
-Remote access (e.g., RDP) is access to DOD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organizationally controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+Remote access (e.g., RDP) is access to DOD nonpublic information systems by an authorized user (or an information system) communicating through an external, nonorganization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless. 
 
-Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.
+Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography, enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash. 
 
-RHEL 8.4 and newer releases incorporate system-wide crypto policies by default. The SSH configuration file has no effect on the ciphers, MACs, or algorithms unless specifically defined in the /etc/sysconfig/sshd file. The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/openssh.config file.</pre></td>
-	<td><pre>Verify the SSH client is configured to use only MACs employing FIPS 140-3 approved algorithms with the following command:
+RHEL 8 incorporates systemwide crypto policies by default. The SSH configuration file has no effect on the ciphers, MACs, or algorithms unless specifically defined in the /etc/sysconfig/sshd file. The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/openssh.config file.</pre></td>
+	<td><pre>Verify the RHEL 8 SSH client is configured to use only MACs employing FIPS 140-3-approved algorithms.
 
-$ grep -i macs /etc/crypto-policies/back-ends/openssh.config
+To verify the MACs in the systemwide SSH configuration file, use the following command:
 
--oMACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256
+$ grep -i MACs /etc/crypto-policies/back-ends/openssh.config
 
-If the MACs entries in the "openssh.config" file have any hashes other than "MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,hmac-sha2-256,hmac-sha2-512", they are missing, or commented out, this is a finding.</pre></td>
-	<td><pre>Configure the RHEL 8 SSH client to use only MACs employing FIPS 140-3 approved algorithms.
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256
 
-For RHEL 8.4 and newer, update the "/etc/crypto-policies/back-ends/openssh.config" file with the following command:
-sudo sed -i -E 's/(-oMACs=)[^ ]*/\1hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256/' "$(readlink -f /etc/crypto-policies/back-ends/openssh.config)"
+If the MACs entries in the "openssh.config" file have any hashes other than "hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-2562", or they are missing or commented out, this is a finding.</pre></td>
+	<td><pre>Configure the RHEL 8 SSH client to use only MACs employing FIPS 140-3-approved algorithms.
 
-A reboot is required for the changes to take effect.</pre></td>
+Reinstall crypto-policies with the following command:
+
+$ sudo dnf -y reinstall crypto-policies
+
+Set the crypto-policy to FIPS with the following command:
+
+$ sudo update-crypto-policies --set FIPS
+
+Setting system policy to FIPS
+
+Note: Systemwide crypto policies are applied on application startup. It is recommended to restart the system for the change of policies to fully take place.</pre></td>
 	<td>RHEL-08-010296</td>
-	<td>SV-272482r1069414_rule</td>
+	<td>SV-272482r1155367_rule</td>
 </tr>
 
 <tr>
 	<td>V-272483</td>
 	<td>CCI-001453</td>
 	<td>medium</td>
-	<td>RHEL 8 SSH client must be configured to use only ciphers employing FIPS 140-3 validated cryptographic hash algorithms.</td>
+	<td>The RHEL 8 SSH client must be configured to use only DOD-approved encryption ciphers employing FIPS 140-3-validated cryptographic hash algorithms to protect the confidentiality of SSH client connections.</td>
 	<td>SRG-OS-000250-GPOS-00093</td>
-	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
+	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection. 
 
-Remote access (e.g., RDP) is access to DOD nonpublic information systems by an authorized user (or an information system) communicating through an external, nonorganization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+Remote access (e.g., RDP) is access to DOD nonpublic information systems by an authorized user (or an information system) communicating through an external, nonorganization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless. 
 
-Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.
+Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography, enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash. 
 
-RHEL 8 incorporates systemwide crypto policies by default. The SSH configuration file has no effect on the ciphers, MACs, or algorithms unless specifically defined in the /etc/sysconfig/sshd file. The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/opensshserver.config file.
-
-The system will attempt to use the first hash presented by the client that matches the server list. Listing the values "strongest to weakest" is a method to ensure the use of the strongest hash available to secure the SSH connection.
+RHEL 8 incorporates systemwide crypto policies by default. The SSH configuration file has no effect on the ciphers, MACs, or algorithms unless specifically defined in the /etc/sysconfig/sshd file. The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/openssh.config file.
 
 Satisfies: SRG-OS-000250-GPOS-00093, SRG-OS-000393-GPOS-00173, SRG-OS-000394-GPOS-00174, SRG-OS-000125-GPOS-00066</pre></td>
-	<td><pre>Verify the SSH client is configured to use only ciphers employing FIPS 140-3 approved algorithms.
+	<td><pre>Verify the RHEL 8 SSH client is configured to use only ciphers employing FIPS 140-3-approved algorithms.
 
-To verify the Ciphers in the systemwide SSH configuration file, use the following command:
+To verify the ciphers in the systemwide SSH configuration file, use the following command:
 
-$ sudo grep -i ciphers /etc/crypto-policies/back-ends/openssh.config 
--oCiphers=aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes128-ctr
+$ grep -i Ciphers /etc/crypto-policies/back-ends/openssh.config 
 
-If the ciphers entries in the "openssh.config" file have any hashes other than "aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes128-ctr", or they are missing, or commented out, this is a finding.</pre></td>
-	<td><pre>Configure the RHEL 8 SSH client to use only ciphers employing FIPS 140-3 approved algorithms by updating the "/etc/crypto-policies/back-ends/openssh.config" file with the following commands.
+Ciphers aes256-gcm@openssh.com,aes256-ctr,aes128-gcm@openssh.com,aes128-ctr
 
-To manually update the ciphers in the systemwide SSH configuration, use the following command:
+If the cipher entries in the "openssh.config" file have any ciphers other than "aes256-gcm@openssh.com,aes256-ctr,aes128-gcm@openssh.com,aes128-ctr", or they are missing or commented out, this is a finding.</pre></td>
+	<td><pre>Configure the RHEL 8 SSH client to use only ciphers employing FIPS 140-3-approved algorithms.
 
-$ sudo sed -i -E 's/(-oCiphers=)[^ ]*/\1aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes128-ctr/' "$(readlink -f /etc/crypto-policies/back-ends/openssh.config)"
+Reinstall crypto-policies with the following command:
 
-A reboot is required for the changes to take effect.</pre></td>
+$ sudo dnf -y reinstall crypto-policies
+
+Set the crypto-policy to FIPS with the following command:
+
+$ sudo update-crypto-policies --set FIPS
+
+Setting system policy to FIPS
+
+Note: Systemwide crypto policies are applied on application startup. It is recommended to restart the system for the change of policies to fully take place.</pre></td>
 	<td>RHEL-08-010297</td>
-	<td>SV-272483r1069415_rule</td>
+	<td>SV-272483r1155361_rule</td>
 </tr>
 
 <tr>
@@ -12391,26 +12159,27 @@ Privileged functions include, for example, establishing accounts, performing sys
 This command must be run as root:
 
 # grep -r sysadm_r /etc/sudoers /etc/sudoers.d
-%{designated_group_or_user_name} ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
+/etc/sudoers.d/admins:<username> ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
 
 If conflicting results are returned, this is a finding.
 
 If a designated sudoers administrator group or account(s) is not configured to elevate the SELinux type and role to "sysadm_t" and "sysadm_r" with the use of the sudo command, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to elevate the SELinux context when an administrator calls the sudo command.
+
 Edit a file in the "/etc/sudoers.d" directory with the following command:
 
 $ sudo visudo -f /etc/sudoers.d/<customfile>
 
 Use the following example to build the <customfile> in the /etc/sudoers.d directory to allow any administrator belonging to a designated sudoers admin group to elevate their SELinux context with the use of the sudo command:
 
-%{designated_group_or_user_name} ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
+{designated_group_or_user_name} ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
 
 Remove any configurations that conflict with the above from the following locations:
  
 /etc/sudoers
 /etc/sudoers.d/</pre></td>
 	<td>RHEL-08-010455</td>
-	<td>SV-272484r1069340_rule</td>
+	<td>SV-272484r1134875_rule</td>
 </tr>
 
 <tr>
@@ -12432,14 +12201,158 @@ If either of these commands do not return the expected output, or the lines are 
 	<td><pre>Configure RHEL 8 to audit the execution of any system call made by cron as root or as any privileged user.
 
 Add or update the following file system rules to "/etc/audit/rules.d/audit.rules":
-auditctl -w /etc/cron.d/ -p wa -k cronjobs
-auditctl -w /var/spool/cron/ -p wa -k cronjobs
+-w /etc/cron.d/ -p wa -k cronjobs
+-w /var/spool/cron/ -p wa -k cronjobs
 
 To load the rules to the kernel immediately, use the following command:
 
 $ sudo augenrules --load</pre></td>
 	<td>RHEL-08-030655</td>
-	<td>SV-274877r1106148_rule</td>
+	<td>SV-274877r1155381_rule</td>
+</tr>
+
+<tr>
+	<td>V-279929</td>
+	<td>CCI-001133</td>
+	<td>medium</td>
+	<td>RHEL 8 must automatically exit interactive command shell user sessions after 10 minutes of inactivity.</td>
+	<td>SRG-OS-000163-GPOS-00072</td>
+	<td><pre>Terminating an idle interactive command shell user session within a short time period reduces the window of opportunity for unauthorized personnel to take control of it when left unattended in a virtual terminal or physical console.
+
+Satisfies: SRG-OS-000163-GPOS-00072, SRG-OS-000029-GPOS-00010</pre></td>
+	<td><pre>Verify RHEL 8 is configured to exit interactive command shell user sessions after 10 minutes of inactivity or less with the following command:
+
+$ sudo grep -i tmout /etc/profile /etc/profile.d/*.sh
+
+/etc/profile.d/tmout.sh:declare -xr TMOUT=600
+
+If "TMOUT" is not set to "600" or less in a script located in the "/etc/'profile.d/ directory, is missing or is commented out, this is a finding.</pre></td>
+	<td><pre>Configure RHEL 8 to exit interactive command shell user sessions after 10 minutes of inactivity.
+
+Add or edit the following line in "/etc/profile.d/tmout.sh":
+
+#!/bin/bash
+
+declare -xr TMOUT=600</pre></td>
+	<td>RHEL-08-020360</td>
+	<td>SV-279929r1156340_rule</td>
+</tr>
+
+<tr>
+	<td>V-279930</td>
+	<td>CCI-000068</td>
+	<td>medium</td>
+	<td>RHEL 8 IP tunnels must use FIPS 140-3-approved cryptographic algorithms.</td>
+	<td>SRG-OS-000033-GPOS-00014</td>
+	<td><pre>Overriding the system crypto policy makes the behavior of the Libreswan service violate expectations and makes system configuration more fragmented.</pre></td>
+	<td><pre>Note: If the ipsec service is not installed, this requirement is Not Applicable.
+
+Verify the IPsec service uses the system crypto policy with the following command:
+
+$ sudo grep include /etc/ipsec.conf /etc/ipsec.d/*.conf
+
+/etc/ipsec.conf:include /etc/crypto-policies/back-ends/libreswan.config
+/etc/ipsec.conf:include /etc/ipsec.d/*.conf
+
+If the ipsec configuration file does not contain "include /etc/crypto-policies/back-ends/libreswan.config", this is a finding.</pre></td>
+	<td><pre>Configure Libreswan to use the system cryptographic policy.
+
+Add the following line to "/etc/ipsec.conf":
+
+include /etc/crypto-policies/back-ends/libreswan.config</pre></td>
+	<td>RHEL-08-010280</td>
+	<td>SV-279930r1156343_rule</td>
+</tr>
+
+<tr>
+	<td>V-279931</td>
+	<td>CCI-002418</td>
+	<td>medium</td>
+	<td>RHEL 8 must implement DOD-approved encryption in the bind package.</td>
+	<td>SRG-OS-000423-GPOS-00187</td>
+	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
+
+Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.
+
+RHEL 8 incorporates systemwide crypto policies by default. The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/ directory.
+
+Satisfies: SRG-OS-000423-GPOS-00187, SRG-OS-000426-GPOS-00190</pre></td>
+	<td><pre>Note: If the "bind" package is not installed, this requirement is Not Applicable.
+
+Verify BIND uses the system crypto policy with the following command:
+
+$ sudo grep include /etc/named.conf 
+
+include "/etc/crypto-policies/back-ends/bind.config";' 
+
+If BIND is installed and the BIND config file does not contain the include "/etc/crypto-policies/back-ends/bind.config" directive, or the line is commented out, this is a finding.</pre></td>
+	<td><pre>Configure BIND to use the system crypto policy.
+
+Add the following line to the "options" section in "/etc/named.conf":
+
+include "/etc/crypto-policies/back-ends/bind.config";</pre></td>
+	<td>RHEL-08-010275</td>
+	<td>SV-279931r1156346_rule</td>
+</tr>
+
+<tr>
+	<td>V-279932</td>
+	<td>CCI-002450</td>
+	<td>high</td>
+	<td>RHEL 8 cryptographic policy must not be overridden.</td>
+	<td>SRG-OS-000396-GPOS-00176</td>
+	<td><pre>Centralized cryptographic policies simplify applying secure ciphers across an operating system and the applications that run on that operating system. Use of weak or untested encryption algorithms undermines the purposes of using encryption to protect data.
+
+Satisfies: SRG-OS-000396-GPOS-00176, SRG-OS-000393-GPOS-00173, SRG-OS-000394-GPOS-00174</pre></td>
+	<td><pre>Verify RHEL 8 cryptographic policies are not overridden.
+
+Verify the configured policy matches the generated policy with the following command:
+
+$ sudo update-crypto-policies --is-applied
+
+The configured policy is applied
+
+If the returned message does not match the above, this is a finding.</pre></td>
+	<td><pre>Configure RHEL 8 to correctly implement the systemwide cryptographic policies by reinstalling the crypto-policies package contents.
+
+Reinstall crypto-policies with the following command:
+
+$ sudo dnf -y reinstall crypto-policies
+
+Set the crypto-policy to FIPS with the following command:
+
+$ sudo update-crypto-policies --set FIPS
+
+Setting system policy to FIPS
+
+Note: Systemwide crypto policies are applied on application startup. It is recommended to restart the system for the change of policies to fully take place.</pre></td>
+	<td>RHEL-08-010270</td>
+	<td>SV-279932r1156349_rule</td>
+</tr>
+
+<tr>
+	<td>V-279933</td>
+	<td>CCI-002450</td>
+	<td>high</td>
+	<td>RHEL 8 must have the crypto-policies package installed.</td>
+	<td>SRG-OS-000396-GPOS-00176</td>
+	<td><pre>Centralized cryptographic policies simplify applying secure ciphers across an operating system and the applications that run on that operating system. Use of weak or untested encryption algorithms undermines the purposes of using encryption to protect data.
+
+Satisfies: SRG-OS-000396-GPOS-00176, SRG-OS-000393-GPOS-00173, SRG-OS-000394-GPOS-00174</pre></td>
+	<td><pre>Verify the RHEL 8 crypto-policies package is installed with the following command:
+
+$ sudo dnf list --installed crypto-policies
+
+Updating Subscription Management repositories.
+Installed Packages
+crypto-policies.noarch                     20230731-1.git3177e06.el8                      @rhel-8-for-x86_64-baseos-rpms
+
+If the crypto-policies package is not installed, this is a finding.</pre></td>
+	<td><pre>Install the crypto-policies package (if the package is not already installed) with the following command:
+
+$ sudo dnf -y install crypto-policies</pre></td>
+	<td>RHEL-08-010015</td>
+	<td>SV-279933r1156352_rule</td>
 </tr>
 
 </table>

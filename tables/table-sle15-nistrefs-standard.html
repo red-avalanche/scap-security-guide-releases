@@ -466,10 +466,11 @@ For all partitions listed by the previous command, it is necessary to search for
 setuid / setgid programs using the following command:
 <pre>$ sudo find <i>PARTITION</i> -xdev -perm /6000 -type f 2&gt;/dev/null</pre>
 
+
 For each setuid / setgid program identified by the previous command, an audit rule must be
-present in the appropriate place using the following line structure, setting ARCH to either b32 for 32-bit
-system, or having two lines for both b32 and b64 in case your system is 64-bit:
-<pre>-a always,exit -F arch=ARCH -F path=<i>PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+present in the appropriate place using the following line structure:
+<pre>-a always,exit -F path=<i>PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program to read
 audit rules during daemon startup, add the line to a file with suffix <tt>.rules</tt> in the
@@ -839,18 +840,19 @@ unauthorized users.
   <td>CCE-85749-0</td>
   <td>Ensure auditd Collects Information on Kernel Module Loading and Unloading - finit_module</td>
   <td xml:lang="en-US">
-If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.
   </td>
   <td xml:lang="en-US">
 The addition/removal of kernel modules can be used to alter the behavior of
@@ -864,7 +866,8 @@ to have an audit trail of modules that have been introduced into the kernel.
   <td>CCE-85750-8</td>
   <td>Ensure auditd Collects Information on Kernel Module Loading - init_module</td>
   <td xml:lang="en-US">
-To capture kernel module loading events, use following line, setting ARCH to
+
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
@@ -1003,6 +1006,31 @@ daily</pre>
 Log files that are not properly rotated run the risk of growing so large
 that they fill up the /var/log partition. Valuable logging information could be lost
 if the /var/log partition becomes full.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(a)<br/>AC-6(1)<br/>AU-9(4)</td>
+  <td>CCE-92534-7</td>
+  <td>System Audit Logs Must Be Group Owned By Root</td>
+  <td xml:lang="en-US">
+All audit logs must be group owned by root user. The path for audit log can
+be configured via <tt>log_file</tt> parameter in <pre>/etc/audit/auditd.conf</pre>
+or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
+
+To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
+
+  <pre>$ sudo chgrp root /var/log/audit/*</pre>
+  
+
+
+If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other
+than the <tt>root</tt> group account, change the group ownership of the audit logs
+to this specific group.
+  </td>
+  <td xml:lang="en-US">
+Unauthorized disclosure of audit records can reveal system and configuration data to
+attackers, thus compromising its confidentiality.
   </td>
   <td></td>
 </tr>
@@ -1232,7 +1260,7 @@ The cron service allow periodic job execution, needed for almost all administrat
 The ntpd service should be installed.
   </td>
   <td xml:lang="en-US">
-Time synchronization (using NTP) is required by almost all network and administrative tasks (syslog, cryptographic based services (authentication, etc.), etc.). Ntpd is regulary maintained and updated, supporting security features such as RFC 5906.
+Time synchronization (using NTP) is required by almost all network and administrative tasks (syslog, cryptographic based services (authentication, etc.), etc.). Ntpd is regularly maintained and updated, supporting security features such as RFC 5906.
   </td>
   <td></td>
 </tr>
@@ -1945,7 +1973,7 @@ router.
 <tr>
   <td>CM-7(a)<br/>CM-7(b)<br/>SC-5(3)(a)</td>
   <td>CCE-92482-9</td>
-  <td>Enable Kernel Paremeter to Log Martian Packets on all IPv4 Interfaces by Default</td>
+  <td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces by Default</td>
   <td xml:lang="en-US">
 To set the runtime status of the <code>net.ipv4.conf.default.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.log_martians=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.default.log_martians = 1</pre>
@@ -2374,7 +2402,7 @@ NIS does not support efficiently security constraints, ACL, etc. and should not 
   <td>N/A</td>
   <td>Uninstall the ntpdate package</td>
   <td xml:lang="en-US">
-ntpdate is a historical ntp synchronization client for unixes. It sould be uninstalled.
+ntpdate is a historical ntp synchronization client for unixes. It should be uninstalled.
   </td>
   <td xml:lang="en-US">
 ntpdate is an old not security-compliant ntp client. It should be replaced by modern ntp clients such as ntpd, able to use cryptographic mechanisms integrated in NTP.

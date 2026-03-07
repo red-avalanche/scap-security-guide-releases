@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>456</td>
+			<td>455</td>
 			<td>0</td>
-			<td>456</td>
+			<td>455</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -247,7 +247,7 @@ Oracle Linux Server release 9.5
 If the installed version of OL 9 is not supported, this is a finding.</pre></td>
 	<td><pre>Upgrade OL 9 to a supported version.</pre></td>
 	<td>OL09-00-000010</td>
-	<td>SV-271438r1091026_rule</td>
+	<td>SV-271438r1117152_rule</td>
 </tr>
 
 <tr>
@@ -326,7 +326,7 @@ Add or modify the following line in the "/usr/lib/systemd/system/emergency.servi
 
 ExecStart=-/usr/lib/systemd/systemd-sulogin-shell emergency</pre></td>
 	<td>OL09-00-000025</td>
-	<td>SV-271441r1091035_rule</td>
+	<td>SV-271441r1117265_rule</td>
 </tr>
 
 <tr>
@@ -350,7 +350,7 @@ Add or modify the following line in the "/usr/lib/systemd/system/rescue.service"
 
 ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue</pre></td>
 	<td>OL09-00-000030</td>
-	<td>SV-271442r1091038_rule</td>
+	<td>SV-271442r1117265_rule</td>
 </tr>
 
 <tr>
@@ -601,7 +601,7 @@ Once the superuser account has been added, update the grub.cfg file by running:
 
 $ sudo grubby --update-kernel=ALL'</pre></td>
 	<td>OL09-00-000050</td>
-	<td>SV-271451r1091065_rule</td>
+	<td>SV-271451r1117265_rule</td>
 </tr>
 
 <tr>
@@ -770,20 +770,28 @@ $ sudo dnf remove nfs-utils</pre></td>
 	<td>V-271457</td>
 	<td>CCI-000381</td>
 	<td>medium</td>
-	<td>OL 9 must not have the rsh-server package installed.</td>
+	<td>OL 9 must not install packages from the Extra Packages for Enterprise Linux (EPEL) repository.</td>
 	<td>SRG-OS-000095-GPOS-00049</td>
-	<td><pre>The "rsh-server" service provides unencrypted remote access service, which does not provide for the confidentiality and integrity of user passwords or the remote session and has very weak authentication. If a privileged user were to login using this service, the privileged user password could be compromised. The "rsh-server" package provides several obsolete and insecure network services. Removing it decreases the risk of accidental (or intentional) activation of those services.</pre></td>
-	<td><pre>Verify that OL 9 does not have the rsh-server package installed with the following command:
+	<td><pre>The EPEL is a repository of high-quality open-source packages for enterprise-class Linux distributions such as RHEL, CentOS, AlmaLinux, Rocky Linux, and Oracle Linux. These packages are not part of the official distribution but are built using the same Fedora build system to ensure compatibility and maintain quality standards.</pre></td>
+	<td><pre>Verify that OL 9 is not able to install packages from the EPEL with the following command:
 
-$ dnf list --installed rsh-server
-Error: No matching Packages to list
+$ dnf repolist
+repo id                                               repo name
+ol9_UEKR7                                             Oracle Linux 9 UEK Release 7 (x86_64)
+ol9_appstream                                         Oracle Linux 9 Application Stream Packages (x86_64)
+ol9_baseos_latest                                     Oracle Linux 9 BaseOS Latest (x86_64)
+ol9_oraclelinuxmanager210_client                      Oracle Linux Manager Client 2.10 for Oracle Linux 9 (x86_64)
 
-If the "rsh-server" package is installed, this is a finding.</pre></td>
-	<td><pre>Remove the rsh-server package with the following command:
+If any repositories containing the word "epel" in the name exist, this is a finding.</pre></td>
+	<td><pre>The repo package can be manually removed with the following command:
 
-$ sudo dnf remove rsh-server</pre></td>
+$ sudo dnf remove epel-release
+
+Configure the operating system to disable use of the EPEL repository with the following command:
+
+$ sudo dnf config-manager --set-disabled epel</pre></td>
 	<td>OL09-00-000105</td>
-	<td>SV-271457r1091083_rule</td>
+	<td>SV-271457r1134853_rule</td>
 </tr>
 
 <tr>
@@ -1511,7 +1519,7 @@ If the command has any output, this is a finding.</pre></td>
 
 $ sudo dnf reinstall -y crypto-policies</pre></td>
 	<td>OL09-00-000244</td>
-	<td>SV-271481r1091155_rule</td>
+	<td>SV-271481r1117272_rule</td>
 </tr>
 
 <tr>
@@ -2524,7 +2532,9 @@ $ sudo systemctl enable --now pcscd</pre></td>
 	<td>OL 9 must have the libreswan package installed.</td>
 	<td>SRG-OS-000120-GPOS-00061</td>
 	<td><pre>Providing the ability for remote users or systems to initiate a secure VPN connection protects information when it is transmitted over a wide area network.</pre></td>
-	<td><pre>Verify that OL 9 libreswan service package is installed.
+	<td><pre>Note: If there is no operational need for Libreswan to be installed, this rule is not applicable.
+
+Verify that OL 9 libreswan service package is installed.
 
 Check that the libreswan service package is installed with the following command:
 
@@ -2537,7 +2547,7 @@ If the libreswan package is not installed, this is a finding.</pre></td>
 
 $ sudo dnf install -y libreswan</pre></td>
 	<td>OL09-00-000410</td>
-	<td>SV-271517r1091263_rule</td>
+	<td>SV-271517r1101885_rule</td>
 </tr>
 
 <tr>
@@ -5119,27 +5129,29 @@ $ sudo service auditd restart</pre></td>
 	<td>medium</td>
 	<td>OL 9 must take action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity.</td>
 	<td>SRG-OS-000343-GPOS-00134</td>
-	<td><pre>If security personnel are not notified immediately when storage volume reaches 75 percent utilization, they are unable to plan for audit record storage capacity expansion.</pre></td>
+	<td><pre>If security personnel are not notified immediately when storage volume reaches a maximum of 75 percent utilization, they are unable to plan for audit record storage capacity expansion. The notification can be set to trigger at lower utilization thresholds at the ISSO's discretion.</pre></td>
 	<td><pre>Verify that OL 9 takes action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following command:
 
 $ sudo grep -w space_left /etc/audit/auditd.conf
 space_left = 25%
 
-If the value of the "space_left" keyword is not set to 25 percent of the storage volume allocated to audit logs, or if the line is commented out, ask the system administrator (SA) to indicate how the system is providing real-time alerts to the SA and information system security officer (ISSO). If the "space_left" value is not configured to the correct value, this is a finding.</pre></td>
-	<td><pre>Configure OL 9 to initiate an action to notify the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity by adding/modifying the following line in the /etc/audit/auditd.conf file.
+If the value of the "space_left" keyword is not set to 25 percent or greater of the storage volume allocated to audit logs, or if the line is commented out, ask the system administrator (SA) to indicate how the system is providing real-time alerts to the SA and information system security officer (ISSO). 
+
+If the "space_left" value is not configured to the value "25%" or more, this is a finding.</pre></td>
+	<td><pre>Configure OL 9 to initiate an action to notify the SA and ISSO (at a minimum) when allocated audit record storage volume reaches (at most) 75 percent of the repository maximum audit record storage capacity by adding/modifying the following line in the /etc/audit/auditd.conf file:
 
 space_left  = 25%</pre></td>
 	<td>OL09-00-000865</td>
-	<td>SV-271599r1091509_rule</td>
+	<td>SV-271599r1134856_rule</td>
 </tr>
 
 <tr>
 	<td>V-271600</td>
 	<td>CCI-001855</td>
 	<td>medium</td>
-	<td>OL 9 must notify the system administrator (SA) and information system security officer (ISSO) (at a minimum) when allocated audit record storage volume 75 percent utilization.</td>
+	<td>OL 9 must notify the system administrator (SA) and information system security officer (ISSO) (at a minimum) when allocated audit record storage volume reaches 75 percent utilization.</td>
 	<td>SRG-OS-000343-GPOS-00134</td>
-	<td><pre>If security personnel are not notified immediately when storage volume reaches 75 percent utilization, they are unable to plan for audit record storage capacity expansion.</pre></td>
+	<td><pre>If security personnel are not notified immediately when storage volume reaches a maximum of 75 percent utilization, they are unable to plan for audit record storage capacity expansion. The notification can be set to trigger at lower utilization thresholds at the ISSO's discretion.</pre></td>
 	<td><pre>Verify that OL 9 notifies the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following command:
 
 $ sudo grep -w space_left_action /etc/audit/auditd.conf
@@ -5148,11 +5160,11 @@ space_left_action = email
 If the value of the "space_left_action" is not set to "email", or if the line is commented out, ask the SA to indicate how the system is providing real-time alerts to the SA and ISSO.
 
 If there is no evidence that real-time alerts are configured on the system, this is a finding.</pre></td>
-	<td><pre>Configure OL 9 to initiate an action to notify the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity by adding/modifying the following line in the /etc/audit/auditd.conf file.
+	<td><pre>Configure OL 9 to initiate an action to notify the SA and ISSO (at a minimum) when allocated audit record storage volume reaches (at most) 75 percent of the repository maximum audit record storage capacity by adding/modifying the following line in the /etc/audit/auditd.conf file:
 
 space_left_action = email</pre></td>
 	<td>OL09-00-000870</td>
-	<td>SV-271600r1091512_rule</td>
+	<td>SV-271600r1134858_rule</td>
 </tr>
 
 <tr>
@@ -6089,7 +6101,7 @@ $ sudo grub2-setpassword
 Enter password:
 Confirm password:</pre></td>
 	<td>OL09-00-001115</td>
-	<td>SV-271635r1091617_rule</td>
+	<td>SV-271635r1117265_rule</td>
 </tr>
 
 <tr>
@@ -7918,41 +7930,6 @@ Note: Enabling and starting USBGuard without properly configuring it for an indi
 </tr>
 
 <tr>
-	<td>V-271702</td>
-	<td>CCI-003959</td>
-	<td>medium</td>
-	<td>OL 9 must disable automatic mounting of Universal Serial Bus (USB) mass storage driver.</td>
-	<td>SRG-OS-000690-GPOS-00140</td>
-	<td><pre>Without authenticating devices, unidentified or unknown devices may be introduced, thereby facilitating malicious activity.
-
-Peripherals include, but are not limited to, such devices as flash drives, external storage, and printers.</pre></td>
-	<td><pre>Verify that OL 9 disables automatic mounting of the USB storage kernel module with the following command:
-
-$ grep usb-storage /etc/modprobe.d/* | grep "/bin/true" 
-install usb-storage /bin/true
-
-If the command does not return any output, or the line is commented out, this is a finding.
-
-Verify the operating system disables the ability to use USB mass storage device.
-
-$ grep usb-storage /etc/modprobe.d/* | grep -i "blacklist"
-blacklist usb-storage
-
-If the command does not return any output, or the line is commented out, this is a finding.</pre></td>
-	<td><pre>Configure OL 9 to disable using the USB storage kernel module. 
-
-Create a file under "/etc/modprobe.d" to contain the following:
-
-# sudo su -c "echo install usb-storage /bin/true >> /etc/modprobe.d/DISASTIG.conf"
-
-Configure the operating system to disable the ability to use USB mass storage devices.
-
-# sudo su -c "echo blacklist usb-storage >> /etc/modprobe.d/DISASTIG.conf"</pre></td>
-	<td>OL09-00-002332</td>
-	<td>SV-271702r1091818_rule</td>
-</tr>
-
-<tr>
 	<td>V-271703</td>
 	<td>CCI-000067</td>
 	<td>medium</td>
@@ -9140,7 +9117,7 @@ Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>OL09-00-002406</td>
-	<td>SV-271745r1091947_rule</td>
+	<td>SV-271745r1117266_rule</td>
 </tr>
 
 <tr>
@@ -9176,7 +9153,7 @@ Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>OL09-00-002407</td>
-	<td>SV-271746r1091950_rule</td>
+	<td>SV-271746r1117266_rule</td>
 </tr>
 
 <tr>
@@ -9202,7 +9179,7 @@ Reload settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>OL09-00-002408</td>
-	<td>SV-271747r1091953_rule</td>
+	<td>SV-271747r1117266_rule</td>
 </tr>
 
 <tr>
@@ -9226,7 +9203,7 @@ The system configuration files need to be reloaded for the changes to take effec
 
 $ sudo sysctl --system</pre></td>
 	<td>OL09-00-002409</td>
-	<td>SV-271748r1091956_rule</td>
+	<td>SV-271748r1117266_rule</td>
 </tr>
 
 <tr>
@@ -9250,7 +9227,7 @@ The system configuration files need to be reloaded for the changes to take effec
 
 $ sudo sysctl --system</pre></td>
 	<td>OL09-00-002410</td>
-	<td>SV-271749r1091959_rule</td>
+	<td>SV-271749r1117266_rule</td>
 </tr>
 
 <tr>
@@ -9691,34 +9668,6 @@ $ sudo sysctl --system</pre></td>
 </tr>
 
 <tr>
-	<td>V-271767</td>
-	<td>CCI-000803</td>
-	<td>medium</td>
-	<td>OL 9 must prevent system daemons from using Kerberos for authentication.</td>
-	<td>SRG-OS-000120-GPOS-00061</td>
-	<td><pre>Unapproved mechanisms used for authentication to the cryptographic module are not verified; therefore, cannot be relied upon to provide confidentiality or integrity and DOD data may be compromised.
-
-OL 9 systems using encryption are required to use FIPS-compliant mechanisms for authenticating to cryptographic modules.
-
-The key derivation function (KDF) in Kerberos is not FIPS compatible. Ensuring the system does not have any keytab files present prevents system daemons from using Kerberos for authentication. A keytab is a file containing pairs of Kerberos principals and encrypted keys.
-
-FIPS 140-3 is the current standard for validating that mechanisms used to access cryptographic modules use authentication that meets DOD requirements. This allows for Security Levels 1, 2, 3, or 4 for use on a general-purpose computing system.</pre></td>
-	<td><pre>Verify that OL 9 prevents system daemons from using Kerberos for authentication with the following command:
-
-$ ls -al /etc/*.keytab
-ls: cannot access '/etc/*.keytab': No such file or directory 
-
-If this command produces any "keytab" file(s), this is a finding.</pre></td>
-	<td><pre>Configure OL 9 to prevent system daemons from using Kerberos for authentication.
-
-Remove any files with the .keytab extension from the operating system.
-
-$ sudo rm -f /etc/*.keytab</pre></td>
-	<td>OL09-00-002429</td>
-	<td>SV-271767r1092013_rule</td>
-</tr>
-
-<tr>
 	<td>V-271768</td>
 	<td>CCI-000366</td>
 	<td>medium</td>
@@ -10013,7 +9962,7 @@ Set the sticky bit on all world-writable directories using the command, replace 
 
 $ sudo chmod a+t [World-Writable Directory]</pre></td>
 	<td>OL09-00-002510</td>
-	<td>SV-271779r1092049_rule</td>
+	<td>SV-271779r1117267_rule</td>
 </tr>
 
 <tr>
@@ -10157,7 +10106,7 @@ Set the owner of all public directories as root or a system account using the co
 
 $ sudo chown root [Public Directory]</pre></td>
 	<td>OL09-00-002516</td>
-	<td>SV-271785r1092067_rule</td>
+	<td>SV-271785r1117267_rule</td>
 </tr>
 
 <tr>
@@ -10233,23 +10182,21 @@ $ sudo chmod 755 [DIRECTORY]</pre></td>
 	<td>V-271789</td>
 	<td>CCI-001499</td>
 	<td>medium</td>
-	<td>OL 9 library files must be group-owned by root or a system account.</td>
+	<td>OL 9 library files must be group owned by root or a system account.</td>
 	<td>SRG-OS-000259-GPOS-00100</td>
 	<td><pre>If OL 9 allowed any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to OL 9 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges.</pre></td>
-	<td><pre>Verify that OL 9 system-wide shared library files are group-owned by "root" with the following command:
+	<td><pre>Verify that OL 9 systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are group owned by root with the following command:
 
-$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \;
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec stat -c "%n %G" {} +
 
-If any system-wide shared library file is returned and is not group-owned by a required system account, this is a finding.</pre></td>
-	<td><pre>Configure the system-wide shared library files (/lib, /lib64, /usr/lib and /usr/lib64) to be protected from unauthorized access.
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the OL 9 systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" to be group owned by root with the following command:
 
-Run the following command, replacing "[FILE]" with any library file not group-owned by "root".
-
-$ sudo chgrp root [FILE]</pre></td>
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec chown :root {} +</pre></td>
 	<td>OL09-00-002523</td>
-	<td>SV-271789r1092079_rule</td>
+	<td>SV-271789r1134863_rule</td>
 </tr>
 
 <tr>
@@ -10261,39 +10208,39 @@ $ sudo chgrp root [FILE]</pre></td>
 	<td><pre>If OL 9 allowed any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to OL 9 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges.</pre></td>
-	<td><pre>Verify that OL 9 system-wide shared library files are owned by "root" with the following command:
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are owned by root with the following command:
 
-$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -user root -exec ls -l {} \;
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -exec stat -c "%n %U" {} +
 
-If any system-wide shared library file is not owned by root, this is a finding.</pre></td>
-	<td><pre>Configure the system-wide shared library files (/lib, /lib64, /usr/lib and /usr/lib64) to be protected from unauthorized access.
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" to be owned by root with the following command:
 
-Run the following command, replacing "[FILE]" with any library file not owned by "root".
-
-$ sudo chown root [FILE]</pre></td>
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -exec chown root {} +</pre></td>
 	<td>OL09-00-002524</td>
-	<td>SV-271790r1092082_rule</td>
+	<td>SV-271790r1134866_rule</td>
 </tr>
 
 <tr>
 	<td>V-271791</td>
 	<td>CCI-001499</td>
 	<td>medium</td>
-	<td>OL 9 library files must have mode 755 or less permissive.</td>
+	<td>OL 9 library files must have mode 0755 or less permissive.</td>
 	<td>SRG-OS-000259-GPOS-00100</td>
 	<td><pre>If OL 9 allowed any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to OL 9 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges.</pre></td>
-	<td><pre>Verify that OL 9 system-wide shared library files contained in the following directories have mode "755" or less permissive with the following command:
+	<td><pre>Verify that OL 9 systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" have mode 0755 or less permissive.
 
-$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 -perm /022 -type f -exec ls -l {} \;
+Check that the systemwide shared library files have mode 0755 or less permissive with the following command:
 
-If any system-wide shared library file is found to be group-writable or world-writable, this is a finding.</pre></td>
-	<td><pre>Configure the library files to be protected from unauthorized access. Run the following command, replacing "[FILE]" with any library file with a mode more permissive than 755.
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' -perm /022 -exec stat -c "%n %a" {} +
 
-$ sudo chmod 755 [FILE]</pre></td>
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" to have mode 0755 or less permissive with the following command:
+
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' -perm /022 -exec chmod go-w {} +</pre></td>
 	<td>OL09-00-002525</td>
-	<td>SV-271791r1092085_rule</td>
+	<td>SV-271791r1134971_rule</td>
 </tr>
 
 <tr>
@@ -12758,6 +12705,36 @@ pkcs11:id=%88%68%BF%E0%8E%35%C4%3B%38%6B%62%F7%28%3B%84%81%C8%0C%D7%4D;type=cert
     category: authority</pre></td>
 	<td>OL09-00-900140</td>
 	<td>SV-271901r1092415_rule</td>
+</tr>
+
+<tr>
+	<td>V-278952</td>
+	<td>CCI-000130</td>
+	<td>medium</td>
+	<td>OL 9 must audit any script or executable called by cron as root or by any privileged user.</td>
+	<td>SRG-OS-000037-GPOS-00015</td>
+	<td><pre>Any script or executable called by cron as root or by any privileged user must be owned by that user, must have the permissions 0755 or more restrictive, and should have no extended rights that allow any nonprivileged user to modify the script or executable.</pre></td>
+	<td><pre>Verify that OL 9 is configured to audit the execution of any system call made by cron as root or as any privileged user.
+
+$ sudo auditctl -l | grep /etc/cron.d
+-w /etc/cron.d -p wa -k cronjobs
+
+$ sudo auditctl -l | grep /var/spool/cron
+-w /var/spool/cron -p wa -k cronjobs
+
+If either of these commands do not return the expected output, or the lines are commented out, this is a finding.</pre></td>
+	<td><pre>Configure OL 9 to audit the execution of any system call made by cron as root or as any privileged user.
+
+Add or update the following file system rules to "/etc/audit/rules.d/audit.rules":
+
+auditctl -w /etc/cron.d/ -p wa -k cronjobs
+auditctl -w /var/spool/cron/ -p wa -k cronjobs
+
+To load the rules to the kernel immediately, use the following command:
+
+$ sudo augenrules --load</pre></td>
+	<td>OL09-00-002584</td>
+	<td>SV-278952r1135407_rule</td>
 </tr>
 
 </table>

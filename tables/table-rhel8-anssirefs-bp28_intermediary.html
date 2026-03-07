@@ -308,7 +308,7 @@ default Grub2 command line for Linux operating systems. Modify the line within
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="spec_store_bypass_disable=<tt>seccomp</tt>"</pre>
   </td>
   <td xml:lang="en-US">
-In vulnerable processsors, the speculatively forwarded store can be used in a cache side channel
+In vulnerable processors, the speculatively forwarded store can be used in a cache side channel
 attack. An example of this is reading memory to which the attacker does not directly have access,
 for example inside the sandboxed code.
   </td>
@@ -413,7 +413,7 @@ To set the runtime status of the <code>kernel.perf_cpu_time_max_percent</code> k
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.perf_cpu_time_max_percent = 1</pre>
   </td>
   <td xml:lang="en-US">
-The <tt>kernel.perf_cpu_time_max_percent</tt> configures a treshold of
+The <tt>kernel.perf_cpu_time_max_percent</tt> configures a threshold of
 maximum percentile of CPU that can be used by Perf system. Restricting usage
 of <tt>Perf</tt> system decreases risk of potential availability problems.
   </td>
@@ -630,7 +630,7 @@ Avoids ARP Flux on system that have more than one interface on the same subnet.
 <tr>
   <td>R12</td>
   <td>CCE-88001-3</td>
-  <td>Drop Gratuitious ARP frames on All IPv4 Interfaces</td>
+  <td>Drop Gratuitous ARP frames on All IPv4 Interfaces</td>
   <td xml:lang="en-US">
 To set the runtime status of the <code>net.ipv4.conf.all.drop_gratuitous_arp</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.drop_gratuitous_arp=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.all.drop_gratuitous_arp = 1</pre>
@@ -1669,7 +1669,7 @@ attacks.
 <br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
-possble combinations that need to be tested before the password is compromised.
+possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of lowercase characters makes password guessing attacks
 more difficult by ensuring a larger search space.
   </td>
@@ -1755,8 +1755,8 @@ Do not allow users to reuse recent passwords. This can be accomplished by using 
 <tt>remember</tt> option for the <tt>pam_unix</tt> or <tt>pam_pwhistory</tt> PAM modules.
   </td>
   <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not
-re-used by a user.
+Preventing reuse of previous passwords helps ensure that a compromised password is not
+reused by a user.
   </td>
   <td></td>
 </tr>
@@ -2110,7 +2110,7 @@ in <tt>/etc/sudoers.d/</tt>.
   </td>
   <td xml:lang="en-US">
 Forcing sudo to reset the environment ensures that environment variables are not passed on to the
-command accidentaly, preventing leak of potentially sensitive information.
+command accidentally, preventing leak of potentially sensitive information.
   </td>
   <td></td>
 </tr>
@@ -3953,7 +3953,7 @@ $ sudo yum erase telnet-server</pre>
 It is detrimental for operating systems to provide, or install by default,
 functionality exceeding requirements or mission objectives. These
 unnecessary capabilities are often overlooked and therefore may remain
-unsecure. They increase the risk to the platform by providing additional
+insecure. They increase the risk to the platform by providing additional
 attack vectors.
 <br />
 The telnet service provides an unencrypted remote access service which does
@@ -3995,7 +3995,7 @@ Removing the <tt>tftp-server</tt> package decreases the risk of the accidental
 <br /><br />
 If TFTP is required for operational support (such as transmission of router
 configurations), its use must be documented with the Information Systems
-Securty Manager (ISSM), restricted to only authorized personnel, and have
+Security Manager (ISSM), restricted to only authorized personnel, and have
 access control rules established.
   </td>
   <td></td>
@@ -4067,6 +4067,51 @@ remote session.
 
 Removing the <tt>ypserv</tt> package decreases the risk of the accidental
 (or intentional) activation of NIS or NIS+ services.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>R67</td>
+  <td>CCE-82416-9</td>
+  <td>Configure LDAP Client to Use TLS For All Transactions</td>
+  <td xml:lang="en-US">
+This check verifies cryptography has been implemented
+to protect the integrity of remote LDAP authentication sessions.
+<br /><br />
+To determine if LDAP is being used for authentication, use the following
+command:
+<pre>$ sudo grep -i useldapauth /etc/sysconfig/authconfig</pre>
+<br /><br />
+If <tt>USELDAPAUTH=yes</tt>, then LDAP is being used. To check if LDAP is
+configured to use TLS, use the following command:
+<pre>$ sudo grep -i ssl /etc/pam_ldap.conf</pre>
+  </td>
+  <td xml:lang="en-US">
+Without cryptographic integrity protections, information can be altered by
+unauthorized users without detection. The ssl directive specifies whether
+to use TLS or not. If not specified it will default to no. It should be set
+to start_tls rather than doing LDAP over SSL.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>R67</td>
+  <td>CCE-82417-7</td>
+  <td>Configure Certificate Directives for LDAP Use of TLS</td>
+  <td xml:lang="en-US">
+Ensure a copy of a trusted CA certificate has been placed in the file
+<tt>/etc/pki/tls/CA/cacert.pem</tt>. Configure LDAP to enforce TLS use and
+to trust certificates signed by that CA. First, edit the file
+<tt>/etc/nslcd.conf</tt>, and add or correct either of the following lines:
+<pre>tls_cacertdir /etc/pki/tls/CA</pre> or 
+<pre>tls_cacertfile /etc/pki/tls/CA/cacert.pem</pre>
+Then review the LDAP server and ensure TLS has been configured.
+  </td>
+  <td xml:lang="en-US">
+The tls_cacertdir or tls_cacertfile directives are required when
+tls_checkpeer is configured (which is the default for openldap versions 2.1 and
+up). These directives define the path to the trust certificates signed by the
+site CA.
   </td>
   <td></td>
 </tr>
@@ -4258,7 +4303,7 @@ Using a higher number of rounds makes password cracking attacks more difficult.
 <tr>
   <td>R68</td>
   <td>CCE-80893-1</td>
-  <td>Set PAM''s Password Hashing Algorithm</td>
+  <td>Set PAM Password Hashing Algorithm - system-auth</td>
   <td xml:lang="en-US">
 The PAM system service can be configured to only store encrypted representations of passwords.
 In "/etc/pam.d/system-auth", the <tt>password</tt> section of the file controls which
@@ -4287,6 +4332,23 @@ configuration option in <tt>/etc/libuser.conf</tt> ensures the use of a strong h
 algorithm that makes password cracking attacks more difficult.
   </td>
   <td>var_password_hashing_algorithm_pam=sha512</td>
+</tr>
+<tr>
+  <td>R69</td>
+  <td>CCE-86076-7</td>
+  <td>Name Service Switch does not use NIS</td>
+  <td xml:lang="en-US">
+Each call to a function which retrieves data from a system database like the
+password or group database is handled by the Name Service Switch
+implementation in the GNU C library.  The various services provided are
+implemented by independent modules, each of which naturally varies widely
+from the other. One of such modules is the <tt>nis</tt> module, which allows
+to get information from NIS servers.
+  </td>
+  <td xml:lang="en-US">
+NIS service is insecure and should not be used.
+  </td>
+  <td></td>
 </tr>
 <tr>
   <td>R74</td>
@@ -4365,68 +4427,6 @@ $ sudo yum install aide</pre>
   </td>
   <td xml:lang="en-US">
 The AIDE package must be installed if it is to be available for integrity checking.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td>CCE-82416-9</td>
-  <td>Configure LDAP Client to Use TLS For All Transactions</td>
-  <td xml:lang="en-US">
-This check verifies cryptography has been implemented
-to protect the integrity of remote LDAP authentication sessions.
-<br /><br />
-To determine if LDAP is being used for authentication, use the following
-command:
-<pre>$ sudo grep -i useldapauth /etc/sysconfig/authconfig</pre>
-<br /><br />
-If <tt>USELDAPAUTH=yes</tt>, then LDAP is being used. To check if LDAP is
-configured to use TLS, use the following command:
-<pre>$ sudo grep -i ssl /etc/pam_ldap.conf</pre>
-  </td>
-  <td xml:lang="en-US">
-Without cryptographic integrity protections, information can be altered by
-unauthorized users without detection. The ssl directive specifies whether
-to use TLS or not. If not specified it will default to no. It should be set
-to start_tls rather than doing LDAP over SSL.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td>CCE-82417-7</td>
-  <td>Configure Certificate Directives for LDAP Use of TLS</td>
-  <td xml:lang="en-US">
-Ensure a copy of a trusted CA certificate has been placed in the file
-<tt>/etc/pki/tls/CA/cacert.pem</tt>. Configure LDAP to enforce TLS use and
-to trust certificates signed by that CA. First, edit the file
-<tt>/etc/nslcd.conf</tt>, and add or correct either of the following lines:
-<pre>tls_cacertdir /etc/pki/tls/CA</pre> or 
-<pre>tls_cacertfile /etc/pki/tls/CA/cacert.pem</pre>
-Then review the LDAP server and ensure TLS has been configured.
-  </td>
-  <td xml:lang="en-US">
-The tls_cacertdir or tls_cacertfile directives are required when
-tls_checkpeer is configured (which is the default for openldap versions 2.1 and
-up). These directives define the path to the trust certificates signed by the
-site CA.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td>CCE-86076-7</td>
-  <td>Name Service Switch does not use NIS</td>
-  <td xml:lang="en-US">
-Each call to a function which retrieves data from a system database like the
-password or group database is handled by the Name Service Switch
-implementation in the GNU C library.  The various services provided are
-implemented by independent modules, each of which naturally varies widely
-from the other. One of such modules is the <tt>nis</tt> module, which allows
-to get information from NIS servers.
-  </td>
-  <td xml:lang="en-US">
-NIS service is insecure and should not be used.
   </td>
   <td></td>
 </tr>

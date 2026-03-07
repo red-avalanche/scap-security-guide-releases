@@ -710,7 +710,8 @@ malicious processes that attempt to delete log files to conceal their presence.
   <td>CCE-80711-5</td>
   <td>Ensure auditd Collects Information on Kernel Module Unloading - delete_module</td>
   <td xml:lang="en-US">
-To capture kernel module unloading events, use following line, setting ARCH to
+
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -735,18 +736,19 @@ to have an audit trail of modules that have been introduced into the kernel.
   <td>CCE-80712-3</td>
   <td>Ensure auditd Collects Information on Kernel Module Loading and Unloading - finit_module</td>
   <td xml:lang="en-US">
-If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program
-to read audit rules during daemon startup (the default), add the following lines to a file
-with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
-loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
-    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
-rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
-in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
-b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.
   </td>
   <td xml:lang="en-US">
 The addition/removal of kernel modules can be used to alter the behavior of
@@ -760,7 +762,8 @@ to have an audit trail of modules that have been introduced into the kernel.
   <td>CCE-80713-1</td>
   <td>Ensure auditd Collects Information on Kernel Module Loading - init_module</td>
   <td xml:lang="en-US">
-To capture kernel module loading events, use following line, setting ARCH to
+
+To capture kernel module loading and unloading events, use the following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
@@ -1767,12 +1770,12 @@ If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
 program to read audit rules during daemon startup (the default), add
 a line of the following form to a file with suffix <tt>.rules</tt>
 in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the
 following form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -2195,26 +2198,6 @@ accepted.
   <td></td>
 </tr>
 <tr>
-  <td>CM-3(6)<br/>SC-12(2)<br/>SC-12(3)<br/>IA-7<br/>SC-13<br/>CM-6(a)<br/>SC-12</td>
-  <td>CCE-80942-6</td>
-  <td>Enable FIPS Mode</td>
-  <td xml:lang="en-US">
-
-Red Hat Enterprise Linux 8 has an installation-time kernel flag that can enable FIPS mode.
-The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
-enabled. Enabling FIPS mode on a preexisting system is not supported. If
-this rule fails on an installed system, then this is a permanent
-finding and cannot be fixed.
-  </td>
-  <td xml:lang="en-US">
-Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
-protect data. The operating system must implement cryptographic modules adhering to the higher
-standards approved by the federal government since this provides assurance they have been tested
-and validated.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>IA-4(e)<br/>AC-2(3)<br/>CM-6(a)</td>
   <td>CCE-80954-1</td>
   <td>Set Account Expiration Following Inactivity</td>
@@ -2337,7 +2320,7 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+When using <tt>rsyslogd</tt> to off-load logs off a encryption system must be used.
 
 Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
 <pre>$ActionSendStreamDriverMode 1</pre>
@@ -2546,7 +2529,7 @@ attacks.
 <br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
-possble combinations that need to be tested before the password is compromised.
+possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of lowercase characters makes password guessing attacks
 more difficult by ensuring a larger search space.
   </td>
@@ -2712,6 +2695,7 @@ the password is compromised.
   <td xml:lang="en-US">
 Configure non-compliant accounts to enforce a <tt>60</tt>-day maximum password lifetime
 restriction by running the following command:
+
 <pre>$ sudo chage -M <tt>60</tt> <i>USER</i></pre>
   </td>
   <td xml:lang="en-US">
@@ -2883,7 +2867,7 @@ of initiating changes, including upgrades and modifications.
 Firewalld can be configured with many backends, such as nftables.
   </td>
   <td xml:lang="en-US">
-Nftables is modern kernel module for controling network connections coming into a system.
+Nftables is modern kernel module for controlling network connections coming into a system.
 Utilizing the limit statement in "nftables" can help to mitigate DoS attacks.
   </td>
   <td></td>
@@ -2932,7 +2916,7 @@ Using a stronger hashing algorithm makes password cracking attacks more difficul
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(c)<br/>CM-6(a)</td>
   <td>CCE-85945-4</td>
-  <td>Set PAM''s Password Hashing Algorithm - password-auth</td>
+  <td>Set PAM Password Hashing Algorithm - password-auth</td>
   <td xml:lang="en-US">
 The PAM system service can be configured to only store encrypted representations of passwords.
 In <tt>/etc/pam.d/password-auth</tt>, the <tt>password</tt> section of the file controls which
@@ -2963,7 +2947,7 @@ algorithm that makes password cracking attacks more difficult.
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(c)<br/>CM-6(a)</td>
   <td>CCE-80893-1</td>
-  <td>Set PAM''s Password Hashing Algorithm</td>
+  <td>Set PAM Password Hashing Algorithm - system-auth</td>
   <td xml:lang="en-US">
 The PAM system service can be configured to only store encrypted representations of passwords.
 In "/etc/pam.d/system-auth", the <tt>password</tt> section of the file controls which
@@ -3650,6 +3634,20 @@ accurate. More information on <tt>chrony</tt> can be found at
 <tt>Chrony</tt> can be configured to be a client and/or a server.
 Add or edit server or pool lines to <tt>/etc/chrony.conf</tt> as appropriate:
 <pre>server &lt;remote-server&gt;</pre>
+Alternatively, server or pool directives can be specified in files included via
+<tt>sourcedir</tt> or <tt>confdir</tt> directives in <tt>/etc/chrony.conf</tt>.
+When using <tt>sourcedir</tt>, create <tt>.sources</tt> files in the specified directory:
+<pre># In /etc/chrony.conf:
+sourcedir /etc/chrony/sources.d
+
+# In /etc/chrony/sources.d/ntp.sources:
+server 0.pool.ntp.org</pre>
+When using <tt>confdir</tt>, create <tt>.conf</tt> files in the specified directory:
+<pre># In /etc/chrony.conf:
+confdir /etc/chrony/conf.d
+
+# In /etc/chrony/conf.d/ntp-servers.conf:
+pool 1.pool.ntp.org</pre>
 Multiple servers may be configured.
   </td>
   <td xml:lang="en-US">
@@ -3699,7 +3697,7 @@ debug problems.
 
 Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
-debuging. Permitting temporary enablement of core dumps during such situations
+debugging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.
   </td>
   <td></td>
@@ -3720,7 +3718,7 @@ terminates an application. The memory image could contain sensitive data
 and is generally useful only for developers or system operators trying to
 debug problems. Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
-debuging. Permitting temporary enablement of core dumps during such situations
+debugging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.
   </td>
   <td></td>
@@ -3800,7 +3798,7 @@ After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.
+of the information system but does not want to logout because of the temporary nature of the absence.
   </td>
   <td></td>
 </tr>
@@ -3818,7 +3816,7 @@ After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.
+of the information system but does not want to logout because of the temporary nature of the absence.
   </td>
   <td></td>
 </tr>
@@ -3956,16 +3954,34 @@ attackers, thus compromising its confidentiality.
   <td>CCE-84048-8</td>
   <td>System Audit Logs Must Have Mode 0750 or Less Permissive</td>
   <td xml:lang="en-US">
-
-Verify the audit log directories have a mode of "0700" or less permissive by first determining
+Verify the audit log directories have a mode of "0750" or less permissive by first determining
 where the audit logs are stored with the following command:
 <pre>$ sudo grep -iw log_file /etc/audit/auditd.conf
-
 log_file = /var/log/audit/audit.log</pre>
+By default, the audit log directory is <tt>/var/log/audit</tt>.
+<br />
 Configure the audit log directory to be protected from unauthorized read access by setting the
-correct permissive mode with the following command:
-<pre>$ sudo chmod 0700 <i>audit_log_directory</i></pre>
-By default, <tt><i>audit_log_directory</i></tt> is "/var/log/audit".
+correct permissive mode.
+<br />
+The appropriate directory permissions depend on the <tt>log_group</tt> setting in <tt>/etc/audit/auditd.conf</tt>:
+<br />
+<ul>
+<li>If <tt>log_group</tt> is set to <tt>root</tt> or is not set, the directory should have mode <tt>0700</tt>.
+This restricts access to root only, which is the most secure configuration.</li>
+<li>If <tt>log_group</tt> is set to a group other than <tt>root</tt>, the directory should have mode <tt>0750</tt>.
+This is necessary because when <tt>log_group</tt> is set to a non-root group, the audit log files are
+typically configured with mode <tt>0640</tt> (allowing group read access). For group members to access
+these files, they need execute permission on the directory to traverse it. The <tt>0750</tt> mode allows
+root full access and the specified group read and execute access, while preventing others from accessing
+the directory.</li>
+</ul>
+<br />
+If <tt>log_group</tt> is set to a group other than <tt>root</tt>, change the mode of the audit log directory
+with the following command:
+<pre>$ sudo chmod 0750 audit_log_directory</pre>
+Otherwise, change the mode of the audit log directory with the following command:
+<pre>$ sudo chmod 0700 audit_log_directory</pre>
+Replace <tt><i>audit_log_directory</i></tt> with the correct audit log directory path.
   </td>
   <td xml:lang="en-US">
 If users can write to audit logs, audit trails can be modified or destroyed.
@@ -4183,14 +4199,21 @@ accounts are created in the future, and the cause should be discovered and addre
   <td>CCE-80819-6</td>
   <td>System Audit Logs Must Have Mode 0640 or Less Permissive</td>
   <td xml:lang="en-US">
-
-Determine where the audit logs are stored with the following command:
+Verify the audit log files have a mode of "0640" or less permissive by first determining
+where the audit logs are stored with the following command:
 <pre>$ sudo grep -iw log_file /etc/audit/auditd.conf
 log_file = /var/log/audit/audit.log</pre>
+By default, the audit log file is <tt>/var/log/audit/audit.log</tt>.
+<br />
 Configure the audit log to be protected from unauthorized read access by setting the correct
-permissive mode with the following command:
+permissive mode.
+If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the
+<tt>root</tt> group account, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0640 <i>audit_log_file</i></pre>
+<br />
+Otherwise, change the mode of the audit log files with the following command:
 <pre>$ sudo chmod 0600 <i>audit_log_file</i></pre>
-By default, <i>audit_log_file</i> is "/var/log/audit/audit.log".
+Replace <tt><i>audit_log_file</i></tt> with the correct audit log file path.
   </td>
   <td xml:lang="en-US">
 If users can write to audit logs, audit trails can be modified or destroyed.
@@ -4252,14 +4275,14 @@ Having a non-default grub superuser username makes password-guessing attacks les
   <td>Extend Audit Backlog Limit for the Audit Daemon</td>
   <td xml:lang="en-US">
 To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
+prior to the audit daemon, add the argument <tt>audit_backlog_limit=<tt>8192</tt></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+To ensure that <tt>audit_backlog_limit=<tt>8192</tt></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>audit_backlog_limit=<tt>8192</tt></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=<tt>8192</tt> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=<tt>8192</tt>"</pre>
   </td>
   <td xml:lang="en-US">
 audit_backlog_limit sets the queue length for audit events awaiting transfer
@@ -4267,7 +4290,7 @@ to the audit daemon. Until the audit daemon is up and running, all log messages
 are stored in this queue.  If the queue is overrun during boot process, the action
 defined by audit failure flag is taken.
   </td>
-  <td></td>
+  <td>var_audit_backlog_limit=8192</td>
 </tr>
 <tr>
   <td>CM-6(a)</td>
@@ -5207,39 +5230,6 @@ X windows has a long history of security vulnerabilities and should not be insta
 </tr>
 <tr>
   <td>AC-6(1)<br/>CM-6(a)</td>
-  <td>CCE-81036-6</td>
-  <td>Ensure the Default Bash Umask is Set Correctly</td>
-  <td xml:lang="en-US">
-To ensure the default umask for users of the Bash shell is set properly,
-add or correct the <tt>umask</tt> setting in <tt>/etc/bashrc</tt> to read
-as follows:
-<pre>umask <tt>077</tt></pre>
-  </td>
-  <td xml:lang="en-US">
-The umask value influences the permissions assigned to files when they are created.
-A misconfigured umask value could result in files with excessive permissions that can be read or
-written to by unauthorized users.
-  </td>
-  <td>var_accounts_user_umask=077</td>
-</tr>
-<tr>
-  <td>AC-6(1)<br/>CM-6(a)</td>
-  <td>CCE-81037-4</td>
-  <td>Ensure the Default C Shell Umask is Set Correctly</td>
-  <td xml:lang="en-US">
-To ensure the default umask for users of the C shell is set properly,
-add or correct the <tt>umask</tt> setting in <tt>/etc/csh.cshrc</tt> to read as follows:
-<pre>umask <tt>077</tt></pre>
-  </td>
-  <td xml:lang="en-US">
-The umask value influences the permissions assigned to files when they are created.
-A misconfigured umask value could result in files with excessive permissions that can be read or
-written to by unauthorized users.
-  </td>
-  <td>var_accounts_user_umask=077</td>
-</tr>
-<tr>
-  <td>AC-6(1)<br/>CM-6(a)</td>
   <td>CCE-82888-9</td>
   <td>Ensure the Default Umask is Set Correctly in login.defs</td>
   <td xml:lang="en-US">
@@ -5250,26 +5240,6 @@ add or correct the <tt>UMASK</tt> setting in <tt>/etc/login.defs</tt> to read as
   <td xml:lang="en-US">
 The umask value influences the permissions assigned to files when they are created.
 A misconfigured umask value could result in files with excessive permissions that can be read and
-written to by unauthorized users.
-  </td>
-  <td>var_accounts_user_umask=077</td>
-</tr>
-<tr>
-  <td>AC-6(1)<br/>CM-6(a)</td>
-  <td>CCE-81035-8</td>
-  <td>Ensure the Default Umask is Set Correctly in /etc/profile</td>
-  <td xml:lang="en-US">
-To ensure the default umask controlled by <tt>/etc/profile</tt> is set properly,
-add or correct the <tt>umask</tt> setting in <tt>/etc/profile</tt> to read as follows:
-<pre>umask <tt>077</tt></pre>
-
-Note that <tt>/etc/profile</tt> also reads scrips within <tt>/etc/profile.d</tt> directory.
-These scripts are also valid files to set umask value. Therefore, they should also be
-considered during the check and properly remediated, if necessary.
-  </td>
-  <td xml:lang="en-US">
-The umask value influences the permissions assigned to files when they are created.
-A misconfigured umask value could result in files with excessive permissions that can be read or
 written to by unauthorized users.
   </td>
   <td>var_accounts_user_umask=077</td>
@@ -5398,7 +5368,7 @@ Without auditing of these events it may be harder or impossible to identify what
 This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
 after system reboot. From "pam_faillock" man pages:
 <pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
-boot so the access will be reenabled after system reboot. If that is undesirable, a different
+boot so the access will be re-enabled after system reboot. If that is undesirable, a different
 tally directory must be set with the "dir" option.</pre>
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
@@ -5511,6 +5481,11 @@ of the return instruction pointer.
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/false</pre>
+This entry will cause a non-zero return value during a <code>cramfs</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install cramfs /bin/true</pre>
 
 To configure the system to prevent the <code>cramfs</code> from being used,
 add the following line to file <code>/etc/modprobe.d/cramfs.conf</code>:
@@ -5542,6 +5517,11 @@ within one connection.
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
 <pre>install sctp /bin/false</pre>
+This entry will cause a non-zero return value during a <code>sctp</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install sctp /bin/true</pre>
 
 To configure the system to prevent the <code>sctp</code> from being used,
 add the following line to file <code>/etc/modprobe.d/sctp.conf</code>:
@@ -5565,6 +5545,11 @@ cluster.
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
 <pre>install tipc /bin/false</pre>
+This entry will cause a non-zero return value during a <code>tipc</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install tipc /bin/true</pre>
 
 To configure the system to prevent the <code>tipc</code> from being used,
 add the following line to file <code>/etc/modprobe.d/tipc.conf</code>:
@@ -5587,6 +5572,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/false</pre>
+This entry will cause a non-zero return value during a <code>usb-storage</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install usb-storage /bin/true</pre>
 
 To configure the system to prevent the <code>usb-storage</code> from being used,
 add the following line to file <code>/etc/modprobe.d/usb-storage.conf</code>:
@@ -5781,7 +5771,7 @@ The <tt>nosuid</tt> mount option prevents set-user-identifier (SUID)
 and set-group-identifier (SGID) permissions from taking effect. These permissions
 allow users to execute binaries with the same permissions as the owner and group
 of the file respectively. Users should not be allowed to introduce SUID and SGID
-files into the system via partitions mounted from removeable media.
+files into the system via partitions mounted from removable media.
 Add the <code>nosuid</code> option to the fourth column of
 <tt>/etc/fstab</tt> for the line which controls mounting of
 
@@ -6051,7 +6041,7 @@ $ sudo yum erase telnet-server</pre>
 It is detrimental for operating systems to provide, or install by default,
 functionality exceeding requirements or mission objectives. These
 unnecessary capabilities are often overlooked and therefore may remain
-unsecure. They increase the risk to the platform by providing additional
+insecure. They increase the risk to the platform by providing additional
 attack vectors.
 <br />
 The telnet service provides an unencrypted remote access service which does
@@ -6077,7 +6067,7 @@ Removing the <tt>tftp-server</tt> package decreases the risk of the accidental
 <br /><br />
 If TFTP is required for operational support (such as transmission of router
 configurations), its use must be documented with the Information Systems
-Securty Manager (ISSM), restricted to only authorized personnel, and have
+Security Manager (ISSM), restricted to only authorized personnel, and have
 access control rules established.
   </td>
   <td></td>
@@ -6702,25 +6692,6 @@ properly, avoiding the system to become inaccessible.
   <td></td>
 </tr>
 <tr>
-  <td>AC-9<br/>AC-9(1)</td>
-  <td>CCE-80788-3</td>
-  <td>Ensure PAM Displays Last Logon/Access Notification</td>
-  <td xml:lang="en-US">
-To configure the system to notify users of last logon/access using <tt>pam_lastlog</tt>,
-add or correct the <tt>pam_lastlog</tt> settings in <tt>/etc/pam.d/postlogin</tt>
-to include <tt>showfailed</tt> option, such as:
-<pre>session     [default=1]    pam_lastlog.so showfailed</pre>
-And make sure that the <tt>silent</tt> option is not set for this specific line.
-  </td>
-  <td xml:lang="en-US">
-Users need to be aware of activity that occurs regarding their account. Providing users with
-information regarding the number of unsuccessful attempts that were made to login to their
-account allows the user to determine if any unauthorized activity has occurred and gives them
-an opportunity to notify administrators.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>AU-9</td>
   <td>CCE-86239-1</td>
   <td>Audit Tools Must Be Group-owned by Root</td>
@@ -6881,7 +6852,7 @@ After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
-of the information system but does not want to logout because of the temporary nature of the absense.
+of the information system but does not want to logout because of the temporary nature of the absence.
   </td>
   <td>var_screensaver_lock_delay=5_seconds</td>
 </tr>
@@ -6998,6 +6969,32 @@ address information.
   <td></td>
 </tr>
 <tr>
+  <td>AC-12<br/>SC-10<br/>AC-2(5)<br/>CM-6(a)</td>
+  <td>CCE-80673-7</td>
+  <td>Set Interactive Session Timeout</td>
+  <td xml:lang="en-US">
+Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
+The <tt>TMOUT</tt>
+
+setting in a file loaded by <tt>/etc/profile</tt>, e.g.
+<tt>/etc/profile.d/tmout.sh</tt> should read as follows:
+<pre>typeset -xr TMOUT=<tt>10_min</tt></pre>
+or
+<pre>declare -xr TMOUT=<tt>10_min</tt></pre>
+Using the <code>typeset</code> keyword is preferred for wider compatibility with ksh and other shells.
+  </td>
+  <td xml:lang="en-US">
+Terminating an idle session within a short time period reduces
+the window of opportunity for unauthorized personnel to take control of a
+management session enabled on the console or console port that has been
+left unattended.
+  </td>
+  <td>var_accounts_tmout=10_min</td>
+</tr>
+<tr>
   <td>AU-12(b)</td>
   <td>CCE-85871-2</td>
   <td>Verify Permissions on /etc/audit/auditd.conf</td>
@@ -7036,57 +7033,6 @@ those responsible for one.
   <td></td>
 </tr>
 <tr>
-  <td>SC-12(2)<br/>SC-12(3)<br/>IA-7<br/>SC-13<br/>CM-6(a)<br/>SC-12</td>
-  <td>CCE-82155-3</td>
-  <td>Enable Dracut FIPS Module</td>
-  <td xml:lang="en-US">
-
-Red Hat Enterprise Linux 8 has an installation-time kernel flag that can enable FIPS mode.
-The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
-enabled. Enabling FIPS mode on a preexisting system is not supported. If
-this rule fails on an installed system, then this is a permanent
-finding and cannot be fixed.
-
-To enable FIPS, the system requires that the <tt>fips</tt> module is added in <tt>dracut</tt> configuration.
-Check if <tt>/etc/dracut.conf.d/40-fips.conf</tt> contain <tt>add_dracutmodules+=" fips "</tt>
-  </td>
-  <td xml:lang="en-US">
-Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
-protect data. The operating system must implement cryptographic modules adhering to the higher
-standards approved by the federal government since this provides assurance they have been tested
-and validated.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>SC-12(2)<br/>SC-12(3)<br/>IA-7<br/>SC-13<br/>CM-6(a)<br/>SC-12</td>
-  <td>CCE-84027-2</td>
-  <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
-  <td xml:lang="en-US">
-System running in FIPS mode is indicated by kernel parameter
-<tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
-
-Red Hat Enterprise Linux 8 has an installation-time kernel flag that can enable FIPS mode.
-The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
-enabled. Enabling FIPS mode on a preexisting system is not supported. If
-this rule fails on an installed system, then this is a permanent
-finding and cannot be fixed.
-
-
-
-To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
-parameters during system installation so key generation is done with FIPS-approved algorithms
-and continuous monitoring tests in place.
-  </td>
-  <td xml:lang="en-US">
-Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
-protect data. The operating system must implement cryptographic modules adhering to the higher
-standards approved by the federal government since this provides assurance they have been tested
-and validated.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>SC-13<br/>SC-12(2)<br/>SC-12(3)</td>
   <td>CCE-80934-3</td>
   <td>Configure BIND to use System Crypto Policy</td>
@@ -7103,24 +7049,6 @@ is not commented out or superseded by later includes:
   </td>
   <td xml:lang="en-US">
 Overriding the system crypto policy makes the behavior of the BIND service violate expectations,
-and makes system configuration more fragmented.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>SC-13<br/>SC-12(2)<br/>SC-12(3)</td>
-  <td>CCE-80936-8</td>
-  <td>Configure Kerberos to use System Crypto Policy</td>
-  <td xml:lang="en-US">
-Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-Kerberos is supported by crypto policy, but it's configuration may be
-set up to ignore it.
-To check that Crypto Policies settings for Kerberos are configured correctly, examine that there is a symlink at
-/etc/krb5.conf.d/crypto-policies targeting /etc/cypto-policies/back-ends/krb5.config.
-If the symlink exists, Kerberos is configured to use the system-wide crypto policy settings.
-  </td>
-  <td xml:lang="en-US">
-Overriding the system crypto policy makes the behavior of Kerberos violate expectations,
 and makes system configuration more fragmented.
   </td>
   <td></td>
@@ -7153,9 +7081,9 @@ randomization (KASLR).
   <td>CCE-80935-0</td>
   <td>Configure System Cryptography Policy</td>
   <td xml:lang="en-US">
-To configure the system cryptography policy to use ciphers only from the <tt><tt>fips</tt></tt>
+To configure the system cryptography policy to use ciphers only from the <tt><tt>fips_stig</tt></tt>
 policy, run the following command:
-<pre>$ sudo update-crypto-policies --set <tt>fips</tt></pre>
+<pre>$ sudo update-crypto-policies --set <tt>fips_stig</tt></pre>
 The rule checks if settings for selected crypto policy are configured as expected. Configuration files in the <tt>/etc/crypto-policies/back-ends</tt> are either symlinks to correct files provided by Crypto-policies package or they are regular files in case crypto policy customizations are applied.
 Crypto policies may be customized by crypto policy modules, in which case it is delimited from the base policy using a colon.
   </td>
@@ -7164,44 +7092,7 @@ Centralized cryptographic policies simplify applying secure ciphers across an op
 the applications that run on that operating system. Use of weak or untested encryption algorithms
 undermines the purposes of utilizing encryption to protect data.
   </td>
-  <td>var_system_crypto_policy=fips</td>
-</tr>
-<tr>
-  <td>AC-17(a)<br/>AC-17(2)<br/>CM-6(a)<br/>MA-4(6)<br/>SC-13<br/>SC-12(2)<br/>SC-12(3)</td>
-  <td>CCE-80938-4</td>
-  <td>Configure OpenSSL library to use System Crypto Policy</td>
-  <td xml:lang="en-US">
-Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSL is supported by crypto policy, but the OpenSSL configuration may be
-set up to ignore it.
-To check that Crypto Policies settings are configured correctly, you have to examine the OpenSSL config file
-available under <tt>/etc/pki/tls/openssl.cnf</tt>.
-This file has the <tt>ini</tt> format, and it enables crypto policy support
-if there is a <tt>[ crypto_policy ]</tt> section that contains the <tt>.include /etc/crypto-policies/back-ends/opensslcnf.config</tt> directive.
-  </td>
-  <td xml:lang="en-US">
-Overriding the system crypto policy makes the behavior of the Java runtime violates expectations,
-and makes system configuration more fragmented.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>AC-17(a)<br/>AC-17(2)<br/>CM-6(a)<br/>MA-4(6)<br/>SC-13</td>
-  <td>CCE-80939-2</td>
-  <td>Configure SSH to use System Crypto Policy</td>
-  <td xml:lang="en-US">
-Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-SSH is supported by crypto policy, but the SSH configuration may be
-set up to ignore it.
-To check that Crypto Policies settings are configured correctly, ensure that
-the <tt>CRYPTO_POLICY</tt> variable is either commented or not set at all
-in the <tt>/etc/sysconfig/sshd</tt>.
-  </td>
-  <td xml:lang="en-US">
-Overriding the system crypto policy makes the behavior of the SSH service violate expectations,
-and makes system configuration more fragmented.
-  </td>
-  <td></td>
+  <td>var_system_crypto_policy=fips_stig</td>
 </tr>
 <tr>
   <td>AC-17 (1)</td>
@@ -7394,173 +7285,6 @@ surrounding the use of remote access methods.
   <td></td>
 </tr>
 <tr>
-  <td>AC-17(2)</td>
-  <td>CCE-84254-2</td>
-  <td>Configure GnuTLS library to use DoD-approved TLS Encryption</td>
-  <td xml:lang="en-US">
-Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-GnuTLS is supported by system crypto policy, but the GnuTLS configuration may be
-set up to ignore it.
-
-To check that Crypto Policies settings are configured correctly, ensure that
-<tt>/etc/crypto-policies/back-ends/gnutls.config</tt> contains the following
-line and is not commented out:
-<tt>+VERS-ALL:-VERS-DTLS0.9:-VERS-TLS1.1:-VERS-TLS1.0:-VERS-SSL3.0:-VERS-DTLS1.0</tt>
-
-These keywords are order-independent, so the line can be in any order. GnuTLS will then prefer the highest version.
-  </td>
-  <td xml:lang="en-US">
-Overriding the system crypto policy makes the behavior of the GnuTLS
-library violate expectations, and makes system configuration more
-fragmented.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>AC-17(2)</td>
-  <td>CCE-84255-9</td>
-  <td>Configure OpenSSL library to use TLS Encryption</td>
-  <td xml:lang="en-US">
-Crypto Policies are means of enforcing certain cryptographic settings for
-selected applications including OpenSSL. OpenSSL is by default configured to
-modify its configuration based on currently configured Crypto Policy.
-Editing the Crypto Policy back-end is not recommended.
-
-Check the crypto-policies(7) man page and choose a policy that configures TLS
-protocol to version 1.2 or higher, for example DEFAULT, FUTURE or FIPS policy.
-Or create and apply a custom policy that restricts minimum TLS version to 1.2.
-
-For example for versions prior to crypto-policies-20210617-1.gitc776d3e.el8.noarch
-this is expected:
-
-<pre>$ sudo grep -i MinProtocol /etc/crypto-policies/back-ends/opensslcnf.config
-
-MinProtocol = TLSv1.2
-</pre>
-
-Or for version crypto-policies-20210617-1.gitc776d3e.el8.noarch and newer this is
-expected:
-
-<pre>$ sudo grep -i MinProtocol /etc/crypto-policies/back-ends/opensslcnf.config
-
-TLS.MinProtocol = TLSv1.2
-DTLS.MinProtocol = DTLSv1.2</pre>
-  </td>
-  <td xml:lang="en-US">
-Without cryptographic integrity protections, information can be altered by
-unauthorized users without detection.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>AC-17(2)</td>
-  <td>CCE-85902-5</td>
-  <td>Configure SSH Client to Use FIPS 140 Validated Ciphers: openssh.config</td>
-  <td xml:lang="en-US">
-Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
-set up incorrectly.
-
-To check that Crypto Policies settings for ciphers are configured correctly, ensure that
-<tt>/etc/crypto-policies/back-ends/openssh.config</tt> contains the following
-line and is not commented out:
-<pre>Ciphers <tt>stig_extended</tt></pre>
-  </td>
-  <td xml:lang="en-US">
-Overriding the system crypto policy makes the behavior of the OpenSSH client
-violate expectations, and makes system configuration more fragmented. By
-specifying a cipher list with the order of ciphers being in a “strongest to
-weakest” orientation, the system will automatically attempt to use the
-strongest cipher for securing SSH connections.
-  </td>
-  <td>sshd_approved_ciphers=stig_extended</td>
-</tr>
-<tr>
-  <td>AC-17(2)</td>
-  <td>CCE-85897-7</td>
-  <td>Configure SSH Server to Use FIPS 140-2 Validated Ciphers: opensshserver.config</td>
-  <td xml:lang="en-US">
-Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
-set up incorrectly.
-
-To check that Crypto Policies settings for ciphers are configured correctly, ensure that
-<tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
-text and is not commented out:
-<pre>-oCiphers=<tt>stig_extended</tt></pre>
-  </td>
-  <td xml:lang="en-US">
-Overriding the system crypto policy makes the behavior of the OpenSSH server
-violate expectations, and makes system configuration more fragmented. By
-specifying a cipher list with the order of ciphers being in a “strongest to
-weakest” orientation, the system will automatically attempt to use the
-strongest cipher for securing SSH connections.
-  </td>
-  <td>sshd_approved_ciphers=stig_extended</td>
-</tr>
-<tr>
-  <td>AC-17(2)</td>
-  <td>CCE-85870-4</td>
-  <td>Configure SSH Client to Use FIPS 140-2 Validated MACs: openssh.config</td>
-  <td xml:lang="en-US">
-Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
-set up incorrectly.
-
-To check that Crypto Policies settings are configured correctly, ensure that
-<tt>/etc/crypto-policies/back-ends/openssh.config</tt> contains the following
-line and is not commented out:
-<tt>MACs <tt>stig_extended</tt></tt>
-  </td>
-  <td xml:lang="en-US">
-Overriding the system crypto policy makes the behavior of the OpenSSH
-client violate expectations, and makes system configuration more
-fragmented.
-  </td>
-  <td>sshd_approved_macs=stig_extended</td>
-</tr>
-<tr>
-  <td>AC-17(2)</td>
-  <td>CCE-85899-3</td>
-  <td>Configure SSH Server to Use FIPS 140-2 Validated MACs: opensshserver.config</td>
-  <td xml:lang="en-US">
-Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
-set up incorrectly.
-
-To check that Crypto Policies settings are configured correctly, ensure that
-<tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
-text and is not commented out:
-<tt>-oMACS=<tt>stig_extended</tt></tt>
-  </td>
-  <td xml:lang="en-US">
-Overriding the system crypto policy makes the behavior of the OpenSSH
-server violate expectations, and makes system configuration more
-fragmented.
-  </td>
-  <td>sshd_approved_macs=stig_extended</td>
-</tr>
-<tr>
-  <td>AC-17(2)</td>
-  <td>CCE-86059-3</td>
-  <td>Use Only FIPS 140-2 Validated Key Exchange Algorithms</td>
-  <td xml:lang="en-US">
-Limit the key exchange algorithms to those  which are FIPS-approved.
-Add or modify the following line in <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt>
-<pre>CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'</pre>
-This rule ensures that only the key exchange algorithms mentioned
-above (or their subset) are configured for use, keeping the given
-order of algorithms.
-  </td>
-  <td xml:lang="en-US">
-FIPS-approved key exchange algorithms are required to be used.
-The system will attempt to use the first algorithm presented by the client that matches
-the server list. Listing the values "strongest to weakest" is a method to ensure the use
-of the strongest algorithm available to secure the SSH connection.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>AC-18</td>
   <td>CCE-82028-2</td>
   <td>Disable ATM Support</td>
@@ -7572,6 +7296,11 @@ and virtual paths.
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
 <pre>install atm /bin/false</pre>
+This entry will cause a non-zero return value during a <code>atm</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install atm /bin/true</pre>
 
 To configure the system to prevent the <code>atm</code> from being used,
 add the following line to file <code>/etc/modprobe.d/atm.conf</code>:
@@ -7613,6 +7342,11 @@ is now also used in marine, industrial, and medical applications.
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
 <pre>install can /bin/false</pre>
+This entry will cause a non-zero return value during a <code>can</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install can /bin/true</pre>
 
 To configure the system to prevent the <code>can</code> from being used,
 add the following line to file <code>/etc/modprobe.d/can.conf</code>:
@@ -7635,6 +7369,11 @@ high-speed real-time communication.
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
 <pre>install firewire-core /bin/false</pre>
+This entry will cause a non-zero return value during a <code>firewire-core</code> module installation
+and additionally convey the meaning of the entry to the user in form of an error message.
+If you would like to omit a non-zero return value and an error message, you may want to add a different line instead
+(both <code>/bin/true</code> and <code>/bin/false</code> are allowed by OVAL and will be accepted by the scan):
+<pre>install firewire-core /bin/true</pre>
 
 To configure the system to prevent the <code>firewire-core</code> from being used,
 add the following line to file <code>/etc/modprobe.d/firewire-core.conf</code>:
@@ -7885,24 +7624,6 @@ user defaults for each account on the system.
 </tr>
 <tr>
   <td></td>
-  <td>CCE-84039-7</td>
-  <td>User Initialization Files Must Not Run World-Writable Programs</td>
-  <td xml:lang="en-US">
-Set the mode on files being executed by the user initialization files with the
-following command:
-<pre>$ sudo chmod o-w <i>FILE</i></pre>
-  </td>
-  <td xml:lang="en-US">
-If user start-up files execute world-writable programs, especially in
-unprotected directories, they could be maliciously modified to destroy user
-files or otherwise compromise the system at the user level. If the system is
-compromised at the user level, it is easier to elevate privileges to eventually
-compromise the system at the root and network level.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
   <td>CCE-84040-5</td>
   <td>Ensure that Users Path Contains Only Local Directories</td>
   <td xml:lang="en-US">
@@ -7958,6 +7679,26 @@ the user may be given access to the / directory as the current working directory
 upon logon. This could create a Denial of Service because the user would not be
 able to access their logon configuration files, and it may give them visibility
 to system files they normally would not be able to access.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>CCE-90711-3</td>
+  <td>All Interactive User Home Directories Must Reside On a Separate Partition</td>
+  <td xml:lang="en-US">
+All interactive user home directories must be located on a file system
+partition separate from the root (<tt>/</tt>) partition. If any interactive
+user's home directory resides directly on the root file system, a failure
+of that file system or a user filling it up could impact system operation.
+  </td>
+  <td xml:lang="en-US">
+Ensuring that interactive user home directories are on a separate
+partition from the root file system prevents users from filling the root
+partition, which could result in system instability or denial of service.
+It also allows administrators to apply more restrictive mount options
+such as <tt>noexec</tt>, <tt>nosuid</tt>, and <tt>nodev</tt> to the
+partition containing user home directories.
   </td>
   <td></td>
 </tr>
@@ -8432,6 +8173,31 @@ a trusted vendor.
 </tr>
 <tr>
   <td></td>
+  <td>CCE-86548-5</td>
+  <td>Ensure EPEL Repository is Disabled</td>
+  <td xml:lang="en-US">
+The system must not have the EPEL (Extra Packages for Enterprise Linux) repository enabled.
+EPEL provides additional packages that are not part of the official RHEL distribution and
+may not meet enterprise security requirements.
+
+Check if any repository files in <tt>/etc/yum.repos.d/</tt> contain enabled EPEL repositories
+by running:
+<pre>$ grep -r "^\[.*epel.*\]" /etc/yum.repos.d/</pre>
+
+If EPEL repositories are found, ensure they are disabled by setting <tt>enabled=0</tt> in
+the repository configuration file.
+  </td>
+  <td xml:lang="en-US">
+The EPEL repository is not officially supported by Red Hat and may contain packages that have
+not been vetted for security in an enterprise environment. Using unsupported repositories can
+introduce vulnerabilities, compatibility issues, or packages that do not meet DoD security
+requirements. Only packages from authorized repositories should be installed to maintain
+system integrity and security.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
   <td>CCE-83659-3</td>
   <td>Verify Group Who Owns /var/log Directory</td>
   <td xml:lang="en-US">
@@ -8592,6 +8358,18 @@ The <tt>OSPP</tt>, <tt>NO-SHA1</tt>, <tt>NO-CAMELLIA</tt>, and <tt>ECDHE-ONLY</t
   </td>
   <td xml:lang="en-US">
 Sub-policies can cause insecure ciphers to be used.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>CCE-86493-4</td>
+  <td>Implement STIG Sub Crypto Policy</td>
+  <td xml:lang="en-US">
+Create a custom cryptographic policy to follow the guidance from DISA.
+  </td>
+  <td xml:lang="en-US">
+To follow STIG policy.
   </td>
   <td></td>
 </tr>
@@ -8777,6 +8555,22 @@ $ sudo yum erase abrt</pre>
 Mishandling crash data could expose sensitive information about
 vulnerabilities in software executing on the system, as well as sensitive
 information from within a process's address space or registers.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>CCE-82723-8</td>
+  <td>Install crypto-policies package</td>
+  <td xml:lang="en-US">
+The <code>crypto-policies</code> package can be installed with the following command:
+<pre>
+$ sudo yum install crypto-policies</pre>
+  </td>
+  <td xml:lang="en-US">
+Centralized cryptographic policies simplify applying secure ciphers across an operating system and
+the applications that run on that operating system. Use of weak or untested encryption algorithms
+undermines the purposes of utilizing encryption to protect data.
   </td>
   <td></td>
 </tr>
@@ -9143,7 +8937,7 @@ make sure that the file contains line
 SSH implementation in Red Hat Enterprise Linux 8 uses the openssl library, which doesn't use
 high-entropy sources by default. Randomness is needed to generate data-encryption keys, and as
 plaintext padding and initialization vectors in encryption algorithms, and high-quality
-entropy elliminates the possibility that the output of the random number generator used by SSH
+entropy eliminates the possibility that the output of the random number generator used by SSH
 would be known to potential attackers.
   </td>
   <td></td>
@@ -9199,8 +8993,8 @@ Or the <tt>/etc/sudoers</tt> should not contain any <tt>#include</tt>,
 Note that the '#' character doesn't denote a comment in the configuration file.
   </td>
   <td xml:lang="en-US">
-Some <tt>sudo</tt> configurtion options allow users to run programs without re-authenticating.
-Use of these configuration options makes it easier for one compromised accound to be used to
+Some <tt>sudo</tt> configuration options allow users to run programs without re-authenticating.
+Use of these configuration options makes it easier for one compromised account to be used to
 compromise other accounts.
   </td>
   <td></td>
